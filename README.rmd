@@ -1,0 +1,5 @@
+#Fundus Image Comparator and Classifier
+
+##Acknowledgements
+Jayashree Kalpathy-Cramer, original source code (
+Collin Wen for dockerizing (https://github.com/CollinWen/Image-Comparator-Dockerfile)
