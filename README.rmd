@@ -1,5 +1,17 @@
-#Fundus Image Comparator and Classifier
+# Fundus Image Comparator and Classifier
 
-##Acknowledgements
-Jayashree Kalpathy-Cramer, original source code (
-Collin Wen for dockerizing (https://github.com/CollinWen/Image-Comparator-Dockerfile)
+Purpose: For setting up a static page where users can do pairwise comparison and individual classifications for a set of images
+
+## Instructions for use
+This webpage was dockerized and uploaded to Amazon AWS for distribution. 
+
+1. Set up an Amazon AWS server (recommend free tier for small scale use)
+2. SFTP the dockerfile to your server root directory
+3. Create docker image 
+  -Will add specific configuration instructions
+4. Run server and access webpage using the following (replace 8080 with your port of choice):
+  `python -m SimpleHTTPServer 8080` 
+  
+## Acknowledgements
+Jayashree Kalpathy-Cramer, for original source code (https://github.com/AlanCramer/Image-Comparator)
+Collin Wen, for dockerizing (https://github.com/CollinWen/Image-Comparator-Dockerfile)
