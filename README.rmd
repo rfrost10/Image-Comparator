@@ -1,6 +1,15 @@
-# Fundus Image Comparator and Classifier #
+---
+title: "README Image Classifier and Comparator"
+author: "Jimmy Chen"
+date: "10/8/2019"
+output: rmarkdown::github_document
+---
+
+# Fundus Image Comparator and Classifier 
+
 Purpose: For setting up a static page where users can do pairwise comparison and individual classifications for a set of images
-## Instructions for use ##
+
+## Instructions for use 
 This webpage was dockerized and uploaded to Amazon AWS for distribution. 
 
 1. Set up an Amazon AWS server (recommend free tier for small scale use)
@@ -10,6 +19,6 @@ This webpage was dockerized and uploaded to Amazon AWS for distribution.
 4. Run server and access webpage using the following (replace 8080 with your port of choice):
   ```python -m SimpleHTTPServer 8080``` 
   
-## Acknowledgements ##
+## Acknowledgements 
 Jayashree Kalpathy-Cramer, for original source code (https://github.com/AlanCramer/Image-Comparator)
 Collin Wen, for dockerizing (https://github.com/CollinWen/Image-Comparator-Dockerfile)
