@@ -1,14 +1,11 @@
 ---
-title: "README Image Classifier and Comparator"
+title: "Image Classifier and Comparator"
 author: "Jimmy Chen"
 date: "10/8/2019"
-output: rmarkdown::github_document
+output: 
+  github_document:
+    html_preview: false
 ---
-
-
-```{r, echo = FALSE}
-knitr::opts_chunk$set(collapse=TRUE, comment="##", fig.retina=2, fig.path = "README_figs/README-")
-```
 
 # Fundus Image Comparator and Classifier 
 
@@ -22,8 +19,13 @@ This webpage was dockerized and uploaded to Amazon AWS for distribution.
 3. Create docker image 
   -Will add specific configuration instructions
 4. Run server and access webpage using the following (replace 8080 with your port of choice):
-  ```python -m SimpleHTTPServer 8080``` 
+  ```
+  python -m SimpleHTTPServer 8080
+  ```
   
 ## Acknowledgements 
 Jayashree Kalpathy-Cramer, for original source code (https://github.com/AlanCramer/Image-Comparator)
+
 Collin Wen, for dockerizing (https://github.com/CollinWen/Image-Comparator-Dockerfile)
+
+i-ROP Consortium for image set (https://i-rop.github.io/)
