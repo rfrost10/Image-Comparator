@@ -1,0 +1,5 @@
+Steps to install on new computer
+Install couchdb http://couchdb.apache.org/
+git clone https://github.com/AlanCramer/Image-Comparator.git
+start couchdb and go to admin
+follow instruction in Image-Comparator/dbutil/README to add images to db

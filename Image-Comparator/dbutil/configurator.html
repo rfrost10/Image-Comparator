@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>IC - Database Configurator </title>
+    <link href="configurator.css" rel="stylesheet"> 
+
+    <script src="../vendor/jquery/jquery-2.1.0.min.js"></script>
+    <script src="configurator.js"></script>  
+    <script src="../util/uuidutil.js"></script> 
+    
+</head>
+<body>
+
+        <div class="row">
+            <button class="btn-primary" onclick=onCreateImageDb()>Build Image DB</button>
+        </div>
+        <div class="row">
+            <button class="btn-primary" onclick=onLoadImages()>Load DB Images</button>            
+        </div>
+        <input type="file" multiple id="openimage" name="imagefile" accept="image/*" style="display:none"/>
+        <div>
+            <img id="imgdisp" width = 100 height = 100></img>
+        </div>
+</body>

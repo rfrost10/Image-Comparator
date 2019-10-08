@@ -1,0 +1,3 @@
+Steps to install on new computer
+Install couchdb http://couchdb.apache.org/
+git clone https://github.com/AlanCramer/Image-Comparator.git

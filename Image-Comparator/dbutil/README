@@ -1,0 +1,28 @@
+
+To use addImagesToDb.sh:
+    At the couchdb with url
+    http://127.0.0.1:54956/
+    create an empty database called ret_images
+    Then run the script e.g.
+    find ../images -name *.jpg | xargs addImagesToDb.sh
+
+New method addImagesToDb_jkc
+    install couchrest gem (sudo gem install couchrest)
+    edit script: change baseDir location on line 6
+    edit script: change dbname
+
+not longer (Create a database called image_compare_results )
+
+create a image compare list
+
+create a task for each user
+
+
+
+Configurator files are (unfinished!) web based tool to add images and other functionality
+
+basic_views.json is the code for the views of the couchdb - handy for when recreating a db.
+
+genComparisonOrder.rb
+    This is a script that takes a number (which represents the number of docs) then generates a shuffled order of that many numbers.
+    Maybe it can also put this document into the db. If so, it should take a name.
