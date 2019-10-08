@@ -5,6 +5,11 @@ date: "10/8/2019"
 output: rmarkdown::github_document
 ---
 
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="##", fig.retina=2, fig.path = "README_figs/README-")
+```
+
 # Fundus Image Comparator and Classifier 
 
 Purpose: For setting up a static page where users can do pairwise comparison and individual classifications for a set of images
