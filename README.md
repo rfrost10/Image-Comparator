@@ -2,7 +2,7 @@
 
 Purpose: Set up a static webpage and server to host classifier/comparator tasks for ophthalmologists and collect classification/comparison data for analysis
 
-I am not the original author of these files. This repository contains aggregated and updated files from previous developers. See acknowledgement below.
+I am not the original author of these files. This repository contains aggregated and updated files from previous developers. See acknowledgements below.
 
 ## Instructions for use
 1. Set up AWS instance. Free tier is adequate for deployment on a small scale.You will need your public host IP or DNS and SFTP access (prefer Filezilla) to make docker setup easier
@@ -11,6 +11,8 @@ I am not the original author of these files. This repository contains aggregated
 4. Deploy server using the following:
 ```python -m SimpleHTTPServer 8080```
 5. Use tmux before running the above command to allow the server to run indefinitely
+
+TODO: More detailed instructions to come!
 
 ## Acknowledgements
 Jayashree Kalpathy-Cramer, PhD for original source code (https://github.com/AlanCramer/Image-Comparator)
