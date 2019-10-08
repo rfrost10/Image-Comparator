@@ -13,6 +13,6 @@ I am not the original author of these files. This repository contains aggregated
 5. Use tmux before running the above command to allow the server to run indefinitely
 
 ## Acknowledgements
-Jayashree Kalpathy-Cramer, Phd for original source code (https://github.com/AlanCramer/Image-Comparator)
+Jayashree Kalpathy-Cramer, PhD for original source code (https://github.com/AlanCramer/Image-Comparator)
 
 Collin Wen, for dockerized image (https://github.com/CollinWen/Image-Comparator-Dockerfile)
