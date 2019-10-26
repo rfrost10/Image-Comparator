@@ -1,6 +1,6 @@
 # Fundus Image Classifier and Comparator
 
-Purpose: Set up a static webpage and server to host classifier/comparator tasks for ophthalmologists and collect classification/comparison data on retinal fundus images for data analysis
+Purpose: Set up a static webpage and server to host classifier/pairwise comparator tasks for images 
 
 I am not the original author of these files. This repository contains aggregated and updated files from previous developers. See acknowledgements below.
 
