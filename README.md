@@ -1,4 +1,4 @@
-# Fundus Image Classifier and Comparator
+# Image Classifier and Comparator
 
 Purpose: Set up a static webpage and server to host classifier/pairwise comparator tasks for images 
 
@@ -14,10 +14,16 @@ I am not the original author of these files. This repository contains aggregated
 6. Use tmux to before deploying the server to allow the server to run indefinitely
 
 ## Acknowledgements
-Jayashree Kalpathy-Cramer, PhD for original source code (https://github.com/AlanCramer/Image-Comparator)
 
-Collin Wen, for dockerized image (https://github.com/CollinWen/Image-Comparator-Dockerfile)
+In the order they appear this project has been forked and added to. Yet again we fork to make a QTIM-Lab based project that will be adapted and maintained here.
+
+1. Jayashree Kalpathy-Cramer, PhD for original source code (https://github.com/AlanCramer/Image-Comparator)  
+2. Collin Wen (https://github.com/CollinWen/Image-Comparator.git)  
+3. Collin Wen (https://github.com/CollinWen/Image-Comparator-Dockerfile)  
+4. Jimmy chen (https://github.com/jche253/Fundus_Classifier_Comparator)  
+
 
 ## Contact
 For questions, please contact:
-Jimmy Chen, chenjim@ohsu.edu
+* Benjamin Bearce, bbearce@gmail.com  
+* Jayashree Kalpathy-Cramer, PhD kalpathy@nmr.mgh.harvard.edu  
