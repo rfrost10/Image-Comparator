@@ -34,7 +34,7 @@ $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 * <imageFolder> is ```/data``` inside the docker, which was mounted during container creation.  
 * <imageSetName> is the name for the image set.  
 
-> &ltimageFolder&gt can be any folder if not using docker.
+> \<imageFolder> can be any folder if not using docker.
 
 
 3. Add images to an Image Compare List:
