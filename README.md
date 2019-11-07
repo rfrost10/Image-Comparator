@@ -34,7 +34,7 @@ $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 * <imageFolder> is ```/data``` inside the docker, which was mounted during container creation.  
 * <imageSetName> is the name for the image set.  
 
-> <imageFolder> can be any folder if not using docker.
+> \<imageFolder> can be any folder if not using docker.
 
 
 3. Add images to an Image Compare List:
@@ -42,19 +42,19 @@ $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 ```bash
 $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
 ```
-* <image set name> was the name given to addImagesToDb_jkc.rb  
-* <pct repeat> is the percentage of repeated pairs to be displayed  
-* <list name> is a new list name  
+* \<image set name> was the name given to addImagesToDb_jkc.rb  
+* \<pct repeat> is the percentage of repeated pairs to be displayed  
+* \<list name> is a new list name  
 
 4. Add a task to a user:
 
 ```bash
 $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
 ```
-* <user> is who should complete the task  
-* <image-list name> this is <list name> from above in (makeICLFromImageSetName.rb)  
-* <image-list-type> ```compare``` or ```OCTcompare```.  
-* <task-order> is what precedence the image compare task takes relative to others assigned to this user.   
+* \<user> is who should complete the task  
+* \<image-list name> this is <list name> from above in (makeICLFromImageSetName.rb)  
+* \<image-list-type> ```compare``` or ```OCTcompare```.  
+* \<task-order> is what precedence the image compare task takes relative to others assigned to this user.   
 
 ## Acknowledgements
 
