@@ -56,6 +56,19 @@ $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
 * \<image-list-type> ```compare``` or ```OCTcompare```.  
 * \<task-order> is what precedence the image compare task takes relative to others assigned to this user.   
 
+5. Change Image-Comparator/ui/two_image.html to have your users in this section:
+
+```html
+<!-- manually add users that you assigned tasks too in makeTasks.rb -->
+<select id="username" onchange="OnSetUser(this.value)">
+  <option selected="selected">Choose your user</option>
+  <option value="grader1">Grader 1</option>
+  <option value="grader2">Grader 2</option>
+  <option value="grader3">Grader 3</option>
+  <option value="grader4">Grader 4</option>
+</select>
+```
+
 ## Acknowledgements
 
 In the order they appear this project has been forked and added to. Yet again we fork to make a QTIM-Lab based project that will be adapted and maintained here.
