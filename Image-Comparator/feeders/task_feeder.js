@@ -42,8 +42,28 @@ var ImageCompare = (function (IC) {
                 if (newResRows.length < 1)
                     return; // hmmm - some sort of message that there are no pending tasks?
 
+
+
+                // BB - start
+
+                var ICL_task_index = 0;
+                var task_order = Number.POSITIVE_INFINITY;
+                for (var row = 0 ; row < newResRows.length; ++row) {
+                    if (newResRows[row].value.task_order < task_order){
+                        task_order = newResRows[row].value.task_order;
+                        ICL_task_index = row;
+                    }
+
+                }
+
                 // set the TaskFeeder ICL info
-                var task = IC.TaskFeeder.current_task = newResRows[0].value;
+                var task = IC.TaskFeeder.current_task = newResRows[ICL_task_index].value;
+                // var task = IC.TaskFeeder.current_task = newResRows[0].value; // original
+
+                // BB - end
+
+
+
                 var curICL = IC.TaskFeeder.current_icl = task.image_compare_list;
                 var curTaskIdx = IC.TaskFeeder.current_task_idx = task.current_idx;
 

@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
 
     handleUrlFilter(document.location.search);
@@ -51,7 +50,6 @@ setLabelDanger = function(isDanger, label) {
 };
 
 updateStatusInfo = function() {
-
     // update user
     // var elem = document.getElementById("si_user");
     // var user_elem = document.getElementById("username");
@@ -60,6 +58,7 @@ updateStatusInfo = function() {
     // var label = $("#si_user_label");
     // var isDanger = (selUser.value === "testuser");
     // setLabelDanger(isDanger, label);
+
 
     // update database
     var elem = document.getElementById("si_db");
@@ -94,11 +93,12 @@ updateStatInfoTasks = function(json) {
         curTaskElem.hidden = false;
 
         $('#image-row').show();
-        $('#image-row2').show();
-        var toDoMsg = document.getElementById("to-do-message");
-        toDoMsg.style.display = "none";
-
-        var firstTask = tasks[0].value;
+        //$('#image-row2').show();
+        
+	var toDoMsg = document.getElementById("to-do-message");
+        toDoMsg.textContent = "Pick the knee with more severe OA.";
+        
+	var firstTask = tasks[0].value;
 
         // now we want to find the task that has the lowest (positive?) task_order
         var minTaskOrder = Number.POSITIVE_INFINITY;
@@ -139,8 +139,8 @@ updateStatInfoTasks = function(json) {
         curTaskElem.hidden = true;
         var imagesDiv = document.getElementById("image-row");
         imagesDiv.style.display = "none";
-        var imagesDiv2 = document.getElementById("image-row2");
-        imagesDiv2.style.display = "none";
+        //var imagesDiv2 = document.getElementById("image-row2");
+        //imagesDiv2.style.display = "none";
 
         $('#to-do-message').show()
         var toDoMsg = document.getElementById("to-do-message");
@@ -176,8 +176,8 @@ createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
     // var db_config_elem = document.getElementById("database");
     // var db_config = db_config_elem.options[db_config_elem.selectedIndex].value;
     // var hostname = db_config === "localhost" ?
-    //     "http://localhost:54956/" :
-    //     "http://ec2-54-224-183-251.compute-1.amazonaws.com:54956/";
+    //     "http://localhost:5984/" :
+    //     "http://ec2-54-224-183-251.compute-1.amazonaws.com:5984/";
     // var imageDbName = "ret_images/";
     // var resultsDbName = "ret_images/";
     var dbName = ImageCompare.TaskFeeder.GetImageDbUrl();
@@ -327,3 +327,4 @@ OnNotSure = function() {
 
     saveResultSetImages(0);
 };
+
