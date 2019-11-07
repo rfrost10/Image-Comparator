@@ -44,7 +44,7 @@ response = JSON.parse(resp)
 imageIdRows = response['rows']
 imageIds = []
 imageIdRows.each {|x| imageIds.push(x['value'].to_i) }
-imageIds.sort()
+imageIds = imageIds.sort()
 puts imageIds
 
 rangeBnds = [imageIds.first, imageIds.last]
@@ -104,7 +104,7 @@ puts obj.to_json
 # put the results in the database
 dbname = "ret_images/"
 docname = nameStr
-url = 'http://localhost:54956/' + dbname + docname
+url = 'http://localhost:5984/' + dbname + docname
 
 
 uri = URI.parse(url)
