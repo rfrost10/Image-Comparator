@@ -20,7 +20,7 @@
 
     <link href="/ui/two_image.css" rel="stylesheet">
 
-    <link rel="shortcut icon" type="image/png" href="/images/UWfavicon.png">
+    <link rel="shortcut icon" type="image/png" href="/images/favicon-32x32.png">
 
     <!-- Google Analytics -->
     <script>
@@ -66,6 +66,8 @@
                         </select>
                     </li>
                     <li>
+
+			<!-- manually add users that you assigned tasks too in makeTasks.rb -->
                         <select id="username" onchange="OnSetUser(this.value)">
                           <option selected="selected">Choose your user</option>
                           <option value="grader1">Grader 1</option>
@@ -73,6 +75,9 @@
                           <option value="grader3">Grader 3</option>
                           <option value="grader4">Grader 4</option>
                         </select>
+
+
+
                     </li>
                 </ul>
             </div>
@@ -102,29 +107,28 @@
 
         <!-- Projects Row -->
         <div id="image-row" class="row">
-            <div  class="col-md-6 portfolio-item" onclick="OnImage0()  style="width:1100px;height:500px"">
 
-                <img id="image0"class="img-responsive portfolio-item "src="https://via.placeholder.com/1250x500" alt="">
+          <div  class="col-md-4 portfolio-item" onclick="OnImage0()"  style="display:inline-block;">
+            <img id="image0" class="img-responsive portfolio-item" src="https://via.placeholder.com/1250x500" alt="" style="width:100%;">
+          </div>
 
-            </div>
+          <div id=tie-button class="col-md-1 portfolio-item" onclick="OnNotSure()">
+            <button type="button" class="btn btn-warning" style="display:block; margin:auto;">Tie</button>
+          </div>
 
-        </div>
+          <div  class="col-md-4 portfolio-item" onclick="OnImage1()" style="display:inline-block;">
+            <img id="image1" class="img-responsive portfolio-item" src="https://via.placeholder.com/1250x500" alt="" style="width:100%;">
+          </div>
 
-        <br>
-        <p></p>
+         </div>
 
-        <div id="image-row2" class="row">
-
-            <div  class="col-md-6 portfolio-item" onclick="OnImage1() style="width:1100px;height:500px"">
-
-                <img id="image1" class="img-responsive" src="https://via.placeholder.com/1250x500" alt="">
-
-            </div>
-        </div>
         <!-- /.row -->
+
         <hr>
+
     </div>
-    <!-- /.container -->
+    <!-- /.Page Content -->
+
 
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery-2.1.0.min.js"></script>
