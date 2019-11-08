@@ -45,6 +45,48 @@ $ python3 -m http.server 8080
 Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
 ```
 
+You should see html indicating success:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Image Comparator</title>
+
+    <style>
+        body {
+            margin:4%;
+        }
+    </style>
+
+<link rel="shortcut icon" type="image/png" href="/images/favicon-32x32.png">
+
+</head>
+
+<body>
+
+    <h2>Image Comparator</h2>
+
+    <br>
+
+    <label> To see the image comparison user interface to compare two knee images go </label>
+    <a href = "ui/two_image.html"> here</a>
+
+    <p></p>
+
+    <!--
+    <label> To see the image comparison user interface to compare two OCT scans go </label>
+    <a href = "ui/oct_two_image.html"> here</a>
+    -->
+
+</body>
+
+</html>
+
+```
+
 > Without the use of *tmux* or *screen* your server will stop when the terminal is terminated. 
 
 To use screen perform the following:
@@ -103,12 +145,6 @@ Next confirm that CORS (cross-origin resource sharing) is enabled in the followi
 Once you've confirmed the bind_address and CORS are configured properly, you must restart the couchdb server by using the following command:
 ```
 service couchdb restart
-```
-
-To finish configuring a single node setup, run the following;
-```
-curl -X PUT http://admin:<password>@localhost:5984/_users
-curl -X PUT http://admin:<password>@localhost:5984/_replicator
 ```
 
 ### Test Connections
