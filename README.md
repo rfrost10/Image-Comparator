@@ -4,17 +4,64 @@ Purpose: Set up a static webpage and server to host classifier/pairwise comparat
 
 I am not the original author of these files. This repository contains aggregated and updated files from previous developers. See acknowledgements below.
 
-## Instructions for setup
+## Pre-Install Instructions
+
 1. Set up AWS instance. A free tier server is adequate for small scale deployment. I also recommend setting up an SFTP client such as FileZilla for easier file transfer (will require your public IPv4/DNS and a security key .pem file)
-2. SSH to your server using your custom command/security key provided by AWS. Move dockerfile to the root directory of your AWS server 
-3. Create docker image using instructions described here: https://github.com/CollinWen/Image-Comparator-Dockerfile
-4. Of note, the above repository's dockerfile works, but does not work completely, and some of the webpage code did not work. I have attached my proposed fixes in my dockerfile but have not been able to verify if it works. If the dockerfile above does not work for you, I would recommend replacing the above repository's files with this repository's files and using sed to replace all of my IP addrresses with your server's.
-5. Deploy server using the following:
+2. SSH to your server using your custom command/security key provided by AWS.
+
+## Instructions for setup
+
+> Make sure you are in your home directory *~/home/ubuntu* or *~/home/\<user>* if on a local machine
+
+1. ```git clone https://github.com/QTIM-Lab/Image-Comparator.git```  
+
+2. ```cd Image-Comparator/Image-Comparator``` 
+
+3. Install these libraries if your system doesn't already have them (more necesary for docker containers as they are light weight with minimal installed software).
+
+> AWS VMs have all but ruby
 
 ```bash
-python -m SimpleHTTPServer 8080
+apt-get install -y git
+apt-get install -y python
+apt-get install -y ruby
+apt-get install -y vim
+apt-get install -y curl
 ```
-6. Use tmux to before deploying the server to allow the server to run indefinitely
+
+4. Deploy server using the following:
+
+*python2*  
+```bash
+$ python -m SimpleHTTPServer 8080
+Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
+```
+
+*python3*
+```bash
+$ python3 -m http.server 8080
+Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
+```
+
+> Without the use of *tmux* or *screen* your server will stop when the terminal is terminated. 
+
+To use screen perform the following:
+
+```bash
+$ screen -S http_server
+```
+
+Once in the screen run ```python3 -m http.server 8080``` and then use *cntrl+a, d* to exit screen leaving it running. Finally use ```screen -ls``` to see available screens:
+
+```bash
+$ screen -ls
+There is a screen on:
+	13545.http_server	(11/08/19 20:28:20)	(Detached)
+1 Socket in /run/screen/S-ubuntu.
+```
+
+Now anytime you need to get into the screen to stop the server run ```screen -r http_server```, and you will be dropped back into the screen.
+
 
 ## Instructions for use
 1. To create and setup the database, run the following (use the <db_name> you used from the docker build command):  
@@ -68,6 +115,13 @@ $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
   <option value="grader4">Grader 4</option>
 </select>
 ```
+
+## Instructions for setup via **Docker**
+3. Create docker image using instructions described here: https://github.com/CollinWen/Image-Comparator-Dockerfile
+4. Of note, the above repository's dockerfile works, but does not work completely, and some of the webpage code did not work. I have attached my proposed fixes in my dockerfile but have not been able to verify if it works. If the dockerfile above does not work for you, I would recommend replacing the above repository's files with this repository's files and using sed to replace all of my IP addrresses with your server's.
+
+...TDB
+
 
 ## Acknowledgements
 
