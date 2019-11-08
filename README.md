@@ -64,13 +64,6 @@ There is a screen on:
 
 Now anytime you need to get into the screen to stop the server run ```screen -r http_server```, and you will be dropped back into the screen.
 
-
-## Instructions for setup via **Docker**. **NOT A NEED**
-3. Create docker image using instructions described here: https://github.com/CollinWen/Image-Comparator-Dockerfile
-4. Of note, the above repository's dockerfile works, but does not work completely, and some of the webpage code did not work. I have attached my proposed fixes in my dockerfile but have not been able to verify if it works. If the dockerfile above does not work for you, I would recommend replacing the above repository's files with this repository's files and using sed to replace all of my IP addrresses with your server's.
-
-...TDB
-
 ### Couchdb Setup
 
 To install couchdb, run the following:
