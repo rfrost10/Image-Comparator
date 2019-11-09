@@ -194,11 +194,8 @@ Next add images to the database with script *addImagesToDb_jkc.rb*:
 $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 ```
 
-* <imageFolder> is any image folder on your machine.  
-* <imageSetName> is the name for the image set.  
-
-> \<imageFolder> can be any folder if not using docker.
-
+* \<imageFolder> is any image folder on your machine.  
+* \<imageSetName> is the name for the image set.  
 
 2. Add images to an Image Compare List:
 
