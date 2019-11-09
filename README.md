@@ -45,7 +45,7 @@ $ python3 -m http.server 8080
 Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
 ```
 
-You should see html indicating success:
+You should see this html indicating success:
 
 ```html
 <!DOCTYPE html>
@@ -152,22 +152,22 @@ service couchdb restart
 If you have opened ports 8080 (for the http site) and 5984 (couchdb) then you should be able to navigate to these urls:
 
 ```
-http://\<aws-ip-address--or--dns>:8080
-http://\<aws-ip-address--or--dns>:5984
+http://<aws-ip-address--or--dns>:8080
+http://<aws-ip-address--or--dns>:5984
 ```
 
 or
 
 ```
-http://\<local-ip-address>:8080
-http://\<local-ip-address>:5984
+http://<local-ip-address>:8080
+http://<local-ip-address>:5984
 ```
 
 or
 
 ```
-http://\<localhost>:8080
-http://\<localhost>:5984
+http://<localhost>:8080
+http://<localhost>:5984
 ```
 
 ## Instructions for use
