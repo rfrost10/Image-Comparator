@@ -10,17 +10,25 @@ ARGV.each { |arg| puts "Argument: #{arg}" }
 user = ARGV[0]
 i_list = ARGV[1]
 task_type=ARGV[2]
-
+task_order=ARGV[3] #.to_int
+dbname = ARGV[4]
+DNS = ARGV[5]
 
 if (ARGV.size <3) then
-    puts "Usage: ruby : #{$PROGRAM_NAME}.rb <user> <image-list name> <image-list-type> <task-order> where image-list-type is compare or OCTcompare";
+    puts "Usage: ruby : #{$PROGRAM_NAME} <user> <image-list name> <image-list-type> <task-order>i <dbname> <DNS>"
+    puts "Where:\n"
+    puts "1 <user> is the user assigned to the task.\n"
+    puts "2 <image-list name> is an Image Compare List created before this step.\n"
+    puts "3 <image-list-type> is compare, OCTcompare, classify, classify_nine or quandrant.\n"
+    puts "4 <task-order> is the order in which to complete this task relatve to other tasks.\n"
+    puts "5 <dbname> is the name of the db made in previous steps.\n"
+    puts "6 <DNS> is the VM or ip-address of the machine you are using.\n"
     exit
 end
 
 
 #if task order is provided, use it otherwise task order is set to arbitrarily high number so that it shows up last
 if (ARGV.size > 3)
-  task_order=ARGV[3]#.to_int
   task_order=task_order.strip.to_i
   puts task_order
   puts task_order.class
@@ -60,9 +68,8 @@ end
 
 
 # put the results in the database
-dbname = "ret_images/"
 docname = uuid
-url = 'http://ec2-18-220-36-255.us-east-2.compute.amazonaws.com:54956/' + dbname + docname
+url = "http://#{dbname}:5984/" + dbname + "/" + docname
 uri = URI.parse(url)
 
 http = Net::HTTP.new(uri.host, uri.port)

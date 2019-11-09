@@ -205,19 +205,24 @@ $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName> <DNS> <user:password> <
 ```bash
 $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
 ```
-* \<image set name> was the name given to addImagesToDb_jkc.rb  
-* \<pct repeat> is the percentage of repeated pairs to be displayed  
-* \<list name> is a new list name  
+
+* \<image set name> was the name given to addImagesToDb_jkc.rb for the <imageSetName>.\n";
+* \<pct repeat> is the percentage of repeated pairs to be displayed.\n"
+* \<list name> is a new Image Compare List name.\n";
+* \<dbname> name of db created under Instructions for use.\n"
 
 3. Add a task to a user:
 
 ```bash
 $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
 ```
+
 * \<user> is who should complete the task  
 * \<image-list name> this is <list name> from above in (makeICLFromImageSetName.rb)  
-* \<image-list-type> ```compare``` or ```OCTcompare```.  
-* \<task-order> is what precedence the image compare task takes relative to others assigned to this user.   
+* \<image-list-type> compare, OCTcompare, classify, classify_nine or quandrant.  
+* \<task-order> is what precedence the image compare task takes relative to others assigned to this user.  
+* \<dbname> is the name of the db made in previous steps.
+* \<DNS> is the VM or ip-address of the machine you are using.
 
 4. Change Image-Comparator/ui/two_image.html to have your users in this section:
 
