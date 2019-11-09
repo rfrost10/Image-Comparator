@@ -3,16 +3,22 @@ require 'couchrest'
 require 'securerandom'
 
 
-#baseDir="/Users/jkc/Documents/retinalImaging/website/Image-Comparator/"
-
-
 imageFolder=ARGV[0]
 imageSetName=ARGV[1]
+dns = ARGV[2]
+userpass = ARGV[3]
+dbname = ARGV[4]
 
-if (ARGV.size != 2) then
-  puts "Usage: ruby : #{$PROGRAM_NAME}.rb <imageFolder> <imageSetName>";
-  puts "where imageFolder is the full path to folder/directory where the images are located."
-  puts "And imageSetName can be used by makeImageCompareList"
+#DNS = "ec2-35-171-23-49.compute-1.amazonaws.com"
+
+if (ARGV.size != 5) then
+  puts "Usage: ruby : #{$PROGRAM_NAME} <imageFolder> <imageSetName> <DNS> <user:password> <dbname>";
+  puts "Where:\n"
+  puts "1 - <imageFolder> is the full path to folder/directory where the images are located.\n"
+  puts "2 - <imageSetName> can be used by makeICLFromImageSetName.rb later.\n"
+  puts "3 - <DNS> is ip-address or VM DNS.\n"
+  puts "4 - <user:password> is your VMs username and password entered explicitly as user:password.\n"
+  puts "5 - <dbname> is the name of the database you want to add images to."
   exit
 end
 
@@ -20,12 +26,10 @@ end
 
 ims=Dir.glob("#{imageFolder}/*")
 
-dbname = "ret_images"
 
 #connect to db, create if does not exist
-@db = CouchRest.database!("http://admin:PASSword_123@ec2-18-234-167-89.compute-1.amazonaws.com:5984/#{dbname}")
+@db = CouchRest.database!("http://#{userpass}@#{dns}:5984/#{dbname}")
 
-#CouchRest.put("http://localhost:5984/testdb/doc", 'name' => 'test', 'date' => Date.current)
 
 res= @db.view('basic_views/count_image_docs')#.to_yaml
 puts res
@@ -53,12 +57,11 @@ ims.each_with_index  do |im, idx|
 
 }
 obj['_id']=(idx+imgCount+1).to_s
+
 #puts obj
 response =@db.save_doc(obj)
 
 @db.put_attachment(obj, "image", File.open(im), :content_type => "image/#{imClass}")
-
-#@db.save_doc(obj)
 
 end
 

@@ -55,9 +55,9 @@ RUN rm -r Fundus_Classifier_Comparator
 
 ### BB 10/31/2019 ###
 
-RUN grep -rl 'ec2-54-152-40-100.compute-1.amazonaws.com' /Image-Comparator/ | xargs sed -i 's/ec2-54-152-40-100.compute-1.amazonaws.com/ec2-18-234-167-89.compute-1.amazonaws.com/g'
-RUN grep -rl 'ec2-34-201-70-163.compute-1.amazonaws.com' /Image-Comparator/ | xargs sed -i 's/ec2-34-201-70-163.compute-1.amazonaws.com/ec2-18-234-167-89.compute-1.amazonaws.com/g'
-RUN grep -rl 'ec2-18-220-36-255.us-east-2.compute.amazonaws.com' /Image-Comparator/ | xargs sed -i 's/ec2-18-220-36-255.us-east-2.compute.amazonaws.com/ec2-18-234-167-89.compute-1.amazonaws.com/g'
+RUN grep -rl 'ec2-54-152-40-100.compute-1.amazonaws.com' /Image-Comparator/ | xargs sed -i 's/ec2-54-152-40-100.compute-1.amazonaws.com/ec2-35-171-23-49.compute-1.amazonaws.com/g'
+RUN grep -rl 'ec2-34-201-70-163.compute-1.amazonaws.com' /Image-Comparator/ | xargs sed -i 's/ec2-34-201-70-163.compute-1.amazonaws.com/ec2-35-171-23-49.compute-1.amazonaws.com/g'
+RUN grep -rl 'ec2-18-220-36-255.us-east-2.compute.amazonaws.com' /Image-Comparator/ | xargs sed -i 's/ec2-18-220-36-255.us-east-2.compute.amazonaws.com/ec2-35-171-23-49.compute-1.amazonaws.com/g'
 
 RUN grep -rl '54956' /Image-Comparator/ | xargs sed -i 's/54956/5984/g'
 
