@@ -171,7 +171,7 @@ http://<localhost>:5984
 ```
 
 ## Instructions for use
-1. To create and setup the database, run the following (use the <db_name> you used from the docker build command):  
+To create and setup the database, run the following (use the <db_name> you used from the docker build command):  
 
 ```bash
 $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>
@@ -179,7 +179,15 @@ $ cd /Image-Comparator/dbutil
 $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_views -d @basic_views.json
 ```
 
-2. Add Images to DB:
+### Image-Comparator
+
+1. Add Images to DB:
+
+We need to add a ruby package *couchrest* to ruby. Run this command:
+
+```bash
+$ sudo gem install couchrest
+```
 
 ```bash
 $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
@@ -191,7 +199,7 @@ $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 > \<imageFolder> can be any folder if not using docker.
 
 
-3. Add images to an Image Compare List:
+2. Add images to an Image Compare List:
 
 ```bash
 $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
@@ -200,7 +208,7 @@ $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
 * \<pct repeat> is the percentage of repeated pairs to be displayed  
 * \<list name> is a new list name  
 
-4. Add a task to a user:
+3. Add a task to a user:
 
 ```bash
 $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
@@ -210,7 +218,7 @@ $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
 * \<image-list-type> ```compare``` or ```OCTcompare```.  
 * \<task-order> is what precedence the image compare task takes relative to others assigned to this user.   
 
-5. Change Image-Comparator/ui/two_image.html to have your users in this section:
+4. Change Image-Comparator/ui/two_image.html to have your users in this section:
 
 ```html
 <!-- manually add users that you assigned tasks too in makeTasks.rb -->
