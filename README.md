@@ -189,11 +189,12 @@ We need to add a ruby package *couchrest* to ruby. Run this command:
 $ sudo gem install couchrest
 ```
 
+Next add images to the database with script *addImagesToDb_jkc.rb*:
 ```bash
 $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 ```
 
-* <imageFolder> is ```/data``` inside the docker, which was mounted during container creation.  
+* <imageFolder> is any image folder on your machine.  
 * <imageSetName> is the name for the image set.  
 
 > \<imageFolder> can be any folder if not using docker.
