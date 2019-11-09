@@ -191,11 +191,14 @@ $ sudo gem install couchrest
 
 Next add images to the database with script *addImagesToDb_jkc.rb*:
 ```bash
-$ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
+$ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName> <DNS> <user:password> <dbname>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
 * \<imageSetName> is the name for the image set.  
+* \<DNS> Domain Name for VM or ip-address.  
+* \<user:password> VM or local credentials.  
+* \<dbname> name of db created under *Instructions for use*.  
 
 2. Add images to an Image Compare List:
 
