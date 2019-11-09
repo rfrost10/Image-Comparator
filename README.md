@@ -233,7 +233,7 @@ In the order they appear this project has been forked and added to. Yet again we
 4. Jimmy chen (https://github.com/jche253/Fundus_Classifier_Comparator)  
 
 
-## Contactt
+## Contact
 For questions, please contact:
 * Benjamin Bearce, bbearce@gmail.com  
 * Jayashree Kalpathy-Cramer, PhD kalpathy@nmr.mgh.harvard.edu  
