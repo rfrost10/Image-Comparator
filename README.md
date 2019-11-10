@@ -207,9 +207,9 @@ We need to add a ruby package *couchrest* to ruby. Run this command:
 $ sudo gem install couchrest
 ```
 
-Next add images to the database with script *addImagesToDb_jkc.rb*:
+Next add images to the database with script *addImagesToDb.rb*:
 ```bash
-$ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
+$ ruby addImagesToDb.rb <imageFolder> <imageSetName>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
@@ -221,7 +221,7 @@ $ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
 ```
 
-* \<image set name> was the name given to addImagesToDb_jkc.rb for the <imageSetName>.\n";
+* \<image set name> was the name given to addImagesToDb.rb for the <imageSetName>.\n";
 * \<pct repeat> is the percentage of repeated pairs to be displayed.\n"
 * \<list name> is a new Image Compare List name.\n";
 
