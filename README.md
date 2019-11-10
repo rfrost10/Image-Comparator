@@ -17,7 +17,7 @@ I am not the original author of these files. This repository contains aggregated
 
 1. ```git clone https://github.com/QTIM-Lab/Image-Comparator.git```  
 
-2. ```cd Image-Comparator/Image-Comparator``` 
+2. ```cd Image-Comparator``` 
 
 3. Install these libraries if your system doesn't already have them (more necesary for docker containers as they are light weight with minimal installed software).
 

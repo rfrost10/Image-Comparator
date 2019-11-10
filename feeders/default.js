@@ -1,6 +1,26 @@
 
 // This file adds shared utilities for ImageCompare objects
+// - BB It also adds some global variables that can be used by other js and html files
 
+var txt = '';
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function(){
+  if(xmlhttp.status == 200 && xmlhttp.readyState == 4){
+    txt = xmlhttp.responseText;
+    
+    DNS = eval(txt.substring(txt.indexOf('DNS',0), txt.indexOf('IMAGES_DB',0)-3))
+    IMAGES_DB = eval(txt.substring(txt.indexOf('IMAGES_DB',0), txt.indexOf('DB_PORT',0)-3))
+    DB_PORT = eval(txt.substring(txt.indexOf('DB_PORT',0), txt.indexOf('HTTP_PORT',0)-3))
+    HTTP_PORT = eval(txt.substring(txt.indexOf('HTTP_PORT',0), txt.indexOf('DB_ADMIN_USER',0)-3))
+    DB_ADMIN_USER = eval(txt.substring(txt.indexOf('DB_ADMIN_USER',0), txt.indexOf('DB_ADMIN_PASS',0)-3))
+    DB_ADMIN_PASS = eval(txt.substring(txt.indexOf('DB_ADMIN_PASS',0), txt.indexOf('end',0)-1))
+
+  }
+};
+xmlhttp.open("GET","../dbutil/Configuration.rb",true);
+xmlhttp.send();
+
+//
 var ImageCompare = (function (IC) {
 
     IC.TaskFeeder = IC.TaskFeeder || {};
