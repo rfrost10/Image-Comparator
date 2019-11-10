@@ -171,7 +171,25 @@ http://<localhost>:5984
 ```
 
 ## Instructions for use
-To create and setup the database, run the following (use the <db_name> you used from the docker build command):  
+
+Before we continue we need to define some config variables so that all the internal ruby scripts can reference the right things. Find *Image-Comparator/dbutil/Configuration_template.rb*
+
+It should have this:
+
+```ruby
+module Configuration
+  DNS = 'localhost'
+  IMAGES_DB = '<db_name>'
+  DB_PORT = '5984'
+  HTTP_PORT = '8080'
+  DB_ADMIN_USER = '<admin>'
+  DB_ADMIN_PASS = '<password>'
+end
+```
+
+Create a copy called *Configuration.rb* and replace all variables with your custom configurations.
+
+To create and setup the database, run the following:  
 
 ```bash
 $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>
@@ -191,14 +209,11 @@ $ sudo gem install couchrest
 
 Next add images to the database with script *addImagesToDb_jkc.rb*:
 ```bash
-$ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName> <DNS> <user:password> <dbname>
+$ ruby addImagesToDb_jkc.rb <imageFolder> <imageSetName>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
 * \<imageSetName> is the name for the image set.  
-* \<DNS> Domain Name for VM or ip-address.  
-* \<user:password> VM or local credentials.  
-* \<dbname> name of db created under *Instructions for use*.  
 
 2. Add images to an Image Compare List:
 
@@ -209,7 +224,6 @@ $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
 * \<image set name> was the name given to addImagesToDb_jkc.rb for the <imageSetName>.\n";
 * \<pct repeat> is the percentage of repeated pairs to be displayed.\n"
 * \<list name> is a new Image Compare List name.\n";
-* \<dbname> name of db created under Instructions for use.\n"
 
 3. Add a task to a user:
 
@@ -221,8 +235,6 @@ $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
 * \<image-list name> this is <list name> from above in (makeICLFromImageSetName.rb)  
 * \<image-list-type> compare, OCTcompare, classify, classify_nine or quandrant.  
 * \<task-order> is what precedence the image compare task takes relative to others assigned to this user.  
-* \<dbname> is the name of the db made in previous steps.
-* \<DNS> is the VM or ip-address of the machine you are using.
 
 4. Change Image-Comparator/ui/two_image.html to have your users in this section:
 

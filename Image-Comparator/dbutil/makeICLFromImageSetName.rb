@@ -2,15 +2,24 @@ require 'net/http'
 require 'uri'
 require 'json'
 
+# Include config variables - BB 
+require './Configuration' 
+include Configuration 
+ 
+DNS = Configuration::DNS 
+DB_PORT = Configuration::DB_PORT 
+DB_ADMIN_USER = Configuration::DB_ADMIN_USER 
+DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS 
+IMAGES_DB = Configuration::IMAGES_DB 
 
+#  # Include config variables - BB
 
 if (ARGV.size != 4) then
-    puts "Usage: ruby : #{$PROGRAM_NAME} <image set name> <pct repeat> <list name> <dbname>";
+    puts "Usage: ruby : #{$PROGRAM_NAME} <image set name> <pct repeat> <list name>";
     puts "Where: \n"
     puts "1 <image set name> was the name given to addImagesToDb_jkc.rb for the <imageSetName>.\n";
     puts "2 <pct repeat> is the percentage of repeated pairs to be displayed.\n"
     puts "3 <list name> is a new Image Compare List name.\n";
-    puts "4 <dbname> name of db created under Instructions for use.\n"
     exit
 end
 
@@ -19,11 +28,11 @@ end
 #ARGV.each { |arg| puts "Argument: #{arg}" }
 imgSetName = ARGV[0]
 pctRep =ARGV[1]
-nameStr = ARGV[2]
-dbname = ARGV[3]
+list_name = ARGV[2]
 
 # find range from searching db for images that have image_set_name
-viewUrl = "http://localhost:5984/#{dbname}/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
+viewUrl = "http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/#{IMAGES_DB}/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
+
 puts viewUrl
 encoded_url = URI.encode(viewUrl)
 uri = URI.parse(encoded_url)
@@ -90,7 +99,7 @@ puts obj.to_json
 
 
 # put the results in the database
-url = 'http://localhost:5984/' + dbname + "/" +nameStr 
+url = 'http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/' + IMAGES_DB + "/" + list_name 
 
 uri = URI.parse(url)
 

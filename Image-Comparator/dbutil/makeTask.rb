@@ -4,6 +4,18 @@ require 'json'
 require 'securerandom'
 uuid = SecureRandom.uuid
 
+# Include config variables - BB 
+require './Configuration' 
+include Configuration 
+ 
+DNS = Configuration::DNS 
+DB_PORT = Configuration::DB_PORT 
+DB_ADMIN_USER = Configuration::DB_ADMIN_USER 
+DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS 
+IMAGES_DB = Configuration::IMAGES_DB 
+
+# Include config variables - BB
+
 
 # get the number of documents as a command line arg
 ARGV.each { |arg| puts "Argument: #{arg}" }
@@ -11,20 +23,14 @@ user = ARGV[0]
 i_list = ARGV[1]
 task_type=ARGV[2]
 task_order=ARGV[3] #.to_int
-dbname = ARGV[4]
-DNS = ARGV[5]
-userpass = ARGV[6]
 
 if (ARGV.size <3) then
-    puts "Usage: ruby : #{$PROGRAM_NAME} <user> <image-list name> <image-list-type> <task-order> <dbname> <DNS> <user:password>"
+    puts "Usage: ruby : #{$PROGRAM_NAME} <user> <image-list name> <image-list-type> <task-order>"
     puts "Where:\n"
     puts "1 <user> is the user assigned to the task.\n"
     puts "2 <image-list name> is an Image Compare List created before this step.\n"
     puts "3 <image-list-type> is compare, OCTcompare, classify, classify_nine or quandrant.\n"
     puts "4 <task-order> is the order in which to complete this task relatve to other tasks.\n"
-    puts "5 <dbname> is the name of the db made in previous steps.\n"
-    puts "6 <DNS> is the VM or ip-address of the machine you are using.\n"
-    puts "7 <user:password> VM or local credentials.\n"
     exit
 end
 
@@ -59,20 +65,19 @@ else
 end
 
 
-
+# BB - not sure if this is important - #
 
 # need to change icl in db to reflect
-
-
-
 #puts obj.inspect
 #puts obj.to_json
+
+# BB - not sure if this is important - #
 
 
 # put the results in the database
 docname = uuid
 
-url = "http://#{userpass}@#{DNS}"+":5984/" + dbname + "/" + docname
+url = "http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/" + IMAGES_DB + "/" + docname
 puts url
 
 uri = URI.parse(url)
