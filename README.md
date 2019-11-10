@@ -1,4 +1,4 @@
-# Image Classifier and Comparator
+# Image Comparator and Classifier
 
 Purpose: Set up a static webpage and server to host classifier/pairwise comparator tasks for images 
 
@@ -221,9 +221,9 @@ $ ruby addImagesToDb.rb <imageFolder> <imageSetName>
 $ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
 ```
 
-* \<image set name> was the name given to addImagesToDb.rb for the <imageSetName>.\n";
-* \<pct repeat> is the percentage of repeated pairs to be displayed.\n"
-* \<list name> is a new Image Compare List name.\n";
+* \<image set name> was the name given to addImagesToDb.rb for the <imageSetName>.  
+* \<pct repeat> is the percentage of repeated pairs to be displayed.  
+* \<list name> is a new Image Compare List name.  
 
 3. Add a task to a user:
 
