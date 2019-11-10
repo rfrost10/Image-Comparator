@@ -1,9 +1,16 @@
 require 'couchrest'
 require 'securerandom'
 
+# Include config variables - BB
+require './Configuration'
+include Configuration
 
-#baseDir="/Users/jkc/Documents/retinalImaging/website/Image-Comparator/"
-
+DNS = Configuration::DNS
+DB_PORT = Configuration::DB_PORT
+DB_ADMIN_USER = Configuration::DB_ADMIN_USER
+DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS
+IMAGES_DB = Configuration::IMAGES_DB
+# Include config variables - BB
 
 imageFolder=ARGV[0]
 
@@ -18,9 +25,7 @@ ims=Dir.glob("#{imageFolder}/*")
 dbname = "ret_images"
 
 #connect to db, create if does not exist
-@db = CouchRest.database!("http://admin:password@ec2-18-220-36-255.us-east-2.compute.amazonaws.com:54956/#{dbname}")
-
-#CouchRest.put("http://localhost:54956/testdb/doc", 'name' => 'test', 'date' => Date.current)
+@db = CouchRest.database!("http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/#{IMAGES_DB}")
 
 ims.each_with_index do |fileName, idx|
   uuid = SecureRandom.uuid

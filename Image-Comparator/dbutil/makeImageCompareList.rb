@@ -2,14 +2,25 @@ require 'net/http'
 require 'uri'
 require 'json'
 
+# Include config variables - BB 
+require './Configuration' 
+include Configuration 
+ 
+DNS = Configuration::DNS 
+DB_PORT = Configuration::DB_PORT 
+DB_ADMIN_USER = Configuration::DB_ADMIN_USER 
+DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS 
+IMAGES_DB = Configuration::IMAGES_DB 
+
+#  # Include config variables - BB
 
 
 if (ARGV.size != 4) then
     puts "Usage: ruby : #{$PROGRAM_NAME} <doc range> <pct repeat> <image type> <list name>";
-    puts "  where doc range is a ruby style range in quotations, e.g., \"10..20\" ";
-    puts " and pct repeat is the percentage of repeated pairs to be displayed";
-    puts " and image type is 'ret' for retinal scan or 'oct' for OCT scan"
-    puts "  full example: ruby #{$PROGRAM_NAME} \"10..20\" 20 bub oct";
+    puts "1. <doc range> is a ruby style range in quotations, e.g., \"10..20\" \n";
+    puts "2. <pct repeat> is the percentage of repeated pairs to be displayed\n";
+    puts "3. <image type> is 'ret' for retinal scan or 'oct' for OCT scan\n"
+    puts "4. <list name> is a new Image Compare List name.\n"
     exit
 end
 
@@ -19,7 +30,7 @@ end
 rangeStr = ARGV[0]
 pctRep = ARGV[1]
 image_type = ARGV[2]
-nameStr = ARGV[3]
+list_name = ARGV[3]
 
 if (image_type == "oct") then
     image_type = "OCTimage_compare_list"
@@ -85,9 +96,7 @@ puts obj.to_json
 
 
 # put the results in the database
-dbname = "ret_images/"
-docname = nameStr
-url = 'http://admin:password@ec2-18-220-36-255.us-east-2.compute.amazonaws.com:54956/' + dbname + docname
+url = "http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/" + IMAGES_DB + "/" + list_name 
 
 
 uri = URI.parse(url)

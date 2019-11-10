@@ -13,9 +13,10 @@ task_type=ARGV[2]
 task_order=ARGV[3] #.to_int
 dbname = ARGV[4]
 DNS = ARGV[5]
+userpass = ARGV[6]
 
 if (ARGV.size <3) then
-    puts "Usage: ruby : #{$PROGRAM_NAME} <user> <image-list name> <image-list-type> <task-order>i <dbname> <DNS>"
+    puts "Usage: ruby : #{$PROGRAM_NAME} <user> <image-list name> <image-list-type> <task-order> <dbname> <DNS> <user:password>"
     puts "Where:\n"
     puts "1 <user> is the user assigned to the task.\n"
     puts "2 <image-list name> is an Image Compare List created before this step.\n"
@@ -23,6 +24,7 @@ if (ARGV.size <3) then
     puts "4 <task-order> is the order in which to complete this task relatve to other tasks.\n"
     puts "5 <dbname> is the name of the db made in previous steps.\n"
     puts "6 <DNS> is the VM or ip-address of the machine you are using.\n"
+    puts "7 <user:password> VM or local credentials.\n"
     exit
 end
 
@@ -69,7 +71,10 @@ end
 
 # put the results in the database
 docname = uuid
-url = "http://#{dbname}:5984/" + dbname + "/" + docname
+
+url = "http://#{userpass}@#{DNS}"+":5984/" + dbname + "/" + docname
+puts url
+
 uri = URI.parse(url)
 
 http = Net::HTTP.new(uri.host, uri.port)

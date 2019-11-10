@@ -1,24 +1,26 @@
-
 require 'couchrest'
 require 'securerandom'
 
+# Include config variables - BB 
+ require './Configuration' 
+ include Configuration 
+  
+DNS = Configuration::DNS 
+DB_PORT = Configuration::DB_PORT 
+DB_ADMIN_USER = Configuration::DB_ADMIN_USER 
+DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS 
+IMAGES_DB = Configuration::IMAGES_DB 
+
+#  # Include config variables - BB
 
 imageFolder=ARGV[0]
 imageSetName=ARGV[1]
-dns = ARGV[2]
-userpass = ARGV[3]
-dbname = ARGV[4]
-
-#DNS = "ec2-35-171-23-49.compute-1.amazonaws.com"
 
 if (ARGV.size != 5) then
-  puts "Usage: ruby : #{$PROGRAM_NAME} <imageFolder> <imageSetName> <DNS> <user:password> <dbname>";
+  puts "Usage: ruby : #{$PROGRAM_NAME} <imageFolder> <imageSetName>";
   puts "Where:\n"
   puts "1 - <imageFolder> is the full path to folder/directory where the images are located.\n"
   puts "2 - <imageSetName> can be used by makeICLFromImageSetName.rb later.\n"
-  puts "3 - <DNS> is ip-address or VM DNS.\n"
-  puts "4 - <user:password> is your VMs username and password entered explicitly as user:password.\n"
-  puts "5 - <dbname> is the name of the database you want to add images to."
   exit
 end
 
@@ -28,7 +30,7 @@ ims=Dir.glob("#{imageFolder}/*")
 
 
 #connect to db, create if does not exist
-@db = CouchRest.database!("http://#{userpass}@#{dns}:5984/#{dbname}")
+@db = CouchRest.database!("http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/#{IMAGES_DB}")
 
 
 res= @db.view('basic_views/count_image_docs')#.to_yaml
