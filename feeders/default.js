@@ -2,6 +2,7 @@
 // This file adds shared utilities for ImageCompare objects
 // - BB It also adds some global variables that can be used by other js and html files
 
+// Get config file
 var txt = '';
 var xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function(){
@@ -15,12 +16,29 @@ xmlhttp.onreadystatechange = function(){
     DB_ADMIN_USER = eval(txt.substring(txt.indexOf('DB_ADMIN_USER',0), txt.indexOf('DB_ADMIN_PASS',0)-3))
     DB_ADMIN_PASS = eval(txt.substring(txt.indexOf('DB_ADMIN_PASS',0), txt.indexOf('end',0)-1))
 
+	  
+    // Set initial values for dropdowns and other default elements 
+
+    database_dropdown = document.getElementById('database')
+    //var s = new Option(DNS,DNS)
+    database_dropdown.innerHTML = "<option value='"+ DNS +"'>"+ DNS +"</option>"
+    //database_dropdown.insertBefore(s,database_dropdown.childNodes[0])
+    //database_dropdown.appendChild(s)
+
+
+    database_dropdown = document.getElementById('si_db')
+    database_dropdown.innerHTML = DNS
+
+
   }
 };
 xmlhttp.open("GET","../dbutil/Configuration.rb",true);
 xmlhttp.send();
 
-//
+
+
+// - BB
+
 var ImageCompare = (function (IC) {
 
     IC.TaskFeeder = IC.TaskFeeder || {};

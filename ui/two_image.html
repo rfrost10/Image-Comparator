@@ -62,7 +62,7 @@
                     </li>
                     <li>
                         <select id="database" onload"OnSetDB(this)" onchange="OnSetDB(this)">
-                          <option value="ec2-18-220-36-255.us-east-2.compute.amazonaws.com">ec2-18-220-36-255.us-east-2.compute.amazonaws.com</option>
+                          <option value="localhost">localhost</option>
                         </select>
                     </li>
                     <li>
@@ -92,10 +92,17 @@
 
         <div class="row">
             <h3>Status Info</h3>
-            <div id="si_database"><span id="si_db_label" class="label label-primary">Database</span>     <span id="si_db">Localhost                </span></div>
-            <div><span id="si_task_label" class="label label-primary">Tasks</span>        <span id="si_tasks">2 unfinished tasks     </span></div>
-            <div><span id="si_curtask_label" class="label label-primary">Current Task</span> <span id="si_curtask">Comparison 27 of 56 </span></div>
-        </div>
+            <div id="si_database">
+		    <span id="si_db_label" class="label label-primary">Database</span>
+		    <span id="si_db">Localhost</span>
+	    </div>
+            <div>
+		    <span id="si_task_label" class="label label-primary">Tasks</span>
+		    <span id="si_tasks">0 unfinished tasks</span></div>
+            <div>
+		    <span id="si_curtask_label" class="label label-primary">Current Task</span>
+		    <span id="si_curtask">Comparisons have not started</span></div>
+            </div>
 
         <!-- Page Header -->
         <div class="row">
