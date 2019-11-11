@@ -16,7 +16,7 @@ IMAGES_DB = Configuration::IMAGES_DB
 imageFolder=ARGV[0]
 imageSetName=ARGV[1]
 
-if (ARGV.size != 5) then
+if (ARGV.size != 2) then
   puts "Usage: ruby : #{$PROGRAM_NAME} <imageFolder> <imageSetName>";
   puts "Where:\n"
   puts "1 - <imageFolder> is the full path to folder/directory where the images are located.\n"

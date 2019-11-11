@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 //
 handleUrlFilter = function(urlSearchStr) {
-
+console.log('In handleUrlFilter:\n')
     //alert(urlSearchStr);
     qs= new QueryString(urlSearchStr);
     var user = qs.value("username");
@@ -39,6 +39,7 @@ handleUrlFilter = function(urlSearchStr) {
 // labels can be either primary or danger
 // just for controlling the color through bootstrap
 setLabelDanger = function(isDanger, label) {
+console.log('In setLabelDanger:\n')
 
     if (isDanger) {
         label.removeClass("label-primary");
@@ -50,7 +51,8 @@ setLabelDanger = function(isDanger, label) {
 };
 
 updateStatusInfo = function() {
-    // update user
+console.log('In updateStatusInfo:\n')
+
     // var elem = document.getElementById("si_user");
     // var user_elem = document.getElementById("username");
     // var selUser = user_elem.options[ user_elem.selectedIndex ];
@@ -80,6 +82,9 @@ updateStatusInfo = function() {
 // called on getTasks success, input are the rows from the view
 // todo: should not be global
 updateStatInfoTasks = function(json) {
+
+console.log('In updateStatusInfoTasks:\n')
+	
     var result = json;
     var tasks = result.rows;
 
@@ -151,6 +156,9 @@ updateStatInfoTasks = function(json) {
 
 var getTasks = function(username, successFn) {
 
+console.log('In getTasks:\n')
+
+
     var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
     var fullurl = dburl + "_design/basic_views/_view/incomplete_compare_tasks?key=\"" + username + "\"";
 
@@ -171,13 +179,13 @@ var getTasks = function(username, successFn) {
 // where the user can say "A five times more than B"
 // todo - this should not be global
 createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
-
+console.log('createICResult')
     // todo - this configuration should be external to this function
     // var db_config_elem = document.getElementById("database");
     // var db_config = db_config_elem.options[db_config_elem.selectedIndex].value;
     // var hostname = db_config === "localhost" ?
-    //     "http://localhost:5984/" :
-    //     "http://ec2-54-224-183-251.compute-1.amazonaws.com:5984/";
+    //     "http://localhost:"+DB_PORT+"/" :
+    //     "http://"+DNS+":"+DB_PORT+"/";
     // var imageDbName = "ret_images/";
     // var resultsDbName = "ret_images/";
     var dbName = ImageCompare.TaskFeeder.GetImageDbUrl();
@@ -223,8 +231,8 @@ createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
 // user is used to set the next image pair
 // todo - this should not be global
 updateTask = function(task, user) {
-
-    // first get the length of the icl for the task, (to see if the task is now complete)
+console.log('updateTask') 
+// first get the length of the icl for the task, (to see if the task is now complete)
     var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
     var fullurl = dburl + "_design/basic_views/_view/icl_lengths?key=\"" + task.image_compare_list + "\"";
     var icl_count = -1;
@@ -271,6 +279,8 @@ updateTask = function(task, user) {
 };
 
 OnSetDB = function(sel) {
+console.log('OnSetDB')
+
     console.log ("Database changed to: " + sel.value);
     updateStatusInfo();
 
@@ -281,6 +291,7 @@ OnSetDB = function(sel) {
 
 OnSetUser = function(username) {
 
+console.log('OnSetUser')
     console.log ("User changed to: " + username);
     ImageCompare.username = username;
     updateStatusInfo();
@@ -289,6 +300,7 @@ OnSetUser = function(username) {
 
 // really a private helper
 saveResultSetImages = function (winnerId) {
+console.log('saveResultsSetImages')
     var img0 = ImageCompare.TaskFeeder.Image0;
     var img1 = ImageCompare.TaskFeeder.Image1;
     var task_idx = ImageCompare.TaskFeeder.current_task_idx;

@@ -14,7 +14,7 @@ IMAGES_DB = Configuration::IMAGES_DB
 
 #  # Include config variables - BB
 
-if (ARGV.size != 4) then
+if (ARGV.size != 3) then
     puts "Usage: ruby : #{$PROGRAM_NAME} <image set name> <pct repeat> <list name>";
     puts "Where: \n"
     puts "1 <image set name> was the name given to addImagesToDb_jkc.rb for the <imageSetName>.\n";
@@ -30,8 +30,9 @@ imgSetName = ARGV[0]
 pctRep =ARGV[1]
 list_name = ARGV[2]
 
+
 # find range from searching db for images that have image_set_name
-viewUrl = "http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/#{IMAGES_DB}/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
+viewUrl = "http://#{DNS}:#{DB_PORT}/#{IMAGES_DB}/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
 
 puts viewUrl
 encoded_url = URI.encode(viewUrl)
@@ -99,7 +100,7 @@ puts obj.to_json
 
 
 # put the results in the database
-url = 'http://#{DB_ADMIN_USER}:#{DB_ADMIN_PASS}@#{DNS}:#{DB_PORT}/' + IMAGES_DB + "/" + list_name 
+url = "http://#{DNS}:#{DB_PORT}/" + IMAGES_DB + "/" + list_name 
 
 uri = URI.parse(url)
 
