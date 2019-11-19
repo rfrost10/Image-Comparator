@@ -20,7 +20,7 @@ if (ARGV.size != 2) then
   puts "Usage: ruby : #{$PROGRAM_NAME} <imageFolder> <imageSetName>";
   puts "Where:\n"
   puts "1 - <imageFolder> is the full path to folder/directory where the images are located.\n"
-  puts "2 - <imageSetName> can be used by makeICLFromImageSetName.rb later.\n"
+  puts "2 - <imageSetName> can be used by makeICLFromImageSetName.rb and makeImageClassifyListImageSet.rb later.\n"
   exit
 end
 

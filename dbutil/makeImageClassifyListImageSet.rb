@@ -4,10 +4,11 @@ require 'json'
 
 
 if (ARGV.size != 3) then
-    puts "Usage: ruby : #{$PROGRAM_NAME} <imageSet> <list name> <pct repeat>";
-    puts "  where imageSet is an existing imageSet in the database";
-    puts " and pct repeat is the percentage of repeated pairs to be displayed"
-    puts "  full example: ruby #{$PROGRAM_NAME} firstSetrev2 20";
+    puts "Usage: ruby : #{$PROGRAM_NAME} <imageSet> <list name> <pct repeat>\n";
+    puts "1 - <imageSet> is an existing imageSet in the database\n";
+    puts "2 - <list name> is the new classify list's name\n";
+    puts "3 - <pct repeat> is the percentage of repeated pairs to be displayed\n";
+    puts "full example: ruby #{$PROGRAM_NAME} imageSet test_classify_list 10";
     exit
 end
 
@@ -16,10 +17,10 @@ end
 # get the number of documents as a command line arg
 #ARGV.each { |arg| puts "Argument: #{arg}" }
 imgSetName = ARGV[0]
-pctRep =ARGV[2]
 nameStr = ARGV[1]
+pctRep =ARGV[2]
 
-viewUrl = "http://localhost:5984/rop_images/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
+viewUrl = "http://localhost:5984/ret_images/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
 puts viewUrl
 encoded_url = URI.encode(viewUrl)
 uri = URI.parse(encoded_url)
@@ -70,7 +71,7 @@ obj = { type:"image_classify_list",
 
 
 # put the results in the database
-dbname = "rop_images/"
+dbname = "ret_images/"
 docname = nameStr
 url = 'http://localhost:5984/' + dbname + docname
 puts url

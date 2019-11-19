@@ -249,6 +249,21 @@ $ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
 </select>
 ```
 
+### Image-Classifier
+
+Make sure the database you intend to use is already setup.
+```bash
+$ curl -X PUT http://admin:<password>@localhost:5984/<db_name>
+$ cd /Image-Comparator/dbutil
+$ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_views -d @basic_views.json
+```
+
+* Use addImagesToDb_jkc.rb to add an image set  
+* Use makeImageClassifyListImageSet.rb to make an image classify list  
+
+
+
+
 ## Acknowledgements
 
 In the order they appear this project has been forked and added to. Yet again we fork to make a QTIM-Lab based project that will be adapted and maintained here.
