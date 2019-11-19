@@ -10,9 +10,6 @@
       "map": "function(doc) {\n  if (doc._attachments && doc._attachments.image)\n    emit (doc.id);\n}",
       "reduce": "_count(keys, vals, rereduce)"
     },
-    "classify_tasks": {
-      "map": "function(doc) {\n  if (doc.type === \"classify_tasks\") {\n    emit (doc.user, doc);\n  }\n}"
-    },
     "tasks": {
       "map": "function(doc) {\n  if (doc.type === \"task\") {\n    emit (doc.user, doc);\n  }\n}"
     },
