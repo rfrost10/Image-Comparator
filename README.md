@@ -1,4 +1,4 @@
-# Image Comparator and Classifier
+# IImage Comparator and Classifier
 
 Purpose: Set up a static webpage and server to host classifier/pairwise comparator tasks for images 
 
