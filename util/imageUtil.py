@@ -3,6 +3,7 @@ import glob
 import os
 
 def merge_images(file1, file2):
+    print('In merge_images found at Image_Comparator/util:\n')
     """Merge two images into one, displayed side by side
     :param file1: path to first image file
     :param file2: path to second image file

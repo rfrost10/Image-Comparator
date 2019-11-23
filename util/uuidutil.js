@@ -2,6 +2,7 @@
 // from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
 //
 function generateUUID(){
+    console.log('In generateUUID:\n')
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = (d + Math.random()*16)%16 | 0;

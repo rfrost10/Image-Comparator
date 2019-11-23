@@ -9,16 +9,17 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Classify ROP images</title>
+    <title>Classify Ret images</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="../vendor/bootstrap/css/2-col-portfolio.css" rel="stylesheet">
-    <!--    <link href="two_image.css" rel="stylesheet"> -->
-    
+    <!-- <link href="two_image.css" rel="stylesheet"> -->
+
     <!-- Google Analytics -->
+    <!--
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -29,21 +30,25 @@
       ga('send', 'pageview');
 
     </script>
-    
-    
+    -->
 
-<!-- This is so wrong! First, css should be in another file
-     But worse, this is a hack to hide the focus highlight (used for accessibilty)
-     When buttons are pressed, they get the focus - and get highlighted to show it.
-     There is still a small black outline....
-     Also! any other buttons will get this effect - incorrectly
-     -->
-<style>
-.btn:focus {
-  background-color: #428bca;
-}
+    <!--
+    This is so wrong! First, css should be in another file
+    But worse, this is a hack to hide the focus highlight (used for accessibilty)
+    When buttons are pressed, they get the focus - and get highlighted to show it.
+    There is still a small black outline....
+    Also! any other buttons will get this effect - incorrectly
+    -->
 
-</style>
+
+     <link rel="shortcut icon" type="image/png" href="/images/favicon-32x32.png">
+
+    <style>
+        .btn:focus {
+          background-color: #428bca;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -77,24 +82,9 @@
                         </select>
                     </li>
                     <li>
-                        <select id="username" onchange="OnSetUser(this)">
-                            <option value="testuser">Test User</option>
-                            <option value="mike">Mike</option>
-                            <option value="susan">Susan</option>
-                            <option value="paul">Paul</option>
-                            <option value="karyn">Karyn</option>
-                            <option value="pete">Pete</option>
-                            <option value="nina">Nina</option>
-                            <option value="testuser1">Test User1</option>
-                            <option value="testuser2">Test User2</option>
-
-                <!--              <option value="tom">Tom</option>
-                            <option value="nina">Nina</option>
-                            <option value="jason">Jason</option>
-                            <option value="maria">Maria Ana</option>
-                            <option value="kim">Kim</option>
-                            <option value="tony">Tony</option>
-                            <option value="anton">Anton</option>  -->
+                        <select id="username" onchange="OnSetUser(this.value)">
+                            <option value="test_user">test_user</option>
+                            <option value="test_user1">test_user1</option>
                         </select>
                     </li>
                 </ul>
@@ -105,17 +95,26 @@
         <!-- /.container -->
     </nav>
 
-
-
     <!-- Page Content -->
     <div class="container">
-
         <div class="row">
             <h3>Status Info</h3>
-            <div><span id="si_user_label" class="label label-primary">User</span>         <span id="si_user">Bubba                  </span></div>
-            <div><span id="si_db_label" class="label label-primary">Database</span>     <span id="si_db">Localhost                </span></div>
-            <div><span id="si_task_label" class="label label-primary">Tasks</span>        <span id="si_tasks">2 unfinished tasks     </span></div>
-            <div><span id="si_curtask_label" class="label label-primary">Current Task</span> <span id="si_curtask">Comparison 27 of 56 </span></div>
+            <div>
+                <span id="si_user_label" class="label label-primary">User</span>
+                <span id="si_user">Bubba</span>
+            </div>
+            <div id="si_database">
+                <span id="si_db_label" class="label label-primary">Database</span>
+                <span id="si_db">Localhost</span>
+            </div>
+            <div>
+                <span id="si_task_label" class="label label-primary">Tasks</span>
+                <span id="si_tasks">0 unfinished tasks</span>
+            </div>
+            <div>
+                <span id="si_curtask_label" class="label label-primary">Current Task</span>
+                <span id="si_curtask">Comparison x of y</span>
+            </div>
         </div>
 
         <!-- Page Header -->
@@ -125,25 +124,28 @@
                 </h1>
             </div>
         </div>
-        <!-- /.row -->
+        <!-- row -->
+
+
+
 
         <!-- Projects Row -->
         <div id="image-row" class="row" style="display:block;height:480px">
             <div  class="col-md-6 portfolio-item">
-                <img id="image0" class="img-responsive portfolio-item " width="550" height="400" src="http://placehold.it/700x400" alt="">
+                <img id="image0" class="img-responsive portfolio-item" width="550" height="400" src="http://placehold.it/700x400" alt="">
             </div>
         </div>
 
+        <br>
 
-        <div class=" row btn-group">
-          <button type="button" class="btn btn-primary"   id="Normal" onclick="OnClassify(this)">Normal</button>
-          <button type="button" class="btn btn-primary"   id="PrePlus" onclick="OnClassify(this)">Pre-plus</button>
-          <button type="button" class="btn btn-primary"   id="Plus" onclick="OnClassify(this)">Plus</button>
+        <div class="row btn-group">
+          <button type="button" class="btn btn-primary" id="Normal" onclick="OnClassify(this)">Normal</button>
+          <button type="button" class="btn btn-primary" id="PrePlus" onclick="OnClassify(this)">Pre-plus</button>
+          <button type="button" class="btn btn-primary" id="Plus" onclick="OnClassify(this)">Plus</button>
         </div>
 
-        <!-- /.row -->
-
         <hr>
+        
         <!--
         <div class="row text-center">
             <div>
@@ -153,36 +155,32 @@
                  <textarea id="compare-comment" rows="2" cols="80">Write something here</textarea>
             </div>
         </div>
-        -->
-
-        <!-- Pagination -->
-        <!--
+    
         <div class="row text-center">
             <div class="col-lg-12">
                 <button class="btn-primary" onclick="OnImage0()">Image A</button>
-              <!--    <button class="btn-primary" onclick="OnNotSure()"> Not Sure - Next </button>-->
-      <!--
+                <button class="btn-primary" onclick="OnNotSure()"> Not Sure - Next </button>
                 <button class="btn-primary" onclick="OnImage1()">Image B</button>
             </div>
         </div>
-        <!-- /.row -->
-        <!--
         <hr>
-
-        <!-- Footer -->
-        <!--
+        
         <footer>
+
             <div class="row">
                 <div class="col-lg-12">
                     <p>Copyright &copy; Jalavika Industries 2015</p>
                 </div>
             </div>
-            <!-- /.row -->
+        </footer> 
 
-            <!--      </footer> -->
+        -->
+        
 
     </div>
-    <!-- /.container -->
+
+
+
 
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery-2.1.0.min.js"></script>
@@ -195,7 +193,10 @@
     <script src="../feeders/classify_feeder.js"></script>
 
     <!-- document ready behavior and handlers -->
+    <script src="commonUIUtil.js"></script>
+    <script src="commonTask.js"></script>
     <script src="image_class.js"></script>
+    <script src="queryStringParser.js"></script>
 
     <script src="../util/uuidutil.js"></script>
 

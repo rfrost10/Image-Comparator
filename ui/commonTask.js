@@ -1,4 +1,5 @@
 function findTaskAndSetImage(json, username, listViewName) {
+    console.log('In findTaskAndSetImage:\n')
     var result = json;
 
     // of all pending tasks, are any assigned to this user?

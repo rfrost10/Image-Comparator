@@ -11,21 +11,22 @@ $(document).ready(function() {
 });
 
 updateStatusInfo = function() {
+    console.log('In updateStatusInfo:\n')
 
     // update user
-    // var elem = document.getElementById("si_user");
-    // var user_elem = document.getElementById("username");
-    // var selUser = user_elem.options[ user_elem.selectedIndex ];
-    // elem.textContent = selUser.text;
-    // var label = $("#si_user_label");
-    // var isDanger = (selUser.value === "testuser");
-    // setLabelDanger(isDanger, label);
+    var si_user = document.getElementById("si_user");
+    var user_elem = document.getElementById("username");
+    var selUser = user_elem.options[ user_elem.selectedIndex ];
+    si_user.textContent = selUser.text;
+    var label = $("#si_user_label");
+    var isDanger = (selUser.value === "testuser");
+    setLabelDanger(isDanger, label);
 
     // update database
-    var elem = document.getElementById("si_db");
+    var is_db = document.getElementById("si_db");
     var db_elem = document.getElementById("database");
     var seldb = db_elem.options[ db_elem.selectedIndex ];
-    elem.textContent = seldb.text;
+    si_db.textContent = seldb.text;
     var label = $("#si_db_label");
     var isDanger = (seldb.value === "localhost");
     setLabelDanger(isDanger, label);
@@ -40,7 +41,9 @@ updateStatusInfo = function() {
 // called on getTasks success, input are the rows from the view
 // todo: should not be global
 updateStatInfoTasks = function(json) {
-    var result = jQuery.parseJSON( json );
+    console.log('In updateStatInfoTasks:\n')
+    
+    var result = json;
     var tasks = result.rows;
 
     var elem = document.getElementById("si_tasks");
@@ -51,6 +54,8 @@ updateStatInfoTasks = function(json) {
 
     if (tasks.length > 0) {
         curTaskElem.hidden = false;
+
+        $('#image-row').show();
 
         var firstTask = tasks[0].value;
 
@@ -75,7 +80,8 @@ updateStatInfoTasks = function(json) {
             type : 'GET',
             success : function (json) {
                 //console.log("get succeeded : " + JSON.stringify(json));
-                var result = jQuery.parseJSON( json );
+                // var result = jQuery.parseJSON( json );
+                var result = json
 
                 var curIdx = firstTask.current_idx + 1; // because humans usually don't use zero based indexing
                 curTaskElem.textContent = "You are classifying image " + curIdx + " of " + result.rows[0].value.count;
@@ -104,7 +110,7 @@ updateStatInfoTasks = function(json) {
 
 
 var getIncompleteClassifyTasks = function(username, successFn) {
-
+    console.log('In getIncompleteClassifyTasks:\n')
     var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
     var fullurl = dburl + "_design/basic_views/_view/incomplete_classify_tasks?key=\"" + username + "\"";
 
@@ -125,7 +131,7 @@ var getIncompleteClassifyTasks = function(username, successFn) {
 // where the user can say "A five times more than B"
 // todo - this should not be global
 createICResult = function(diagnosis, img0, user, comment, task, task_idx) {
-
+    console.log('In createICResult:\n')
     var currentTime = new Date();
     var timeStr = currentTime.toString();
     var imgDbStr = ImageCompare.TaskFeeder.GetImageDbUrl();
@@ -169,7 +175,7 @@ createICResult = function(diagnosis, img0, user, comment, task, task_idx) {
 // user is used to set the next image pair
 // todo - this should not be global
 updateTask = function(task, user) {
-
+    console.log('In updateTask:\n')
     // first get the length of the icl for the task, (to see if the task is now complete)
     var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
     var fullurl = dburl + "_design/basic_views/_view/icl_lengths?key=\"" + task.image_classify_list + "\"";
@@ -180,7 +186,8 @@ updateTask = function(task, user) {
         type : 'GET',
         success : function(json) {
 
-            var result = jQuery.parseJSON( json );
+            // var result = jQuery.parseJSON( json );
+            var result = json
             icl_count = result.rows[0].value;
 
             // now that that worked, update the task
@@ -216,6 +223,7 @@ updateTask = function(task, user) {
 };
 
 OnSetDB = function(sel) {
+    console.log('In OnSetDB:\n')
     console.log ("Database changed to: " + sel.value);
     updateStatusInfo();
 
@@ -225,7 +233,7 @@ OnSetDB = function(sel) {
 }
 
 OnSetUser = function(username) {
-
+    console.log('In OnSetUser:\n')
     console.log ("User changed to: " + username);
     ImageCompare.username = username;
     updateStatusInfo();
@@ -234,6 +242,7 @@ OnSetUser = function(username) {
 
 // really a private helper
 saveResultSetImages = function (diagnosis) {
+    console.log('In saveResultSetImages:\n')
     var img0 = ImageCompare.TaskFeeder.Image0;
     var task_idx = ImageCompare.TaskFeeder.current_task_idx;
     var task = ImageCompare.TaskFeeder.current_task;
@@ -258,7 +267,7 @@ saveResultSetImages = function (diagnosis) {
 }
 
 OnClassify = function(btn) {
-
+    console.log('In OnClassify:\n')
     saveResultSetImages(btn.id);
 };
 

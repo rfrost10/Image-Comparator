@@ -43,7 +43,10 @@
 // function below.
 
 function QueryString(qs)
+
 {
+
+    console.log('In QueryString:\n')
     this.dict= {};
 
     // If no query string  was passed in use the one from the current page

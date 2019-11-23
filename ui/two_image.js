@@ -53,15 +53,6 @@ console.log('In setLabelDanger:\n')
 updateStatusInfo = function() {
 console.log('In updateStatusInfo:\n')
 
-    // var elem = document.getElementById("si_user");
-    // var user_elem = document.getElementById("username");
-    // var selUser = user_elem.options[ user_elem.selectedIndex ];
-    // elem.textContent = selUser.text;
-    // var label = $("#si_user_label");
-    // var isDanger = (selUser.value === "testuser");
-    // setLabelDanger(isDanger, label);
-
-
     // update database
     var elem = document.getElementById("si_db");
     var db_elem = document.getElementById("database");
@@ -82,8 +73,7 @@ console.log('In updateStatusInfo:\n')
 // called on getTasks success, input are the rows from the view
 // todo: should not be global
 updateStatInfoTasks = function(json) {
-
-console.log('In updateStatusInfoTasks:\n')
+    console.log('In updateStatusInfoTasks:\n')
 	
     var result = json;
     var tasks = result.rows;
@@ -97,7 +87,7 @@ console.log('In updateStatusInfoTasks:\n')
     if (tasks.length > 0) {
         curTaskElem.hidden = false;
 
-        $('#image-row').show();
+        // $('#image-row').show();
         //$('#image-row2').show();
         
 	var toDoMsg = document.getElementById("to-do-message");

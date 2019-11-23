@@ -1,4 +1,4 @@
-# IImage Comparator and Classifier
+# Image Comparator and Classifier
 
 Purpose: Set up a static webpage and server to host classifier/pairwise comparator tasks for images 
 
@@ -260,6 +260,7 @@ $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_vie
 
 * Use addImagesToDb_jkc.rb to add an image set  
 * Use makeImageClassifyListImageSet.rb to make an image classify list  
+* Use makeTask.rb 
 
 
 

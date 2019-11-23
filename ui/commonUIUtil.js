@@ -3,7 +3,7 @@
 
 // div is a d3 selection of the container div
 buildClassifyButtonGroup = function(div, diagType) {
-
+    console.log('In buildClassifyButtonGroup:\n')
     var inner = div.append('div')
         .classed('btn-group', true)
         .attr('id',diagType);
@@ -15,8 +15,8 @@ buildClassifyButtonGroup = function(div, diagType) {
 }
 
 buildClassifyButton = function(div, name, diagType) {
-
-  var classes ='btn btn-primary ' + name + ' ' + diagType;
+    console.log('In buildClassifyButton:\n')
+    var classes ='btn btn-primary ' + name + ' ' + diagType;
 
     div.append('button')
         .classed(classes, true)
@@ -28,7 +28,7 @@ buildClassifyButton = function(div, name, diagType) {
 
 //
 handleUrlFilter = function(urlSearchStr) {
-
+    console.log('In handleUrlFilter:\n')
     //alert(urlSearchStr);
     qs= new QueryString(urlSearchStr);
     var user = qs.value("username");
@@ -58,6 +58,7 @@ handleUrlFilter = function(urlSearchStr) {
 // labels can be either primary or danger
 // just for controlling the color through bootstrap
 setLabelDanger = function(isDanger, label) {
+    console.log('In setLabelDanger:\n')
 
     if (isDanger) {
         label.removeClass("label-primary");
