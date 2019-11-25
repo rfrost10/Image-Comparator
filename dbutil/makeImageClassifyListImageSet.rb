@@ -38,7 +38,7 @@ response = JSON.parse(resp)
 imageIdRows = response['rows']
 imageIds = []
 imageIdRows.each {|x| imageIds.push(x['value'].to_i) }
-imageIds.sort()
+imageIds.sort!
 puts imageIds
 
 rangeBnds = [imageIds.first, imageIds.last]
