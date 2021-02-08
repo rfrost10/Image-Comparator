@@ -202,6 +202,7 @@ or
 http://<localhost>:8080
 http://<localhost>:5984
 ```
+> Make sure ports 8080 and 5984 are open in AWS\Azure\local dev or you won't see the home page for the website or the welcome json from couchdb.
 
 ## Instructions for use
 
