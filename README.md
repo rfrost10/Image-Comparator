@@ -46,7 +46,6 @@ Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
 ```
 
 You should see this html indicating success:
-
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +73,11 @@ You should see this html indicating success:
     <label> To see the image comparison user interface to compare two knee images go </label>
     <a href = "ui/two_image.html"> here</a>
 
+    <br>
+
+    <label> To see the image classification go</label>
+    <a href = "ui/image_class.html"> here</a>
+
     <p></p>
 
     <!--
@@ -84,8 +88,8 @@ You should see this html indicating success:
 </body>
 
 </html>
-
 ```
+
 
 > Without the use of *tmux* or *screen* your server will stop when the terminal is terminated. 
 
