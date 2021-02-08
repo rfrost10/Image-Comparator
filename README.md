@@ -160,16 +160,16 @@ Bash to do the above:
 ```bash
 # default.ini replacements
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /opt/couchdb/etc/default.ini;
-sudo sed -i 's/;origins = */origins = */g' /opt/couchdb/etc/default.ini;
+sudo sed -i 's/;origins = \*/origins = \*/g' /opt/couchdb/etc/default.ini;
 sudo sed -i 's/credentials = false/credentials = true/g' /opt/couchdb/etc/default.ini;
 sudo sed -i 's/enable_cors = false/enable_cors = true/g' /opt/couchdb/etc/default.ini;
 sudo sed -i 's/; methods =/methods = GET, PUT, POST, HEAD, DELETE/g' /opt/couchdb/etc/default.ini;
-sudo sed -i 's/;headers = /headers = accept, authorize, content-type, origin, referer, x-csrf-token/g' /opt/couchdb/etc/default.ini;
+sudo sed -i 's/; headers =/headers = accept, authorize, content-type, origin, referer, x-csrf-token/g' /opt/couchdb/etc/default.ini;
 
 # local.ini replacements
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /opt/couchdb/etc/local.ini;
-sudo sed '/^[httpd]*/a enable_cors = true' test.txt
-sudo echo '[cors]\norigins = *\ncredentials = true\nmethods = GET, PUT, POST, HEAD, DELETE' >> /opt/couchdb/etc/local.ini
+sudo sed -i '/\[httpd\]/a enable_cors = true' /opt/couchdb/etc/local.ini;
+printf '[cors]\norigins = *\ncredentials = true\nmethods = GET, PUT, POST, HEAD, DELETE' | sudo tee -a /opt/couchdb/etc/local.ini
 
 # 10-bind-address.ini
 sudo sed -i 's/127.0.0.1/0.0.0.0/g' /opt/couchdb/etc/default.d/10-bind-address.ini;
