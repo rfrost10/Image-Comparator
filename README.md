@@ -155,6 +155,14 @@ Next confirm that CORS (cross-origin resource sharing) is enabled in the followi
     * credentials = true
     * methods = GET, PUT, POST, HEAD, DELETE
 
+
+Bash to do the above:
+```bash
+sudo sed -i 's/127.0.0.1/0.0.0.0/g' /opt/couchdb/etc/local.ini;
+sudo sed -i 's/127.0.0.1/0.0.0.0/g' /opt/couchdb/etc/default.ini;
+sudo sed -i 's/127.0.0.1/0.0.0.0/g' /opt/couchdb/etc/default.d/10-bind-address.ini;
+```
+
 Once you've confirmed the bind_address and CORS are configured properly, you must restart the couchdb server by using the following command:
 ```
 service couchdb restart
