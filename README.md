@@ -113,10 +113,19 @@ Now anytime you need to get into the screen to stop the server run ```screen -r 
 ### Couchdb Setup
 
 To install couchdb, run the following:
-```
-echo "deb https://apache.bintray.com/couchdb-deb bionic main" \ | tee -a /etc/apt/sources.list
-curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc \ | apt-key add -
-apt-get update && apt-get install couchdb
+> [couchdb](https://docs.couchdb.org/en/stable/install/unix.html)
+```bash
+sudo apt-get install -y gnupg ca-certificates;
+
+echo "deb https://apache.bintray.com/couchdb-deb bionic main" \
+  | sudo tee /etc/apt/sources.list.d/couchdb.list;
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
+  8756C4F765C9AC3CB6B85D62379CE192D401AB61;
+
+sudo apt update
+
+sudo apt install -y couchdb
 ```
 
 Use the following configurations:
