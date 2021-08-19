@@ -2,13 +2,41 @@
 
 The dockerfile will automatically create a docker image for the Image-Comaparator. A docker image can be run as a virtual linux system, which will be used to deploy the web server. Once the docker image is built and run, the admin can insert custom image datasets and create image classify/compare tasks.
 
+Clone github directory:
+```
+WORKING_DIR=
+cd $WORKING_DIR
+git clone https://github.com/QTIM-Lab/Image-Comparator.git
+cd Image-Comparator
+```
+
 To build the docker images, run the following command:
 ```
 cd Image-Comparator-Dockerfiles # be in the correct directory
 
-export CONTAINER_NAME=image-comparator
-export CONTAINER_TAG=latest
+CONTAINER_NAME=image-comparator
+CONTAINER_TAG=latest
 docker build . -t $CONTAINER_NAME:$CONTAINER_TAG
+```
+
+Now run container:
+```
+cd ../ # Return to main directory
+
+WEB_APP_PORT=8080
+docker run \
+ --rm \
+ -d \
+ -v $WORKING_DIR/Image-Comparator:$WORKING_DIR/Image-Comparator \
+ -w $WORKING_DIR/Image-Comparator \
+ -p $WEB_APP_PORT:$WEB_APP_PORT \
+ --name $CONTAINER_NAME \
+ $CONTAINER_NAME:$CONTAINER_TAG
+```
+
+Stop container:
+```
+docker stop image-comparator
 ```
 
 ### Deploy couchdb docker image
@@ -16,100 +44,31 @@ Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a 
 ```
 mkdir -p /opt/couchdb/data # if it doesn't exist already
 
-export COUCHDB_USER=
-export COUCHDB_PASSWORD=
+COUCHDB_USER=admin
+COUCHDB_PASSWORD=password
+COUCH_PORT=5984
 
-docker run -p 5984:5984 \
-           -n image-comparator-couchdb \
-		   -l $CONTAINER_NAME:$CONTAINER_TAG \
-		   -v /opt/couchdb/data:/opt/couchdb/data \
-		   -d \
-		   -e COUCHDB_USER=$USER \
-		   -e COUCHDB_PASSWORD=$PASSWORD \
-		   couchdb:latest
-
-
-```
-
-Once the image is build, you can run the docker image by the following command (note: to make the database and web server accessible locally, we must forward the port from the virtual machine to the actual system, which will allow all users in the network to access the ports). By default, couchdb runs on port 5984 and the web server on port 8080:
-```
-docker run -p 5984:5984 -p 8080:8080 -it -v /data:/data cwen /bin/bash
-```
-
-Optionally, to run the database and server on custom ports, use the following format:
-```
-docker run -p <custom db port>:5984 -p <custom webserver port>:8080 -it -v /data:/data cwen /bin/bash
-```
-
-## Configuring Couchdb and adding Images ##
-
-To install couchdb, run the following:
-```
-echo "deb https://apache.bintray.com/couchdb-deb bionic main" \ | tee -a /etc/apt/sources.list
-curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc \ | apt-key add -
-apt-get update && apt-get install couchdb
-```
-
-Use the following configurations:
-* 1: single node
-* 0.0.0.0 bind address
-* (password)
-
-To ensure that the database is accessible locally, check the following locations to make sure that all instances of bind_address are set to '0.0.0.0' (127.0.0.1 means that the database is only accessible on the host machine)
-* /opt/couchdb/etc/local.ini
-* /opt/couchdb/etc/default.ini
-* /opt/couchdb/etc/default.d/10-bind-address.ini
-
-Next confirm that CORS (cross-origin resource sharing) is enabled in the following locations
-* /opt/couchdb/etc/default.ini
-    * enable_cors = true
-    * under '[cors]', add the following:
-	* origins = *
-	* credentials = true
-	* methods = GET, PUT, POST, HEAD, DELETE
-	* headers = accept, authorization, content-type, origin, referer, x-csrf-token
-* /opt/couchdb/etc/local.ini
-    * under '[httpd]', add the following:
-	* enable_cors = true
-    * at the bottom, add:
-	* [cors]
-	* origins = *
-	* credentials = true
-	* methods = GET, PUT, POST, HEAD, DELETE
-
-Once you've confirmed the bind_address and CORS are configured properly, you must restart the couchdb server by using the following command:
-```
-service couchdb restart
+docker run \
+ -p $COUCH_PORT:$COUCH_PORT \
+ --name image-comparator-couchdb \
+ --link $CONTAINER_NAME:$CONTAINER_TAG \
+ -v /opt/couchdb/data:/opt/couchdb/data \
+ -d \
+ -e COUCHDB_USER=$COUCHDB_USER \
+ -e COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
+ couchdb:latest
 ```
 
 To finish configuring a single node setup, run the following;
 ```
-curl -X PUT http://admin:<password>@localhost:5984/_users
-curl -X PUT http://admin:<password>@localhost:5984/_replicator
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_users
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_replicator
 ```
 
-To create and setup the database, run the following (use the db_name you used from the docker build command):
+To create and setup the database, run the following:
 ```
-curl -X PUT http://admin:<password>@localhost:5984/<db_name>
-cd /Image-Comparator/dbutil
-curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_views -d @basic_views.json
+DB_NAME=image_comparator
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME
+cd dbutil
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json
 ```
-
-The ruby scripts in the dbutils folder are usefull for adding data to a dataset. While the regular [addImagesToDb_jkc.rb](https://github.com/CollinWen/Image-Comparator/blob/master/dbutil/addImagesToDb_jkc.rb) script will put in all the images in a given directory, the [addOCTImagesToDb.rb](https://github.com/CollinWen/Image-Comparator/blob/master/dbutil/addOCTImagesToDb.rb) script will take in OCT images in the format of a series of directories. Within each directory (which is an OCT scan), all the image layers of the scan will be added as attachments to the database.
-
-Once all the image documents are inserted into the database, the [makeImageCompareList.rb](https://github.com/CollinWen/Image-Comparator/blob/master/dbutil/makeImageCompareList.rb) script can be run to create a list of images to compare (Note: image compare lists are either for standard retinal images or oct scans). 
-
-Once there are image compare lists in the database, the [makeTask.rb](https://github.com/CollinWen/Image-Comparator/blob/master/dbutil/makeTask.rb) script can create compare tasks for different users. Once users are given tasks, they can view the images on the website.
-
-Your database is all set to go! A useful tool to manage your couchdb database is to user project fauxton. If you've set everything up correctly, you should be able to view your database with the URL http://<host_local_ip>:5984/_utils
-You can filter the documents in the database by going to the basic_views tab. There, you can filter specific documents and sort the documents cleanly.
-
-## Starting the server ##
-
-To start the web server, run the following command:
-```
-python -m SimpleHTTPServer 8080
-```
-
-Now you should be able to access the web server from any local (or public) machine with the URL http://<host_local_ip>:<webserver port>
-

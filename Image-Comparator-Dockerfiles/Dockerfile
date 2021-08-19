@@ -9,4 +9,8 @@ RUN apt-get install -y ruby
 RUN apt-get install -y vim
 RUN apt-get install -y curl
 
-CMD ["echo","Image created"]
+# CMD ["bash"]
+
+ENTRYPOINT ["python3.8","-m", "http.server"]
+CMD ["8080"]
+
