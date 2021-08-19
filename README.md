@@ -33,6 +33,7 @@ module Configuration
   DB_ADMIN_PASS = '<password>'
 end
 ```
+> Note: Inside docker containers, "0.0.0.0" and "localhost" now refer to the container and not the host system. Look up your system IP address with "ip addr show" or other utility so that you can specifically identify the right machien to talk to 
 
 Create a copy called *Configuration.rb* and replace all variables with your custom configurations.
 
@@ -57,25 +58,94 @@ curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design
 
 We need to add a ruby package *couchrest* to ruby. Run this command:
 
+Docker install:
 ```bash
+$ docker exec image-comparator gem install couchrest
+```
+or scratch install:
+```
 $ sudo gem install couchrest
 ```
 
 Next add images to the database with script *addImagesToDb.rb*:
+
+In order to simplify the instructions for both docker and from scratch installs I will shell into the docker to demo, but the commands should be the same for both at this point.
+
+> Note: In either case you should start from the "Image-Comparator" directory.
+
+```
+docker exec -it image-comparator bash
+```
+
+Preview of working directory (docker):
 ```bash
-$ ruby addImagesToDb.rb <imageFolder> <imageSetName>
+root@a53f9696685a:/home/bb927/Image-Comparator# ls
+Image-Comparator-Dockerfiles   dbutil     index.html                     ui
+Image-Comparator-From-Scratch  deploy.rb  instatllationInstructions.txt  util
+README.md                      docs       public                         vendor
+about.html                     feeders    results
+contact.html                   images     rubyUtils
+```
+> Note: when deploying the docker container, we mount "$WORKING_DIR", which is one level up from github project "Image-Comparator". This is so at the same level as the github project folder, we can put data to be loaded into couchdb and therefore via the "-v" mount we can still see that data inside the container.
+
+Preview of working directory (scratch - sholld be the same as docker listing):
+```bash
+bb927@acadia-qtim:~/Image-Comparator$ ls
+about.html    Image-Comparator-Dockerfiles   README.md
+contact.html  Image-Comparator-From-Scratch  results
+dbutil        images                         rubyUtils
+deploy.rb     index.html                     ui
+docs          instatllationInstructions.txt  util
+feeders       public                         vendor
+```
+
+Continuing where we left off we need to run addImagesToDb.rb to add images. Place your imaging data in a folder at the same level as "Image-Comparator"
+
+Ex:
+```
+root@a53f9696685a:/home/bb927/Image-Comparator# ls ../image-comparator-data/
+MR.1.dcm   MR.15.dcm  MR.20.dcm  MR.26.dcm  MR.31.dcm  MR.37.dcm  MR.42.dcm  MR.48.dcm  MR.7.dcm
+MR.10.dcm  MR.16.dcm  MR.21.dcm  MR.27.dcm  MR.32.dcm  MR.38.dcm  MR.43.dcm  MR.49.dcm  MR.8.dcm
+MR.11.dcm  MR.17.dcm  MR.22.dcm  MR.28.dcm  MR.33.dcm  MR.39.dcm  MR.44.dcm  MR.5.dcm   MR.9.dcm
+MR.12.dcm  MR.18.dcm  MR.23.dcm  MR.29.dcm  MR.34.dcm  MR.4.dcm   MR.45.dcm  MR.50.dcm
+MR.13.dcm  MR.19.dcm  MR.24.dcm  MR.3.dcm   MR.35.dcm  MR.40.dcm  MR.46.dcm  MR.51.dcm
+MR.14.dcm  MR.2.dcm   MR.25.dcm  MR.30.dcm  MR.36.dcm  MR.41.dcm  MR.47.dcm  MR.6.dcm
+root@a53f9696685a:/home/bb927/Image-Comparator# 
+```
+
+```bash
+cd dbutil
+ruby addImagesToDb.rb <imageFolder> <imageSetName>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
 * \<imageSetName> is the name for the image set.  
 
+Sample Output:
+```
+root@a53f9696685a:/home/bb927/Image-Comparator/dbutil# ruby addImagesToDb_jkc.rb ../../image-comparator-dat
+a/ imageSet1
+{"rows"=>[]}
+../../image-comparator-data//MR.11.dcm
+0
+MR.11.dcm
+dcm
+../../image-comparator-data//MR.40.dcm
+1
+MR.40.dcm
+dcm
+../../image-comparator-data//MR.12.dcm
+
+...
+```
+
 2. Add images to an Image Compare List:
 
 ```bash
-$ makeICLFromImageSetName.rb <image set name> <pct repeat> <list name>
+ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
 ```
 
-* \<image set name> was the name given to addImagesToDb.rb for the <imageSetName>.  
+* \<imageSetName> is the same name that was given to addImagesToDb.rb.  
 * \<pct repeat> is the percentage of repeated pairs to be displayed.  
 * \<list name> is a new Image Compare List name.  
 

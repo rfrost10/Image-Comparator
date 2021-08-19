@@ -27,7 +27,7 @@ WEB_APP_PORT=8080
 docker run \
  --rm \
  -d \
- -v $WORKING_DIR/Image-Comparator:$WORKING_DIR/Image-Comparator \
+ -v $WORKING_DIR:$WORKING_DIR \
  -w $WORKING_DIR/Image-Comparator \
  -p $WEB_APP_PORT:$WEB_APP_PORT \
  --name $CONTAINER_NAME \
@@ -51,7 +51,6 @@ COUCH_PORT=5984
 docker run \
  -p $COUCH_PORT:$COUCH_PORT \
  --name image-comparator-couchdb \
- --link $CONTAINER_NAME:$CONTAINER_TAG \
  -v /opt/couchdb/data:/opt/couchdb/data \
  -d \
  -e COUCHDB_USER=$COUCHDB_USER \

@@ -11,6 +11,7 @@ DB_PORT = Configuration::DB_PORT
 DB_ADMIN_USER = Configuration::DB_ADMIN_USER 
 DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS 
 IMAGES_DB = Configuration::IMAGES_DB 
+ADMIN_PARTY = Configuration::ADMIN_PARTY
 
 #  # Include config variables - BB
 
@@ -32,20 +33,25 @@ list_name = ARGV[2]
 
 
 # find range from searching db for images that have image_set_name
-viewUrl = "http://#{DNS}:#{DB_PORT}/#{IMAGES_DB}/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
+url = "http://#{DNS}:#{DB_PORT}/#{IMAGES_DB}"
+view = "/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
 
-puts viewUrl
-encoded_url = URI.encode(viewUrl)
-uri = URI.parse(encoded_url)
+Url = url+view
+print Url
 
-#uri=URI(viewUrl)
-resp= Net::HTTP.get(uri)
+####
+uri = URI.parse(Url)
+http = Net::HTTP.new(uri.host, uri.port)
+request = Net::HTTP::Get.new(uri.request_uri)
+if ADMIN_PARTY != true
+    request.basic_auth(DB_ADMIN_USER, DB_ADMIN_PASS)
+end
+response = http.request(request)
+response = JSON.parse(response.body)
+####
 
-# grab the ids, sort and confirm all from lowest to highest are in the list
-#response = JSON.parse(resp.body)
-response = JSON.parse(resp)
 
-#puts response
+#inputs response
 imageIdRows = response['rows']
 imageIds = []
 imageIdRows.each {|x| imageIds.push(x['value'].to_i) }
@@ -101,11 +107,17 @@ puts obj.to_json
 
 # put the results in the database
 url = "http://#{DNS}:#{DB_PORT}/" + IMAGES_DB + "/" + list_name 
-
 uri = URI.parse(url)
 
+####
 http = Net::HTTP.new(uri.host, uri.port)
-request = Net::HTTP::Put.new(uri.path)
-
-resp = http.request(request, obj.to_json)
-puts resp.body
+request = Net::HTTP::Put.new(uri.request_uri)
+if ADMIN_PARTY != true
+    request.basic_auth(DB_ADMIN_USER, DB_ADMIN_PASS)
+end
+response = http.request(request, obj.to_json)
+response = JSON.parse(response.body)
+if response['ok'] == true
+    puts "Created Image Compare List"
+end
+####
