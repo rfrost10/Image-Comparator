@@ -16,7 +16,7 @@ Once setup you should have two things running:
 * Web Server
 * Couchdb instance
 
-![Initial Setup](./images/initial_setup.png)
+![Initial Setup](./images/initial_setup.jpg)
 
 Before we continue we need to define some config variables so that all the internal ruby scripts can reference the right things. Find *Image-Comparator/dbutil/Configuration_template.rb*
 
