@@ -152,11 +152,11 @@ ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
 3. Add a task to a user:
 
 ```bash
-$ makeTask.rb <user> <image-list name> <image-list-type> <task-order>
+ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
 ```
 
 * \<user> is who should complete the task  
-* \<image-list name> this is <list name> from above in (makeICLFromImageSetName.rb)  
+* \<list name> <list name> from above in (makeICLFromImageSetName.rb)  
 * \<image-list-type> compare, OCTcompare, classify, classify_nine or quandrant.  
 * \<task-order> is what precedence the image compare task takes relative to others assigned to this user.  
 
