@@ -5,8 +5,12 @@ Purpose: Set up a static webpage and server to host classifier/pairwise comparat
 I am not the original author of these files. This repository contains aggregated and updated files from previous developers. See acknowledgements below.
 
 
+## Instructions for setup
 
+See one of two options:
 
+* [From Dockers](https://github.com/QTIM-Lab/Image-Comparator/tree/master/Image-Comparator-Dockerfiles)
+* [From Scratch (harder)](https://github.com/QTIM-Lab/Image-Comparator/tree/master/Image-Comparator-From-Scratch)
 
 
 Before we continue we need to define some config variables so that all the internal ruby scripts can reference the right things. Find *Image-Comparator/dbutil/Configuration_template.rb*
