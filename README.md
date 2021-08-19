@@ -12,6 +12,11 @@ See one of two options:
 * [From Dockers](https://github.com/QTIM-Lab/Image-Comparator/tree/master/Image-Comparator-Dockerfiles)
 * [From Scratch (harder)](https://github.com/QTIM-Lab/Image-Comparator/tree/master/Image-Comparator-From-Scratch)
 
+Once setup you should have two things running:
+* Web Server
+* Couchdb instance
+
+![Initial Setup](./images/initial_setup.png)
 
 Before we continue we need to define some config variables so that all the internal ruby scripts can reference the right things. Find *Image-Comparator/dbutil/Configuration_template.rb*
 
