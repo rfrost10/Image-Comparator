@@ -1,14 +1,14 @@
 ## Setting up Image-Comparator in a Docker container ##
 
-All code for the Image-Comparator can be found here: https://github.com/CollinWen/Image-Comparator
-
-The dockerfile will automatically create a docker image for the Image-Comaparator and set up a database. A docker image can be run as a virtual linux system, which will be used to deploy the web server. Once the docker image is built and run, the admin can insert custom image datasets and create image classify/compare tasks.
-
-First, navigate to the Dockefile and replace <db_name> and <host_local_ip> with the preferred database name and the local ip of the host machine. **This is important as it will replace all occurences of 'rop_images' and '174.16.42.15' with your entered arguments. The server will not function properly if you skip this step.**
+The dockerfile will automatically create a docker image for the Image-Comaparator. A docker image can be run as a virtual linux system, which will be used to deploy the web server. Once the docker image is built and run, the admin can insert custom image datasets and create image classify/compare tasks.
 
 To build the docker images, run the following command:
 ```
-docker build . -t <name>:<tag>
+cd Image-Comparator-Dockerfiles # be in the correct directory
+
+export CONTAINER_NAME=image-comparator
+export CONTAINER_TAG=latest
+docker build . -t $CONTAINER_NAME:$CONTAINER_TAG
 ```
 
 Once the image is build, you can run the docker image by the following command (note: to make the database and web server accessible locally, we must forward the port from the virtual machine to the actual system, which will allow all users in the network to access the ports). By default, couchdb runs on port 5984 and the web server on port 8080:
