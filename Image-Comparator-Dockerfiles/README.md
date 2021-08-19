@@ -11,6 +11,26 @@ export CONTAINER_TAG=latest
 docker build . -t $CONTAINER_NAME:$CONTAINER_TAG
 ```
 
+### Deploy couchdb docker image
+Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a normal couchdb installs will store data so don't use this directory in a docker mount unless you don't have couchdb installed on the machine already.
+```
+mkdir -p /opt/couchdb/data # if it doesn't exist already
+
+export COUCHDB_USER=
+export COUCHDB_PASSWORD=
+
+docker run -p 5984:5984 \
+           -n image-comparator-couchdb \
+		   -l $CONTAINER_NAME:$CONTAINER_TAG \
+		   -v /opt/couchdb/data:/opt/couchdb/data \
+		   -d \
+		   -e COUCHDB_USER=$USER \
+		   -e COUCHDB_PASSWORD=$PASSWORD \
+		   couchdb:latest
+
+
+```
+
 Once the image is build, you can run the docker image by the following command (note: to make the database and web server accessible locally, we must forward the port from the virtual machine to the actual system, which will allow all users in the network to access the ports). By default, couchdb runs on port 5984 and the web server on port 8080:
 ```
 docker run -p 5984:5984 -p 8080:8080 -it -v /data:/data cwen /bin/bash
