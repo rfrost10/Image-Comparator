@@ -64,7 +64,7 @@ Once logged into couchdb goto settings to enable CORS:
 
 ![Initial Setup](../images/couchdb_cors.jpg)
 
-
+For debugging...
 
 To shell into this container:
 ```
