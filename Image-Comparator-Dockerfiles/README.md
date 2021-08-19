@@ -62,7 +62,7 @@ docker run \
 
 Once logged into couchdb goto settings to enable CORS:
 
-![Initial Setup](./images/couchdb_cors.jpg)
+![Initial Setup](../images/couchdb_cors.jpg)
 
 
 
