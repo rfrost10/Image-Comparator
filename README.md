@@ -18,6 +18,7 @@ Once setup you should have two things running:
 
 ![Initial Setup](./images/initial_setup.jpg)
 
+
 Before we continue we need to define some config variables so that all the internal ruby scripts can reference the right things. Find *Image-Comparator/dbutil/Configuration_template.rb*
 
 It should have this:
@@ -35,12 +36,19 @@ end
 
 Create a copy called *Configuration.rb* and replace all variables with your custom configurations.
 
-To create and setup the database, run the following:  
 
-```bash
-$ curl -X PUT http://admin:<password>@localhost:5984/<db_name>
-$ cd /Image-Comparator/dbutil
-$ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_views -d @basic_views.json
+To finish configuring a single node setup, run the following;
+```
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_users
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_replicator
+```
+
+To create and setup the database, run the following:
+```
+DB_NAME=image_comparator # same as <db_name>
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME
+cd dbutil
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json
 ```
 
 ### Image-Comparator

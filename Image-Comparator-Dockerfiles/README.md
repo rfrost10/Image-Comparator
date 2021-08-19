@@ -34,7 +34,7 @@ docker run \
  $CONTAINER_NAME:$CONTAINER_TAG
 ```
 
-Stop container:
+To stop container (if needed):
 ```
 docker stop image-comparator
 ```
@@ -59,16 +59,7 @@ docker run \
  couchdb:latest
 ```
 
-To finish configuring a single node setup, run the following;
+To stop container (if needed):
 ```
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_users
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_replicator
-```
-
-To create and setup the database, run the following:
-```
-DB_NAME=image_comparator
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME
-cd dbutil
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json
+docker stop image-comparator-couchdb
 ```
