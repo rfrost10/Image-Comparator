@@ -58,6 +58,19 @@ docker run \
  couchdb:latest
 ```
 
+> Note you can't make requests to this container wihtout making sure that CORS (cross-origin resource sharing) is enabled:
+
+Once logged into couchdb goto settings to enable CORS:
+
+![Initial Setup](./images/couchdb_cors.jpg)
+
+
+
+To shell into this container:
+```
+docker exec -it image-comparator-couchdb bash
+```
+
 To stop container (if needed):
 ```
 docker stop image-comparator-couchdb
