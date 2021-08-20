@@ -64,7 +64,10 @@ Once logged into couchdb goto settings to enable CORS:
 
 ![Initial Setup](../images/couchdb_cors.jpg)
 
-For debugging...
+Create an Admin (if you delete them):
+![create couch admin](../images/couchdb_create_admin.jpg)
+
+Debugging...
 
 To shell into this container:
 ```
