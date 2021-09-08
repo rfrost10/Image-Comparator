@@ -1,0 +1,6 @@
+Flask
+python-dotenv
+flask_cors
+requests
+mypy # type checking
+couchdb
