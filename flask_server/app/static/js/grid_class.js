@@ -11,10 +11,13 @@ function init_app() {
   GridTaskFeeder = new TaskFeeder(config_obj);
   // Override methods and attributes of interest
   GridTaskFeeder.buildUI = function(imageList) {
-    grid_of_images = $('#grid_of_images')
+    grid_of_images = $('#grid_of_images');
+    n_count = imageList.length;
     width = 5;
-    height = 5;
+    // height = 5;
+    height = Math.floor(n_count/width) + n_count%width;
     [...Array(height).keys()].forEach((v,i,a) => {
+      console.log(`making row ${i}`)
       var row = $(`<div class="row"></div>`)
       grid_of_images.append(row)
       imageList.slice(v*width,(v+1)*width).forEach((v,i,a) => {

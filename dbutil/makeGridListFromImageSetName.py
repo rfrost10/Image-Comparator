@@ -58,6 +58,7 @@ def makeList(listName: str, imageIDs: list) -> None:
            "time_added":t.strftime('%Y-%m-%d %H:%M:%S')}
     db = couch[IMAGES_DB]
     # pdb.set_trace()
+    print(f"Created Grid List: {listName}")
     doc_id, doc_rev = db.save(obj)
     
 

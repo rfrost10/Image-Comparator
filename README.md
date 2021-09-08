@@ -229,7 +229,7 @@ python makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<des
 ```
 Ex:
 ```bash
-python makeTask.rb benjamin imageSet1 grid 2
+python3 makeTask.py benjamin gridListIkbeom1 grid 1
 ```
 
 

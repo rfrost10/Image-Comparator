@@ -113,7 +113,7 @@ updateStatInfoTasks = function(json) {
         var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
 
         var fullurl = dburl + "_design/basic_views/_view/image_compare_lists?key=\"" + icl_id + "\"";
-
+        
         $.ajax({
             url : fullurl,
             // beforeSend: function (xhr) {
