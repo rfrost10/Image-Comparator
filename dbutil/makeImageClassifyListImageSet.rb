@@ -1,6 +1,20 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'pry'
+
+# Include config variables - BB 
+require './Configuration' 
+include Configuration 
+ 
+DNS = Configuration::DNS 
+DB_PORT = Configuration::DB_PORT 
+DB_ADMIN_USER = Configuration::DB_ADMIN_USER 
+DB_ADMIN_PASS = Configuration::DB_ADMIN_PASS 
+IMAGES_DB = Configuration::IMAGES_DB 
+ADMIN_PARTY = Configuration::ADMIN_PARTY
+
+#  # Include config variables - BB
 
 
 if (ARGV.size != 3) then
@@ -20,19 +34,26 @@ imgSetName = ARGV[0]
 nameStr = ARGV[1]
 pctRep =ARGV[2]
 
-viewUrl = "http://localhost:5984/ret_images/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
-puts viewUrl
-encoded_url = URI.encode(viewUrl)
-uri = URI.parse(encoded_url)
-#puts uri
-#http = Net::HTTP.new(uri.host, uri.port)
-#request = Net::HTTP::Get.new(uri.path+uri.qu)
+# find range from searching db for images that have image_set_name
+url = "http://#{DNS}:#{DB_PORT}/#{IMAGES_DB}"
+view = "/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
 
-#uri=URI(viewUrl)
-resp= Net::HTTP.get(uri)
-response = JSON.parse(resp)
+### viewUrl = "http://localhost:5984/ret_images/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
 
-#puts response
+Url = url+view
+print Url
+
+####
+uri = URI.parse(Url)
+http = Net::HTTP.new(uri.host, uri.port)
+request = Net::HTTP::Get.new(uri.request_uri)
+if ADMIN_PARTY != true
+    request.basic_auth(DB_ADMIN_USER, DB_ADMIN_PASS)
+end
+response = http.request(request)
+response = JSON.parse(response.body)
+###
+
 
 
 imageIdRows = response['rows']
@@ -71,16 +92,35 @@ obj = { type:"image_classify_list",
 
 
 # put the results in the database
-dbname = "ret_images/"
-docname = nameStr
-url = 'http://localhost:5984/' + dbname + docname
-puts url
+# dbname = "ret_images/"
+# docname = nameStr
+# url = 'http://localhost:5984/' + dbname + docname
+# puts url
 
+# uri = URI.parse(url)
+
+# http = Net::HTTP.new(uri.host, uri.port)
+# request = Net::HTTP::Put.new(uri.path)
+
+# puts "here"
+# resp = http.request(request, obj.to_json)
+# puts resp.body
+
+
+
+# put the results in the database
+url = "http://#{DNS}:#{DB_PORT}/" + IMAGES_DB + "/" + nameStr
 uri = URI.parse(url)
 
+####
 http = Net::HTTP.new(uri.host, uri.port)
-request = Net::HTTP::Put.new(uri.path)
-
-puts "here"
-resp = http.request(request, obj.to_json)
-puts resp.body
+request = Net::HTTP::Put.new(uri.request_uri)
+if ADMIN_PARTY != true
+    request.basic_auth(DB_ADMIN_USER, DB_ADMIN_PASS)
+end
+response = http.request(request, obj.to_json)
+response = JSON.parse(response.body)
+if response['ok'] == true
+    puts "Created Image Classify List"
+end
+####

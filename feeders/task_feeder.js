@@ -74,7 +74,7 @@ var ImageCompare = (function (IC) {
                     success: function (json) {
                         // okay, this seems wrong, we got all the tasks - way too much data over the wire
                         // filtering should happen on the server side - is this what reduce is for?
-
+                        debugger
                         var nextpair;
                         var result = json;
                         var found = false;
@@ -92,7 +92,7 @@ var ImageCompare = (function (IC) {
                                     debugger;
                             }
                         }
-
+                        
                         if (!found) {
                             alert("No pending tasks");
                             return;

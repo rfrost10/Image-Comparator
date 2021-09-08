@@ -1,4 +1,4 @@
-## Setting up Image-Comparator in a Docker container ##
+### Setting up Image-Comparator in a Docker container
 
 The dockerfile will automatically create a docker image for the Image-Comaparator. A docker image can be run as a virtual linux system, which will be used to deploy the web server. Once the docker image is built and run, the admin can insert custom image datasets and create image classify/compare tasks.
 
@@ -77,4 +77,39 @@ docker exec -it image-comparator-couchdb bash
 To stop container (if needed):
 ```
 docker stop image-comparator-couchdb
+```
+
+### Setting up Image-Comparator in a Docker Container Using Flask
+
+We will be using the *Dockerfile_flask* file in ```Image-Comparator-Dockerfiles```.
+
+#### Build the container
+
+Build a new image for flask and serve in the context of the flask_server folder:
+```bash
+CONTAINER_NAME=image-comparator
+CONTAINER_TAG=flask
+
+docker build . -f Dockerfile_flask -t $CONTAINER_NAME:$CONTAINER_TAG
+
+cd ../
+
+docker run \
+  -it \
+  --rm \
+  -p 8081:8081 \
+  -v $PWD/flask_server:/flask_server \
+  -w /flask_server \
+  --name "$CONTAINER_NAME_$CONTAINER_TAG" \
+  image-comparator:flask
+```
+
+#### Pip install requirements
+```bash
+pip3 install -r requirements.txt
+```
+
+#### Run flask server
+```bash
+flask run --port 8081 --host 0.0.0.0
 ```

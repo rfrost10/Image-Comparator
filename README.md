@@ -47,8 +47,10 @@ curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_replicator
 To create and setup the database, run the following:
 ```
 DB_NAME=image_comparator # same as <db_name>
+# curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME # if in admin party
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME
 cd dbutil
+# curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json # if in admin party
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json
 ```
 
@@ -88,7 +90,7 @@ contact.html                   images     rubyUtils
 ```
 > Note: when deploying the docker container, we mount "$WORKING_DIR", which is one level up from github project "Image-Comparator". This is so at the same level as the github project folder, we can put data to be loaded into couchdb and therefore via the "-v" mount we can still see that data inside the container.
 
-Preview of working directory (scratch - sholld be the same as docker listing):
+Preview of working directory (scratch - should be the same as docker listing):
 ```bash
 bb927@acadia-qtim:~/Image-Comparator$ ls
 about.html    Image-Comparator-Dockerfiles   README.md
@@ -115,16 +117,16 @@ root@a53f9696685a:/home/bb927/Image-Comparator#
 
 ```bash
 cd dbutil
-ruby addImagesToDb.rb <imageFolder> <imageSetName>
+ruby addImagesToDb.rb <imageFolder> <imageSetName> <fromCSV>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
 * \<imageSetName> is the name for the image set.  
+* \<fromCSV> ```name of csv file in imageFolder```
 
 Sample Output:
 ```
-root@a53f9696685a:/home/bb927/Image-Comparator/dbutil# ruby addImagesToDb_jkc.rb ../../image-comparator-dat
-a/ imageSet1
+root@a53f9696685a:/home/bb927/Image-Comparator/dbutil# ruby addImagesToDb_jkc.rb ../../image-comparator-data/ imageSet1
 {"rows"=>[]}
 ../../image-comparator-data//MR.11.dcm
 0
@@ -182,10 +184,53 @@ $ cd /Image-Comparator/dbutil
 $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_views -d @basic_views.json
 ```
 
-* Use addImagesToDb_jkc.rb to add an image set  
-* Use makeImageClassifyListImageSet.rb to make an image classify list  
-* Use makeTask.rb 
+1. Use addImagesToDb_jkc.rb to add an image set  
+2. Use makeImageClassifyListImageSet.rb to make an image classify list  
+3. Use makeTask.rb 
 
+
+#### Add Images
+> Should be done, but if you want to add additional images do so now
+
+#### Make Image Classify Image List
+```bash
+docker exec -it image-comparator bash
+cd dbutil
+```
+and create:
+```bash
+ruby makeImageClassifyListImageSet.rb <imageSet> <listName> <pctRepeat>
+```
+Ex:
+```bash
+ruby makeImageClassifyListImageSet.rb imageSet1 classifyList1 0
+```
+#### Make Task
+```bash
+ruby makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+> [optional argment]
+
+Ex
+```bash
+ruby makeTask.rb benjamin classifyList1 classify 2
+```
+
+### Grid-Classifier
+
+#### List
+```bash
+python makeGridListFromImageSetName.py <imageSet> <listName>
+```
+
+#### Task
+```bash
+python makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+Ex:
+```bash
+python makeTask.rb benjamin imageSet1 grid 2
+```
 
 
 
