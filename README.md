@@ -40,17 +40,19 @@ Create a copy called *Configuration.rb* and replace all variables with your cust
 
 To finish configuring a single node setup, run the following;
 ```
+# curl -X PUT http://0.0.0.0:5984/_users
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_users
+# curl -X PUT http://0.0.0.0:5984/_replicator
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_replicator
 ```
 
 To create and setup the database, run the following:
 ```
 DB_NAME=image_comparator # same as <db_name>
-# curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME # if in admin party
+# curl -X PUT http://0.0.0.0:5984/$DB_NAME # if in admin party
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME
 cd dbutil
-# curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json # if in admin party
+# curl -X PUT http://0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json # if in admin party
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json
 ```
 
@@ -62,7 +64,7 @@ We need to add a ruby package *couchrest* to ruby. Run this command:
 
 Docker install:
 ```bash
-$ docker exec image-comparator gem install couchrest
+$ docker exec image-comparator-flask gem install couchrest
 ```
 or scratch install:
 ```
@@ -73,10 +75,11 @@ Next add images to the database with script *addImagesToDb.rb*:
 
 In order to simplify the instructions for both docker and from scratch installs I will shell into the docker to demo, but the commands should be the same for both at this point.
 
-> Note: In either case you should start from the "Image-Comparator" directory.
+> Note: In either case you should start from the directory "Image-Comparator" your local machine. This will be your ```$PWD``` and we will shell into the container and run some init scripts.
 
 ```
-docker exec -it image-comparator bash
+docker exec -it -w $PWD image-comparator-flask bash
+cd dbutil; # This puts us in the directory where we can initialize the DB with certain scripts
 ```
 
 Preview of working directory (docker):
@@ -101,7 +104,7 @@ docs          instatllationInstructions.txt  util
 feeders       public                         vendor
 ```
 
-Continuing where we left off we need to run addImagesToDb.rb to add images. Place your imaging data in a folder at the same level as "Image-Comparator"
+Continuing where we left off we need to run addImagesToDb_jkc.rb to add images. Place your imaging data in a folder at the same level as "Image-Comparator"
 
 Ex:
 ```
@@ -117,7 +120,7 @@ root@a53f9696685a:/home/bb927/Image-Comparator#
 
 ```bash
 cd dbutil
-ruby addImagesToDb.rb <imageFolder> <imageSetName> <fromCSV>
+ruby addImagesToDb_jkc.rb Image-Comparator-Data <imageSetName> <fromCSV>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
@@ -126,7 +129,7 @@ ruby addImagesToDb.rb <imageFolder> <imageSetName> <fromCSV>
 
 Sample Output:
 ```
-root@a53f9696685a:/home/bb927/Image-Comparator/dbutil# ruby addImagesToDb_jkc.rb ../../image-comparator-data/ imageSet1
+root@a53f9696685a:/home/bb927/Image-Comparator/dbutil# ruby addImagesToDb_jkc.rb Image-Comparator-Data imageSet1
 {"rows"=>[]}
 ../../image-comparator-data//MR.11.dcm
 0
@@ -194,8 +197,8 @@ $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_vie
 
 #### Make Image Classify Image List
 ```bash
-docker exec -it image-comparator bash
-cd dbutil
+docker exec -it image-comparator-flask bash
+cd /home/bbearce/Documents/Image-Comparator/dbutil
 ```
 and create:
 ```bash
@@ -220,16 +223,16 @@ ruby makeTask.rb benjamin classifyList1 classify 2
 
 #### List
 ```bash
-python makeGridListFromImageSetName.py <imageSet> <listName>
+python3 makeGridListFromImageSetName.py <imageSet> <listName>
 ```
 
 #### Task
 ```bash
-python makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
+python3 makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
 Ex:
 ```bash
-python3 makeTask.py benjamin gridListIkbeom1 grid 1
+python3 makeTask.py benjamin IkbeomGridList1 grid 1
 ```
 
 

@@ -5,8 +5,12 @@ MAINTAINER bbearce <bbearce@mgh.harvard.edu>
 # These are essential
 RUN apt update -y;
 RUN apt install -y python3.8;
-RUN apt-get -y install python3-pip
+RUN apt-get -y install python3-pip;
 RUN apt-get install -y vim;
+RUN apt-get install -y ruby;
+RUN gem install couchrest;
+RUN gem install pry;
+RUN apt-get install curl -y;
 
 ENTRYPOINT ["bash"]
 #CMD ["8080"]

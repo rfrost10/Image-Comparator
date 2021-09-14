@@ -4,7 +4,7 @@ The dockerfile will automatically create a docker image for the Image-Comaparato
 
 Clone github directory:
 ```
-WORKING_DIR=
+WORKING_DIR=$PWD
 cd $WORKING_DIR
 git clone https://github.com/QTIM-Lab/Image-Comparator.git
 cd Image-Comparator
@@ -87,6 +87,7 @@ We will be using the *Dockerfile_flask* file in ```Image-Comparator-Dockerfiles`
 
 Build a new image for flask and serve in the context of the flask_server folder:
 ```bash
+cd Image-Comparator-Dockerfiles
 CONTAINER_NAME=image-comparator
 CONTAINER_TAG=flask
 
@@ -98,9 +99,11 @@ docker run \
   -it \
   --rm \
   -p 8081:8081 \
+  --network="host"  \
   -v $PWD/flask_server:/flask_server \
+  -v $PWD:$PWD \
   -w /flask_server \
-  --name "$CONTAINER_NAME_$CONTAINER_TAG" \
+  --name "$CONTAINER_NAME""-""$CONTAINER_TAG" \
   image-comparator:flask
 ```
 

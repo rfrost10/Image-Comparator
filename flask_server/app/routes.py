@@ -1,11 +1,12 @@
 from app import app
 from flask import render_template, jsonify, send_file, request
-import requests, io, json, pdb
+import requests, couchdb, io, json, pdb
 from dotenv import load_dotenv
 
 # Config
 @app.route('/configuration', methods=['GET'])
 def config():
+    # pdb.set_trace()
     config = {
         "DB_ADMIN_USER":app.config['DB_ADMIN_USER'],
         "DB_ADMIN_PASS":app.config['DB_ADMIN_PASS'],
@@ -89,5 +90,20 @@ def get_image():
 def task_results():
     # return render_template('index.html')
     results = json.loads(request.data)
-    pdb.set_trace()
+    # 1 save results to db
+    DNS = app.config['DNS']
+    DB_PORT = app.config['DB_PORT']
+    couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+    db = couch[app.config["IMAGES_DB"]]
+    doc_id, doc_rev = db.save(results)
+    doc = db.get(doc_id)
+    # 2 needs to mark grid task being referenced as "completed"
+    task_name =results['task_list_name']
+    x = db.find({'selector': {'list_name': task_name, 'type':'task'}})
+    _id = x.__next__()['_id']
+    grid_list = db[_id]
+    grid_list['completed'] = True
+    # pdb.set_trace()
+    db[_id] = grid_list
+
     return jsonify("asdf")

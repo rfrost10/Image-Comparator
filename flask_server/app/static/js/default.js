@@ -59,7 +59,7 @@ function TaskFeeder(config_obj) {
 
   // Flask URLs
   this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
-  this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
+  // this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
   
   
 
@@ -184,20 +184,25 @@ function TaskFeeder(config_obj) {
   
   this.getTaskImageList = function(task) {
     GTF = this; // otherwise "this" becomes the $.ajax object
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        url : this.url_image_list_base,
-        type : 'GET',
-        success: function(response){
-          GTF.imageList = response.rows[0].value.list;
-          resolve(GTF.imageList);
-        },
-        error: function (response) {
-            console.log("get of tasks failed : " + JSON.stringify(response));
-            reject("get of tasks failed : " + JSON.stringify(response))
-        }
-      });
-    })
+    if(task === undefined){
+      return "no tasks left"
+    }else{
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url : this.url_image_list_base+`?key=%22${task.list_name}%22`,
+          type : 'GET',
+          success: function(response){
+            GTF.imageList = response.rows[0].value.list;
+            resolve(GTF.imageList);
+          },
+          error: function (response) {
+              console.log("get of tasks failed : " + JSON.stringify(response));
+              reject("get of tasks failed : " + JSON.stringify(response))
+          }
+        });
+      })
+
+    }
   };
 
   this.buildUI = function(imageList) {

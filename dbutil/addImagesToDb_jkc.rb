@@ -37,7 +37,7 @@ else
 # csv
   ims = {}
   loop = 0
-  CSV.foreach("../../image-comparator-data/#{fromCSV}") do |row|
+  CSV.foreach("../#{imageFolder}/#{fromCSV}") do |row|
     if (loop > 0)
         ims[row[0]] = row[1]
     end
@@ -93,7 +93,7 @@ ims.each_with_index  do |im, idx|
   puts obj
   # binding.pry
   response =@db.save_doc(obj)
-  @db.put_attachment(obj, "image", File.open(imageFolder+im), :content_type => "image/#{imClass}")
+  @db.put_attachment(obj, "image", File.open("../#{imageFolder}/"+im), :content_type => "image/#{imClass}")
 end
 
 
