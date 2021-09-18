@@ -32,12 +32,13 @@ end
 
 if (fromCSV.nil?)
   # ims=Dir.glob("#{imageFolder}/*") --delete if it doesn't break anything
-  ims=Dir.glob("#{imageFolder}*")
+  ims=Dir.glob("#{imageFolder}/*")
+  # binding.pry
 else
 # csv
   ims = {}
   loop = 0
-  CSV.foreach("../#{imageFolder}/#{fromCSV}") do |row|
+  CSV.foreach("#{imageFolder}/#{fromCSV}") do |row|
     if (loop > 0)
         ims[row[0]] = row[1]
     end
@@ -91,9 +92,9 @@ ims.each_with_index  do |im, idx|
   
   obj['_id']=(idx+imgCount+1).to_s
   puts obj
-  # binding.pry
+  binding.pry
   response =@db.save_doc(obj)
-  @db.put_attachment(obj, "image", File.open("../#{imageFolder}/"+im), :content_type => "image/#{imClass}")
+  @db.put_attachment(obj, "image", File.open("#{imageFolder}/"+thisIm), :content_type => "image/#{imClass}")
 end
 
 

@@ -9,6 +9,29 @@ $(document).ready(function() {
     }
 });
 
+init_app = function(){
+    url = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/users`
+    $.ajax({
+        url : url,
+        type : 'GET',
+        success : function (json) {
+            // debugger
+            // populate the select dropdown
+            users = json.rows
+            users.forEach((v,i,a)=>{  
+                user = json.rows[i].value
+                select_dropdown = $("#username")
+                select_dropdown.append(`<option value="${user}">${user}</option>`);
+            })
+
+
+        },
+        error: function (response) {
+            console.log("users get failed : " + JSON.stringify(response));
+        }
+    });    
+}
+
 //
 handleUrlFilter = function(urlSearchStr) {
 console.log('In handleUrlFilter:\n')
@@ -53,7 +76,6 @@ console.log('In setLabelDanger:\n')
 
 updateStatusInfo = function() {
     console.log('In updateStatusInfo:\n')
-
     // update database
     var elem = document.getElementById("si_db");
     var db_elem = document.getElementById("database");
@@ -62,7 +84,7 @@ updateStatusInfo = function() {
     var label = $("#si_db_label");
     var isDanger = (seldb.value === "localhost");
     setLabelDanger(isDanger, label);
-
+    
     // update tasks
     var user = ImageCompare.username;
     if (user) {
@@ -208,7 +230,7 @@ createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
     dataStr += "\"image0\":\"" + dbName + img0.toString() + "\",";
     dataStr += "\"image1\":\"" + dbName + img1.toString() + "\",";
     dataStr += "\"winner\":\"" +  winVal.toString() + "\",";
-
+    dataStr += "\"tie_justification\":\"" +  comment + "\","; // -BB- New
     dataStr += "\"task\":\"" +  task._id + "\",";
     dataStr += "\"task_idx\":\"" +  task_idx + "\"";
 
@@ -325,7 +347,12 @@ console.log('saveResultsSetImages')
     var task_idx = ImageCompare.TaskFeeder.current_task_idx;
     var task = ImageCompare.TaskFeeder.current_task;
 
-    var comment = $("#compare-comment").val();
+    // var comment = $("#compare-comment").val(); // -BB- Old and changed 9/17/2021
+    if(winnerId === 0){
+        var comment = $("#tie_justification").val();
+    }else{
+        var comment = "Not Tie";
+    }
     var user = ImageCompare.username; // $("#username").val();
 
     // these two are like a transaction - how to ensure both or neither?
@@ -342,6 +369,7 @@ console.log('saveResultsSetImages')
 
     // same here - this needs to happen after the previous two
     $.when(d1, d2).then(updateStatusInfo());
+    $('#close-tie-button')[0].click()
 }
 
 var practice=true
@@ -360,15 +388,15 @@ function toggle_practice_mode(){
     }
 }
 
-function instructions_alert(){
-    alert(`***************
-    Arrow keys enabled:
-    * Left Arrow: Left Image
-    * Right Arrow: Right Image
-    * Up Arrow: Tie
-    ***************
-    `)
-}
+// function instructions_alert(){ // can probably delete
+//     alert(`***************
+//     Arrow keys enabled:
+//     * Left Arrow: Left Image
+//     * Right Arrow: Right Image
+//     * Up Arrow: Tie
+//     ***************
+//     `)
+// }
 
 document.addEventListener('keydown', function(event) {
     if(practice === true) {
@@ -389,25 +417,26 @@ document.addEventListener('keydown', function(event) {
             saveResultSetImages(-1);
         }
         else if(event.keyCode == 38) {
-            saveResultSetImages(0);
+            $('*[data-target="#tieModal"]')[0].click()
+            // saveResultSetImages(0);
         }
     }
 
 });
 
+function create_user(){
+    
+}
 
 OnImage0 = function() {
-
     saveResultSetImages(1);
 };
 
 OnImage1 = function() {
-
     saveResultSetImages(-1);
 };
 
 OnNotSure = function() {
-
     saveResultSetImages(0);
 };
 

@@ -60,6 +60,9 @@
     },
     "gridResults": {
       "map": "function(doc) {\n  if (doc.type===\"gridResult\")\n    emit(doc.task, doc);\n}"
+    },
+    "users": {
+      "map": "function(doc) {\n  if (doc.type===\"user\")\n    emit(doc.id, doc.username);\n}"
     }
   }
 }

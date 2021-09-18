@@ -77,7 +77,7 @@ updateStatInfoTasks = function(json) {
 	
     var result = json;
     var tasks = result.rows;
-
+    debugger
     var elem = document.getElementById("si_tasks");
     elem.textContent = "You have " + tasks.length + " unfinished tasks.";
 
@@ -146,12 +146,12 @@ updateStatInfoTasks = function(json) {
 
 var getTasks = function(username, successFn) {
 
-console.log('In getTasks:\n')
+    console.log('In getTasks:\n')
 
 
     var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
     var fullurl = dburl + "_design/basic_views/_view/incomplete_compare_tasks?key=\"" + username + "\"";
-
+    debugger
     $.ajax({
         url : fullurl,
         type : 'GET',

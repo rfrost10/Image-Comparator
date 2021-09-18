@@ -1,6 +1,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'pry'
 
 # Include config variables - BB 
 require './Configuration' 
@@ -54,6 +55,7 @@ response = JSON.parse(response.body)
 #inputs response
 imageIdRows = response['rows']
 imageIds = []
+binding.pry
 imageIdRows.each {|x| imageIds.push(x['value'].to_i) }
 imageIds = imageIds.sort()
 puts imageIds

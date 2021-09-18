@@ -1,5 +1,7 @@
 from app import app
-from flask import render_template, jsonify, send_file, request
+from app import makeTask
+
+from flask import render_template, jsonify, send_file, request, flash, redirect
 import requests, couchdb, io, json, pdb
 from dotenv import load_dotenv
 
@@ -54,7 +56,7 @@ def contact():
 # Action APIs
 @app.route('/get_tasks', methods=['GET'])
 def get_tasks():
-    DB_DNS = app.config["DB_DNS"]
+    DNS = app.config['DNS']
     DB_PORT = app.config["DB_PORT"]
     IMAGES_DB = app.config["IMAGES_DB"]
     DB_ADMIN_USER = app.config["DB_ADMIN_USER"]
@@ -63,7 +65,7 @@ def get_tasks():
 
     username = request.args['username']
 
-    base = "http://{}:{}/{}".format(DB_DNS,DB_PORT,IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS,DB_PORT,IMAGES_DB)
     view = f"_design/basic_views/_view/incomplete_compare_tasks?key=\"{username}\""
     url = f"{base}/{view}"
     # pdb.set_trace()
@@ -107,3 +109,57 @@ def task_results():
     db[_id] = grid_list
 
     return jsonify("asdf")
+
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    DNS = app.config['DNS']
+    DB_PORT = app.config['DB_PORT']
+    couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+    db = couch[app.config["IMAGES_DB"]]
+    pdb.set_trace()
+    # Check Form
+    if request.form['username'] == '':
+        flash("You can't leave user field blank")
+        return render_template('two_image.html')   
+    else:
+        username = request.form['username']
+
+    try:
+        years_exp = request.form['years-exp']
+    except:
+        flash("You have to choose your years of experience")
+        return render_template('two_image.html') 
+
+    try:
+        specialty = request.form['specialty']
+    except:
+        flash("You have to choose your specialty")
+        return render_template('two_image.html') 
+
+    ## Check if user already exists
+    username_db_record = db.find({'selector': {'username': username}})
+    usernames = [u for u in username_db_record]
+    if len(usernames) == 0:
+        # brand new user; create
+        # pdb.set_trace()
+        user = {
+            "type": "user",
+            "username": username,
+            "years_experience": years_exp,
+            "specialty": specialty
+        }
+        # pdb.set_trace()
+        doc_id, doc_rev = db.save(user)
+        flash(f"Created {username}")
+
+        # Make task for Image Compare - Kathi specific for now
+        makeTask.main(user=username, imageListName='kathisICList', imageListType="compare", taskOrder=1)
+        # Return to app
+        return redirect('/two_image')
+    else:
+        # User exists
+        flash("That user exists already")
+        return render_template('two_image.html')
+    
+    # results = json.loads("create_user - success")
+    return redirect('/two_image') 

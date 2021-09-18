@@ -50,6 +50,7 @@ COUCH_PORT=5984
 
 docker run \
  -p $COUCH_PORT:$COUCH_PORT \
+  --network="host"  \
  --name image-comparator-couchdb \
  -v /opt/couchdb/data:/opt/couchdb/data \
  -d \

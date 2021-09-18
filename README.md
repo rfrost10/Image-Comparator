@@ -121,6 +121,7 @@ root@a53f9696685a:/home/bb927/Image-Comparator#
 ```bash
 cd dbutil
 ruby addImagesToDb_jkc.rb Image-Comparator-Data <imageSetName> <fromCSV>
+ruby addImagesToDb_jkc.rb /home/bbearce/Documents/Image-Comparator/Image-Comparator-Data/Kathis_data kathisData
 ```
 
 * \<imageFolder> is any image folder on your machine.  
@@ -148,6 +149,7 @@ dcm
 
 ```bash
 ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
+# ruby makeICLFromImageSetName.rb kathisData 0 kathisICList
 ```
 
 * \<imageSetName> is the same name that was given to addImagesToDb.rb.  
@@ -158,6 +160,7 @@ ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
 
 ```bash
 ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
+# ruby makeTask.rb benjamin kathisICList compare 1
 ```
 
 * \<user> is who should complete the task  
@@ -251,3 +254,4 @@ In the order they appear this project has been forked and added to. Yet again we
 For questions, please contact:
 * Benjamin Bearce, bbearce@gmail.com  
 * Jayashree Kalpathy-Cramer, PhD kalpathy@nmr.mgh.harvard.edu  
+
