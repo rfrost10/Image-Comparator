@@ -62,7 +62,7 @@
                         <a href="/contact">Contact</a>
                     </li>
                     <li>
-                        <select id="database" onload"OnSetDB(this)" onchange="OnSetDB(this)">
+                        <select id="database" onload"OnSetDB(this)" onchange="OnSetDB(this)" style="display:none;">
                           <option value="localhost">localhost</option>
                         </select>
                     </li>
@@ -70,6 +70,7 @@
 
             <!-- manually add users that you assigned tasks too in makeTasks.rb -->
                         <select id="username" onchange="OnSetUser(this.value)">
+                        <!-- <select id="username" onchange="OnSetUser(this.value)" style="display:none;"> -->
                           <option selected="selected">Choose your user</option>
                           <!-- <option value="benjamin">benjamin</option> -->
                         </select>
@@ -89,7 +90,7 @@
 
     <!-- Page Content -->
     <div class="container">
-        <div class="row" id="si_database">
+        <div class="row" id="si_database" style="display:none;">
             <h3>Status Info</h3>
             <span id="si_db_label" class="label label-primary">Database</span>
             <span id="si_db">Localhost</span>
@@ -109,6 +110,8 @@
             <div id=create_new_user_div>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create User</button>
+                <p>Current User: <span id="current_user" style="color: red">User Not Created</span></p>
+                
             
                 <!-- Modal -->
                 <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
@@ -125,7 +128,7 @@
                                 <!-- Form for User input -->
                                 <!-- request.form['username'] -->
                                 <!-- request.form.get('username') -->
-                                <form action="http://pop-os:8081/create_user" method="post">
+                                <form action="http://{{ app_config.DNS }}:{{ app_config.HTTP_PORT }}/create_user" method="post">
 
                                   <label for="username">Username:</label><br>
                                   <input name="username" type="text" style="all: revert;"><br>
@@ -160,7 +163,7 @@
                                   <label for="other">other</label><br>
 
                                   <button class="btn btn-primary">Submit</button>
-
+                                  <p style="color:red;">If placeholders come up instead of images after creating a user, hit refresh.</p>
                                 </form>
 
 
@@ -182,7 +185,11 @@
             <p>Messages from form submission:</p>
             <ul class=flashes>
             {% for message in messages %}
+              {% if message.find("Created User") != -1 %}
+              <li style="color:green;">{{ message }}</li>
+              {% else %}
               <li style="color:red;">{{ message }}</li>
+              {% endif %}    
             {% endfor %}
             </ul>
           {% endif %}
@@ -203,7 +210,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                         <h5 class="modal-title" id="InstructionsLabel">Overview</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="comment_alert()">
                             <span aria-hidden="true">&times;</span>
                         </button>
                         </div>
@@ -211,9 +218,16 @@
                             <p>App Instructions:</p>
                             <ol>
                                 <li>Click "Creat User" and fill out metadata about yourself.</li>
-                                <li>Select yourself (the username you made) from the dropdown at the top of page.</li>
+                                <li>You will be redirected to the same page with survey questions for you to fill out.
+                                    <ul>
+                                      <li>
+                                        <p style="color:red;">If placeholders come up instead of images after creating a user, hit refresh.</p>
+                                      </li>
+                                    </ul>
+                                </li>
+                                <!-- <li>Select yourself (the username you made) from the dropdown at the top of page.</li> -->
                             </ol>
-                            <p>Optional: Click button "Toggle Practice Mode:" to allow for arrow keys to choose images. Otherwise you can click with you mouse. Controls are below.</p>
+                            <p>Optional: Click button "Toggle Practice Mode:" to allow for arrow keys to choose images. Otherwise you can click with your mouse. Controls are below.</p>
                             <p>***************</p>
                             <p>Arrow keys enabled (practice mode "Off"):</p>
                             <p>* Left Arrow: Left Image</p>
@@ -223,18 +237,18 @@
 
                             <hr>
 
-                            <p>Task Overview:</p>
+                            <!-- <p>Task Overview:</p>
                             <img src="{{ url_for('static', filename='img/kathis_example_1.png') }}" class="img-fluid" style="width: 85%;" alt="">
                             <p>Brain tumor illustration without an outline. The turquoise area represents the tumor, i.e. the target area that should get captured by the outline.</p>
                             <p style="font-weight: bold;">In the following, we will show you different brain tumor outlines for the image above and ask you to decide which you prefer.</p>
                             Example:
                             <img src="{{ url_for('static', filename='img/kathis_example_2.png') }}" class="img-fluid" style="width: 85%;" alt="">
                             <p style="font-weight: bold;">For the two ilustrations above, for example, the left outline would be preferable because it captures the full tumor (the whole turquoise area is patterned) and in the right image more than half of the tumor is missed by the outline.</p>
-                            <p style="font-weight: bold;">You will also get the option to say that you think both outlines are of the same quality. In this case, we'd ask you for a justification.</p>
+                            <p style="font-weight: bold;">You will also get the option to say that you think both outlines are of the same quality. In this case, we'd ask you for a justification.</p> -->
 
                         </div>
                         <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="comment_alert()">Close</button>
                         <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                         </div>
                     </div>
@@ -253,6 +267,23 @@
         </div>
         <!-- /.row -->
 
+        <hr>
+
+        <!-- [*] Comment Box if Tie comment not forced -->
+        <div class="row">
+          <div>
+            <h5 class="modal-title" id="tieModalLabel">Enter Optional Justification Before Making a Choice:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div>
+            <textarea id="justification" rows="4" cols="50">optional justification</textarea>           
+          </div>
+        </div>
+
+        <hr>
+
         <!-- Projects Row -->
         <div id="image-row" class="row">
 
@@ -269,34 +300,37 @@
 
 
           <div id=tie-button class="col-md-1 portfolio-item">
-            <!-- <button type="button" class="btn btn-warning" style="display:block; margin:auto;">Tie</button> -->
+            <!-- [*] Use if Tie comment not forced -->
+            <button type="button" class="btn btn-warning" onclick="OnImage1()" style="display:block; margin:auto;">Tie</button>
+            
+            <!-- [-*-] Use if Tie comment forced -->
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#tieModal">Tie</button>
+            <!-- <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#tieModal">Tie</button> -->
           </div>
 
 
+            <!-- [-*-] Modal if Tie comment forced -->
+            <!-- <div class="modal fade" id="tieModal" tabindex="-1" role="dialog" aria-labelledby="tieModalLabel" aria-hidden="true">
 
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="tieModalLabel">Enter Justification For Tie</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input id="justification" type="text" value="default" style="all: revert;">
+                </div>
+                <div class="modal-footer">
+                  <button id="close-tie-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" onclick="OnNotSure()">Save Justification</button>
+                </div>
+                </div>
+              </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="tieModal" tabindex="-1" role="dialog" aria-labelledby="tieModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="tieModalLabel">Enter Justification For Tie</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <input id="tie_justification" type="text" value="default" style="all: revert;">
-              </div>
-              <div class="modal-footer">
-                <button id="close-tie-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="OnNotSure()">Save Justification</button>
-              </div>
-              </div>
-            </div>
-            </div>
+            </div> -->
 
 
 

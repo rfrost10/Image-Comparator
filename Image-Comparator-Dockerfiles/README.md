@@ -48,9 +48,9 @@ COUCHDB_USER=admin
 COUCHDB_PASSWORD=password
 COUCH_PORT=5984
 
+
 docker run \
- -p $COUCH_PORT:$COUCH_PORT \
-  --network="host"  \
+ -p $COUCH_PORT:5984 \
  --name image-comparator-couchdb \
  -v /opt/couchdb/data:/opt/couchdb/data \
  -d \
@@ -90,21 +90,24 @@ Build a new image for flask and serve in the context of the flask_server folder:
 ```bash
 cd Image-Comparator-Dockerfiles
 CONTAINER_NAME=image-comparator
+SUPPLEMENTARY_NAME="" # optional for multiple containers
 CONTAINER_TAG=flask
+MACHINE_PORT="8080"
 
 docker build . -f Dockerfile_flask -t $CONTAINER_NAME:$CONTAINER_TAG
 
 cd ../
 
+# sometimes you will need ```--network="host"```
+# if you can't resolve DNS. Not the most secure though...
 docker run \
   -it \
   --rm \
-  -p 8081:8081 \
-  --network="host"  \
+  -p $MACHINE_PORT:8080 \
   -v $PWD/flask_server:/flask_server \
   -v $PWD:$PWD \
   -w /flask_server \
-  --name "$CONTAINER_NAME""-""$CONTAINER_TAG" \
+  --name "$CONTAINER_NAME""-""$CONTAINER_TAG""$SUPPLEMENTARY_NAME" \
   image-comparator:flask
 ```
 
@@ -115,5 +118,5 @@ pip3 install -r requirements.txt
 
 #### Run flask server
 ```bash
-flask run --port 8081 --host 0.0.0.0
+flask run --port 8080 --host 0.0.0.0
 ```

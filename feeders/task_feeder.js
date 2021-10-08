@@ -17,6 +17,7 @@ var ImageCompare = (function (IC) {
         $("#to-do-message").text(prompt);
     }
 
+ 
     // consult results and image database to select two images to present to user
     IC.TaskFeeder.SetImagePair = function(username) {
 

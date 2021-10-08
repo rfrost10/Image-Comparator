@@ -1,8 +1,19 @@
 
 $(document).ready(function() {
+    // THIS WHOLE SECTION MAKES ME CRINGE...DUCT TAPED TOGETHER BARELY
 
-    handleUrlFilter(document.location.search);
-    updateStatusInfo();
+    // Until the code is written better a delay helps force no errors on loading
+    setTimeout(()=>{ handleUrlFilter(document.location.search) }, 1000);
+
+    // $.when( config_initialization ).then(() => {
+    //     // updateStatusInfo();
+    //     init_app()
+    //     if (ImageCompare.username) {
+    //         ImageCompare.TaskFeeder.SetImagePair(ImageCompare.username);
+    //     }
+    // })
+    // Original below
+    init_app();
 
     if (ImageCompare.username) {
         ImageCompare.TaskFeeder.SetImagePair(ImageCompare.username);
@@ -19,9 +30,10 @@ init_app = function(){
             // populate the select dropdown
             users = json.rows
             users.forEach((v,i,a)=>{  
-                user = json.rows[i].value
+                user = json.rows[i].value.username
                 select_dropdown = $("#username")
                 select_dropdown.append(`<option value="${user}">${user}</option>`);
+                
             })
 
 
@@ -34,13 +46,15 @@ init_app = function(){
 
 //
 handleUrlFilter = function(urlSearchStr) {
-console.log('In handleUrlFilter:\n')
+    console.log('In handleUrlFilter:\n')
     //alert(urlSearchStr);
     qs= new QueryString(urlSearchStr);
     var user = qs.value("username");
     if (user) {
 
       ImageCompare.username = user;
+      $("#current_user")[0].innerHTML = user
+      $("#current_user")[0].style.color = "green"
 
       OnSetUser(user);
     }
@@ -51,7 +65,7 @@ console.log('In handleUrlFilter:\n')
         elem = document.getElementById("database");
         elem.style.display='none'; // or ... style.visibility="hidden"; vis takes the same space, but is not shown
         elem = document.getElementById("username");
-        elem.style.display='none';
+        // elem.style.display='none';
 
         // also remove the Status info about the db
         elem = document.getElementById("si_database");
@@ -191,15 +205,23 @@ var getTasks = function(username, successFn) {
     // });
 
     // New Code that asks flask to handle credential level transactions
-    $.ajax({
-        url: `http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`,
-        type: 'GET',
-        success: successFn,
-        error: function(response){
-            console.log("error:"+response)
-        }
+    if(typeof DNS === 'undefined'){
+        // debugger;
+        // let current_url = location.href;
+        setTimeout(window.location.reload, 1000)
+        
+    }else{
+        $.ajax({
+            url: `http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`,
+            type: 'GET',
+            success: successFn,
+            error: function(response){
+                console.log("error:"+response)
+            }
+    
+        })
+    }
 
-    })
 }
 
 // THIS IS A DB PUT
@@ -230,7 +252,7 @@ createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
     dataStr += "\"image0\":\"" + dbName + img0.toString() + "\",";
     dataStr += "\"image1\":\"" + dbName + img1.toString() + "\",";
     dataStr += "\"winner\":\"" +  winVal.toString() + "\",";
-    dataStr += "\"tie_justification\":\"" +  comment + "\","; // -BB- New
+    dataStr += "\"justification\":\"" +  comment + "\","; // -BB- New
     dataStr += "\"task\":\"" +  task._id + "\",";
     dataStr += "\"task_idx\":\"" +  task_idx + "\"";
 
@@ -348,11 +370,18 @@ console.log('saveResultsSetImages')
     var task = ImageCompare.TaskFeeder.current_task;
 
     // var comment = $("#compare-comment").val(); // -BB- Old and changed 9/17/2021
+    
+    // If Tie mandatory
     if(winnerId === 0){
-        var comment = $("#tie_justification").val();
+        var comment = $("#justification").val();
     }else{
         var comment = "Not Tie";
     }
+
+    // If Tie not mandatory and all submissions require comment or at least an optional comment
+    var comment = $("#justification").val();
+
+
     var user = ImageCompare.username; // $("#username").val();
 
     // these two are like a transaction - how to ensure both or neither?
@@ -362,6 +391,10 @@ console.log('saveResultsSetImages')
 
     var d1 = createICResult(winnerId, img0, img1, user, comment, task, task_idx);
     var d2 = updateTask(task, user);
+    
+    // Update justification back to default;
+    // debugger
+    $("#justification").val('optional justification')
     // update happens asynchronously, so this would be wrong:
     // ImageCompare.TaskFeeder.SetImagePair(user);
     // instead it has to happen inside the updateTask success
@@ -369,7 +402,8 @@ console.log('saveResultsSetImages')
 
     // same here - this needs to happen after the previous two
     $.when(d1, d2).then(updateStatusInfo());
-    $('#close-tie-button')[0].click()
+
+    // $('#close-tie-button')[0].click() // BB - will need this to close modal
 }
 
 var practice=true
@@ -398,6 +432,10 @@ function toggle_practice_mode(){
 //     `)
 // }
 
+function comment_alert(){
+    alert('If you want to provide an optional justification for your decision (left/right/tie), please enter it before you click left/right/tie. The text box will refresh after a decision is made.')
+}
+
 document.addEventListener('keydown', function(event) {
     if(practice === true) {
         if(event.keyCode == 37) {
@@ -417,8 +455,8 @@ document.addEventListener('keydown', function(event) {
             saveResultSetImages(-1);
         }
         else if(event.keyCode == 38) {
-            $('*[data-target="#tieModal"]')[0].click()
-            // saveResultSetImages(0);
+            // $('*[data-target="#tieModal"]')[0].click() // for forced tie justification
+            saveResultSetImages(0);
         }
     }
 

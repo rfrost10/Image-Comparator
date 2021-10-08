@@ -27,11 +27,12 @@ function init_app() {
           // var img = $(`<img src="/static/img/TCGA_CS_4944.png" alt="">`)
           var img = $(`<img src="http://${DNS}:${DB_PORT}/image_comparator/${v}/image" alt="">`)
           var label = $(`<label for="cars">Choose a class:</label>`)
+          // selection_list = ['lateral','frontal'] //for later development
+          // debugger
           var select = $(`<select name="class" id="image_${v}">
-                            <option value="no_motion">no_motion</option>
-                            <option value="mild_motion" selected>mild_motion</option>
-                            <option value="moderate_motion">moderate_motion</option>
-                            <option value="severe_motion">severe_motion</option>
+                            <option value="option1" selected>option1</option>
+                            <option value="option2" selected>option2</option>
+                            <option value="option3" selected>option3</option>
                            </select>`)
           row.append(col)
           col.append(img, label, select)    

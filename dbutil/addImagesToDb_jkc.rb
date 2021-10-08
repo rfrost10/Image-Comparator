@@ -92,7 +92,7 @@ ims.each_with_index  do |im, idx|
   
   obj['_id']=(idx+imgCount+1).to_s
   puts obj
-  binding.pry
+  # binding.pry
   response =@db.save_doc(obj)
   @db.put_attachment(obj, "image", File.open("#{imageFolder}/"+thisIm), :content_type => "image/#{imClass}")
 end

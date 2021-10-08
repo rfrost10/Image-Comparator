@@ -16,7 +16,6 @@ def config():
         "IMAGES_DB":app.config['IMAGES_DB'],
         "DB_PORT":app.config['DB_PORT'],
         "HTTP_PORT":app.config['HTTP_PORT'],
-        "HTTP_PORT":app.config['HTTP_PORT'],
         "ADMIN_PARTY":app.config['ADMIN_PARTY'],
     }
     return jsonify(config)
@@ -28,7 +27,9 @@ def index():
 
 @app.route('/two_image', methods=['GET'])
 def two_image():
-    return render_template('two_image.html')
+    con = json.loads(config().data)
+    # pdb.set_trace()
+    return render_template('two_image.html', app_config=con)
 
 @app.route('/image_class', methods=['GET'])
 def image_class():
@@ -114,13 +115,17 @@ def task_results():
 def create_user():
     DNS = app.config['DNS']
     DB_PORT = app.config['DB_PORT']
+    # pdb.set_trace()
     couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
     db = couch[app.config["IMAGES_DB"]]
-    pdb.set_trace()
+    con = json.loads(config().data)
     # Check Form
     if request.form['username'] == '':
         flash("You can't leave user field blank")
-        return render_template('two_image.html')   
+        return render_template('two_image.html', app_config=con)   
+    elif request.form['username'].find(";") != -1:
+        flash("Username cannot have \";\"'s")
+        return render_template('two_image.html', app_config=con)   
     else:
         username = request.form['username']
 
@@ -128,13 +133,13 @@ def create_user():
         years_exp = request.form['years-exp']
     except:
         flash("You have to choose your years of experience")
-        return render_template('two_image.html') 
+        return render_template('two_image.html', app_config=con) 
 
     try:
         specialty = request.form['specialty']
     except:
         flash("You have to choose your specialty")
-        return render_template('two_image.html') 
+        return render_template('two_image.html', app_config=con) 
 
     ## Check if user already exists
     username_db_record = db.find({'selector': {'username': username}})
@@ -150,16 +155,17 @@ def create_user():
         }
         # pdb.set_trace()
         doc_id, doc_rev = db.save(user)
-        flash(f"Created {username}")
+        flash(f"Created User: {username}")
 
-        # Make task for Image Compare - Kathi specific for now
-        makeTask.main(user=username, imageListName='kathisICList', imageListType="compare", taskOrder=1)
+        # Make task for Image Compare - manually enter imageListName specific for now
+        makeTask.main(user=username, imageListName='', imageListType="compare", taskOrder=1)
         # Return to app
-        return redirect('/two_image')
+        # pdb.set_trace()
+        return redirect(f'/two_image?username={username}')
     else:
         # User exists
         flash("That user exists already")
-        return render_template('two_image.html')
+        return render_template('two_image.html', app_config=con)
     
     # results = json.loads("create_user - success")
     return redirect('/two_image') 

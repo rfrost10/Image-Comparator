@@ -16,7 +16,6 @@ ADMIN_PARTY = Configuration::ADMIN_PARTY
 
 #  # Include config variables - BB
 
-
 if (ARGV.size != 3) then
     puts "Usage: ruby : #{$PROGRAM_NAME} <imageSet> <list name> <pct repeat>\n";
     puts "1 - <imageSet> is an existing imageSet in the database\n";
@@ -56,6 +55,7 @@ response = JSON.parse(response.body)
 
 
 
+# binding.pry
 imageIdRows = response['rows']
 imageIds = []
 imageIdRows.each {|x| imageIds.push(x['value'].to_i) }

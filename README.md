@@ -40,20 +40,22 @@ Create a copy called *Configuration.rb* and replace all variables with your cust
 
 To finish configuring a single node setup, run the following;
 ```
-# curl -X PUT http://0.0.0.0:5984/_users
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_users
-# curl -X PUT http://0.0.0.0:5984/_replicator
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/_replicator
+DB_PORT=5984
+# curl -X PUT http://0.0.0.0:$DB_PORT/_users
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/_users
+# curl -X PUT http://0.0.0.0:$DB_PORT/_replicator
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/_replicator
 ```
 
 To create and setup the database, run the following:
 ```
 DB_NAME=image_comparator # same as <db_name>
-# curl -X PUT http://0.0.0.0:5984/$DB_NAME # if in admin party
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME
+
+# curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME # if in admin party
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME
 cd dbutil
-# curl -X PUT http://0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json # if in admin party
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:5984/$DB_NAME/_design/basic_views -d @basic_views.json
+# curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @basic_views.json # if in admin party
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @basic_views.json
 ```
 
 ### Image-Comparator
@@ -96,12 +98,13 @@ contact.html                   images     rubyUtils
 Preview of working directory (scratch - should be the same as docker listing):
 ```bash
 bb927@acadia-qtim:~/Image-Comparator$ ls
-about.html    Image-Comparator-Dockerfiles   README.md
-contact.html  Image-Comparator-From-Scratch  results
-dbutil        images                         rubyUtils
-deploy.rb     index.html                     ui
-docs          instatllationInstructions.txt  util
-feeders       public                         vendor
+Image-Comparator-Data          dbutil        public
+Image-Comparator-Dockerfiles   deploy.rb     results
+Image-Comparator-From-Scratch  docs          rubyUtils
+README.md                      feeders       ui
+README_MIDRC.md                flask_server  util
+about.html                     images        vendor
+contact.html                   index.html
 ```
 
 Continuing where we left off we need to run addImagesToDb_jkc.rb to add images. Place your imaging data in a folder at the same level as "Image-Comparator"
@@ -120,8 +123,7 @@ root@a53f9696685a:/home/bb927/Image-Comparator#
 
 ```bash
 cd dbutil
-ruby addImagesToDb_jkc.rb Image-Comparator-Data <imageSetName> <fromCSV>
-ruby addImagesToDb_jkc.rb /home/bbearce/Documents/Image-Comparator/Image-Comparator-Data/Kathis_data kathisData
+ruby addImagesToDb_jkc.rb <path to Image-Comparator-Data> <imageSetName> <fromCSV>
 ```
 
 * \<imageFolder> is any image folder on your machine.  
@@ -149,7 +151,6 @@ dcm
 
 ```bash
 ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
-# ruby makeICLFromImageSetName.rb kathisData 0 kathisICList
 ```
 
 * \<imageSetName> is the same name that was given to addImagesToDb.rb.  
@@ -160,7 +161,6 @@ ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
 
 ```bash
 ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
-# ruby makeTask.rb benjamin kathisICList compare 1
 ```
 
 * \<user> is who should complete the task  
@@ -201,26 +201,18 @@ $ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_vie
 #### Make Image Classify Image List
 ```bash
 docker exec -it image-comparator-flask bash
-cd /home/bbearce/Documents/Image-Comparator/dbutil
+cd /home/azureuser/Image-Comparator/dbutil
 ```
 and create:
 ```bash
 ruby makeImageClassifyListImageSet.rb <imageSet> <listName> <pctRepeat>
 ```
-Ex:
-```bash
-ruby makeImageClassifyListImageSet.rb imageSet1 classifyList1 0
-```
+
 #### Make Task
 ```bash
 ruby makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
 > [optional argment]
-
-Ex
-```bash
-ruby makeTask.rb benjamin classifyList1 classify 2
-```
 
 ### Grid-Classifier
 
@@ -233,12 +225,6 @@ python3 makeGridListFromImageSetName.py <imageSet> <listName>
 ```bash
 python3 makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
-Ex:
-```bash
-python3 makeTask.py benjamin IkbeomGridList1 grid 1
-```
-
-
 
 ## Acknowledgements
 
