@@ -223,7 +223,7 @@ python3 makeGridListFromImageSetName.py <imageSet> <listName>
 
 #### Task
 ```bash
-python3 makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
+python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
 
 ## Acknowledgements

@@ -1,7 +1,3 @@
-# require 'net/http'
-# require 'uri'
-# require 'json'
-
 import os, sys, requests, json, couchdb, uuid, pdb, pprint as pp
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv

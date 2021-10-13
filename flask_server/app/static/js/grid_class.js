@@ -15,25 +15,29 @@ function init_app() {
       return "no tasks means no UI to build"
     }else{
       grid_of_images = $('#grid_of_images');
-      n_count = imageList.length;
-      width = 5;
+      grid_of_images.empty()
+      let n_count = imageList.length;
+      let width = $("#img_columns")[0].value
+      // let width = 5;
+      let col_sizes = {1:12, 2:6, 3:4, 4:3, 5:2}
       height = Math.floor(n_count/width) + n_count%width;
       [...Array(height).keys()].forEach((v,i,a) => {
         console.log(`making row ${i}`)
         var row = $(`<div class="row"></div>`)
         grid_of_images.append(row)
         imageList.slice(v*width,(v+1)*width).forEach((v,i,a) => {
-          var col = $(`<div class="col-xs-2"></div>`)
+          var col = $(`<div class="col-xs-${col_sizes[width]}"></div>`)
           // var img = $(`<img src="/static/img/TCGA_CS_4944.png" alt="">`)
-          var img = $(`<img src="http://${DNS}:${DB_PORT}/image_comparator/${v}/image" alt="">`)
+          var img = $(`<img src="http://${DNS}:${DB_PORT}/image_comparator/${v}/image" class="img-responsive" alt="">`)
           var label = $(`<label for="cars">Choose a class:</label>`)
           // selection_list = ['lateral','frontal'] //for later development
           // debugger
           var select = $(`<select name="class" id="image_${v}">
                             <option value="option1" selected>option1</option>
-                            <option value="option2" selected>option2</option>
-                            <option value="option3" selected>option3</option>
-                           </select>`)
+		                        <option value="option2">option2</option>
+		                        <option value="option3">option3</option>
+		                        <option value="option4">option4</option>
+                          </select>`)
           row.append(col)
           col.append(img, label, select)    
         })

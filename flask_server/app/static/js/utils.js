@@ -1,11 +1,11 @@
 // source: https://gist.github.com/paldepind/7211654
 
-let HOST="image-comparator.westeurope.cloudapp.azure.com"
-let PORT="5985"
+let HOST=""
+let PORT="5984"
 let DB="image_comparator"
 let VIEWS_CATEGORY_NAME="basic_views"
 
-let VIEW="taskresults"
+let VIEW="imageSet2ImageId_deleteme"
 
 function delete_docs_in_view(VIEW){
 
@@ -25,7 +25,7 @@ function delete_docs_in_view(VIEW){
 
 }
 
-// delete_docs_in_view(VIEW)
+delete_docs_in_view(VIEW)
 
 // Dangerous!!!
 views_to_clear = ['users','taskresults','tasks', 'classifyResults', 'image_classify_lists', 'image_compare_lists', 'image_grid_lists', 'imageSet2ImageId_deleteme']
