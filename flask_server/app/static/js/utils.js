@@ -1,7 +1,7 @@
 // source: https://gist.github.com/paldepind/7211654
 
-let HOST="image-comparator.westeurope.cloudapp.azure.com"
-let PORT="5985"
+let HOST=""
+let PORT=""
 let DB="image_comparator"
 let VIEWS_CATEGORY_NAME="basic_views"
 

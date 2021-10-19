@@ -99,10 +99,15 @@ docker build . -f Dockerfile_flask -t $CONTAINER_NAME:$CONTAINER_TAG
 cd ../
 
 # sometimes you will need ```--network="host"```
+# soln to the host issue is also solved more appropriately with: what is in the following code
+# source: https://stackoverflow.com/questions/38344941/two-dockers-container-see-each-others-in-the-same-machine
 # if you can't resolve DNS. Not the most secure though...
+
 docker run \
   -it \
   --rm \
+  --link=image-comparator-couchdb \
+  --expose="$COUCH_PORT" \
   -p $MACHINE_PORT:8080 \
   -v $PWD/flask_server:/flask_server \
   -v $PWD:$PWD \

@@ -18,8 +18,8 @@
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/2-col-portfolio.css') }}" rel="stylesheet">
     <!--    <link href="two_image.css" rel="stylesheet"> -->
-
     <link href="{{ url_for('static', filename='css/two_image.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
 
     <link rel="shortcut icon" type="image/png" href="/images/favicon-32x32.png">
 
@@ -343,6 +343,16 @@
 
         </div>
         <!-- /.row -->
+
+
+        <!-- DELETE ME...I'm an example -->
+        <!-- <div class="row">
+            <div class="col-md-5 portfolio-item" style="display:inline-block;">
+                <img id="image-from-flask" class="img-responsive portfolio-item" src="https://via.placeholder.com/1250x500" alt="" style="width:100%;">
+            </div>
+        </div> -->
+        <!--  -->
+
         <hr>
 
     </div>
@@ -360,7 +370,7 @@
     <script src="{{ url_for('static', filename='js/task_feeder.js') }}"></script>
 
     <!-- Test Get Image -->
-    <!-- <script src="{{ url_for('static', filename='js/test_get_image.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/test_get_image.js') }}"></script>
 
     <!-- document ready behavior and handlers -->
     <script src="{{ url_for('static', filename='js/queryStringParser.js') }}"></script>

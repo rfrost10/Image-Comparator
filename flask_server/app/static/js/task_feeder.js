@@ -17,6 +17,23 @@ var ImageCompare = (function (IC) {
         $("#to-do-message").text(prompt);
     }
 
+    // Get base64 representation of image we are fetching from db
+    IC.TaskFeeder.getBase64DataOfImageFromCouch = (image_id=1, htmlID="image0")=>{
+        var url1 = `http://${DNS}:${HTTP_PORT}/get_image/${image_id}`
+        fetch(url1)
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            $(`#${htmlID}`).attr("src", 'data:image/png;base64,' + data)
+            // $("#image-from-flask").attr("src", 'data:image/png;base64,' + data)
+            
+            // vanilla js
+            // document.getElementById('image-from-flask').src = 'data:image/png;base64,' + data;
+            
+        })
+    };
+
     // Set GetImageDbUrl - BB
     IC.TaskFeeder.GetImageDbUrl = function () {
         var  db_config_elem = document.getElementById("database");
@@ -42,13 +59,14 @@ var ImageCompare = (function (IC) {
 
     // consult results and image database to select two images to present to user
     IC.TaskFeeder.SetImagePair = function(username) {
-
         $("#compare-comment").val(this.defaultComment);
 
         // update the dbconfig - guess this should be a function
         var dbName = IC.TaskFeeder.GetImageDbUrl();
-
-        var fullurl = dbName + '_design/basic_views/_view/incomplete_compare_tasks?key=\"' + username+ "\"";
+        // COUCHDB AJAX
+        // var fullurl = dbName + '_design/basic_views/_view/incomplete_compare_tasks?key=\"' + username+ "\"";
+        // FLASK AJAX
+        let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`
         $.ajax({
             url : fullurl,
             // beforeSend: function (xhr) {
@@ -56,7 +74,7 @@ var ImageCompare = (function (IC) {
             // },
             type : 'GET',
             success : function(json) {
-
+                // debugger
                 var result = json
                 var curUser = username;
 
@@ -93,14 +111,20 @@ var ImageCompare = (function (IC) {
                 var curICL = IC.TaskFeeder.current_icl = task.image_compare_list;
                 var curTaskIdx = IC.TaskFeeder.current_task_idx = task.current_idx;
 
+                // COUCHDB AJAX
+                // let url = dbName + '_design/basic_views/_view/image_compare_lists'
+                // FLASK AJAX
+                let url = `http://${DNS}:${HTTP_PORT}/get_image_compare_lists`
+                // debugger
                 // now get the next pair of image ids
                 $.ajax({
-                    url : dbName + '_design/basic_views/_view/image_compare_lists',
+                    url : url,
                     // beforeSend: function (xhr) {
                     //     xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
                     // },
                     type : 'GET',
                     success: function (json) {
+                        // debugger
                         // okay, this seems wrong, we got all the tasks - way too much data over the wire
                         // filtering should happen on the server side - is this what reduce is for?
 
@@ -128,33 +152,41 @@ var ImageCompare = (function (IC) {
 
                         if (prompt) {
                             ImageCompare.TaskFeeder.SetPrompt(prompt);
-                        }
-
+                        }                      
+                        // //img0
                         var idx0 = nextpair[0];
-                        var img0 = document.getElementById("image0");
-                        //img0.src = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx0.toString() + "/image";
-                        $("#image0").fadeOut(100, function() {
-			    var newSrc = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx0.toString() + "/image";
-                            var newImg = new Image(); // by having a new image, onload is called even if the image is already cached
-                            newImg.onload = function() {
-                                $("#image0").attr("src", newImg.src);
-                                $("#image0").fadeIn(100);
-                            };
-                            newImg.src = newSrc;//.fadeIn(400);
-                        });
-
+                        image0_src_attribute = IC.TaskFeeder.getBase64DataOfImageFromCouch(idx0.toString(), htmlID="image0")
+                        // //img1
                         var idx1 = nextpair[1];
-                        var img1 = document.getElementById("image1");
+                        image1_src_attribute = IC.TaskFeeder.getBase64DataOfImageFromCouch(idx1.toString(), htmlID="image1")
+
+                        // ---###
+                        // var idx0 = nextpair[0];
+                        // var img0 = document.getElementById("image0");
+                        //img0.src = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx0.toString() + "/image";
+                        // $("#image0").fadeOut(100, function() {
+                        //     var newSrc = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx0.toString() + "/image";
+                        //     var newImg = new Image(); // by having a new image, onload is called even if the image is already cached
+                        //     newImg.onload = function() {
+                        //         $("#image0").attr("src", newImg.src);
+                        //         $("#image0").fadeIn(100);
+                        //     };
+                        //     newImg.src = newSrc;//.fadeIn(400);
+                        // });
+
+                        // var idx1 = nextpair[1];
+                        // var img1 = document.getElementById("image1");
                         //img1.src = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx1.toString() + "/image";
-                        $("#image1").fadeOut(100, function() {
-			    var newSrc = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx1.toString() + "/image";
-                            var newImg = new Image(); // by having a new image, onload is called even if the image is already cached
-                            newImg.onload = function() {
-                                $("#image1").attr("src", newImg.src);
-                                $("#image1").fadeIn(100);
-                            };
-                            newImg.src = newSrc;//.fadeIn(400);
-                        });
+                        // $("#image1").fadeOut(100, function () {
+                        //     var newSrc = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx1.toString() + "/image";
+                        //     var newImg = new Image(); // by having a new image, onload is called even if the image is already cached
+                        //     newImg.onload = function() {
+                        //         $("#image1").attr("src", newImg.src);
+                        //         $("#image1").fadeIn(100);
+                        //     };
+                        //     newImg.src = newSrc;//.fadeIn(400);
+                        // });
+                        // ---###
 
                         IC.TaskFeeder.Image0 = idx0;
                         IC.TaskFeeder.Image1 = idx1;
@@ -181,7 +213,7 @@ var ImageCompare = (function (IC) {
 
         // update the dbconfig - guess this should be a function
         var dbName = IC.TaskFeeder.GetImageDbUrl();
-
+        debugger; // BB - wasn't sure we'd see this part of the code. Exciting times...
         var fullurl = dbName + '_design/basic_views/_view/incomplete_OCTcompare_tasks?key=\"' + username+ "\"";
         $.ajax({
             url : fullurl,
@@ -208,12 +240,13 @@ var ImageCompare = (function (IC) {
                 var curTaskIdx = IC.TaskFeeder.current_task_idx = task.current_idx;
 
                 // now get the next pair of image ids
+                debugger; // BB - wasn't sure we'd see this part of the code. Exciting times...
                 $.ajax({
                     url : dbName + '_design/basic_views/_view/OCTimage_compare_lists',
                     type : 'GET',
-         	    beforeSend: function (xhr) {
-	  	        xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
-	   	    },
+         	        beforeSend: function (xhr) {
+	  	                xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
+	   	            },
                     success: function (json) {
                         // okay, this seems wrong, we got all the tasks - way too much data over the wire
                         // filtering should happen on the server side - is this what reduce is for?
@@ -252,12 +285,12 @@ var ImageCompare = (function (IC) {
                         IC.TaskFeeder.Image1 = idx1;
                         IC.TaskFeeder.Image0Idx = 0;
                         IC.TaskFeeder.Image1Idx = 0;
-
+                        debugger; // BB - wasn't sure we'd see this part of the code. Exciting times...
                         $.ajax({
                             url : IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + "OCT" + idx0.toString(),
                             beforeSend: function (xhr) {
-		    	        xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
-		    	    },
+		    	                xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
+		    	            },
                             type : 'GET',
                             success : function(json) {
                                 IC.TaskFeeder.Image0Max = json.numImages;
@@ -277,12 +310,12 @@ var ImageCompare = (function (IC) {
                                 });
                             }
                         });
-
+                        debugger; // BB - wasn't sure we'd see this part of the code. Exciting times...
                         $.ajax({
                             url : IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + "OCT" + idx1.toString(),
-			    beforeSend: function (xhr) {
-		    	        xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
-		    	    },
+			                beforeSend: function (xhr) {
+		    	                xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
+		    	            },
                             type : 'GET',
                             success : function(json) {
                                 IC.TaskFeeder.Image1Max = json.numImages;
@@ -303,9 +336,6 @@ var ImageCompare = (function (IC) {
                                 });
                             }
                         });
-
-
-
 
 
                         // $("#slider0").slider("destroy");

@@ -62,6 +62,7 @@ function TaskFeeder(config_obj) {
 
   // Flask URLs
   this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
+  this.get_base64_data_of_image_from_couch = `http://${DNS}:${HTTP_PORT}/get_image/`;
   // this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
   
   
@@ -210,6 +211,20 @@ function TaskFeeder(config_obj) {
 
   this.buildUI = function(imageList) {
     alert("app not set up to inherit properly")
+  };
+
+  this.getBase64DataOfImageFromCouch = (image_id=1)=>{ // For later, not being used yet
+    var url1 = `http://{DNS}:${HTTP_PORT}/get_image/${image_id}`
+    fetch(url1)
+      .then(response => {
+        return response.text();
+      })
+      .then(data => {
+        debugger
+        $("#image-from-flask").attr("src", 'data:image/png;base64,' + data)
+        // document.getElementById('image-from-flask').src = 'data:image/png;base64,' + data;
+        
+      })
   };
 
 }

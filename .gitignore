@@ -2,3 +2,5 @@
 data/
 Configuration.rb
 .env
+Image-Comparator-Data/*
+__pycache__

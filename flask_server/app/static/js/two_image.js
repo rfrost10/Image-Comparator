@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     // THIS WHOLE SECTION MAKES ME CRINGE...DUCT TAPED TOGETHER BARELY
 
@@ -13,7 +12,8 @@ $(document).ready(function() {
     //     }
     // })
     // Original below
-    init_app();
+    // setTimeout(()=>{init_app()}, 1000);
+    init_app()
 
     if (ImageCompare.username) {
         ImageCompare.TaskFeeder.SetImagePair(ImageCompare.username);
@@ -21,7 +21,10 @@ $(document).ready(function() {
 });
 
 init_app = function(){
-    url = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/users`
+    // FLASK AJAX
+    url = `http://${DNS}:${HTTP_PORT}/get_users`
+    // COUCHDB AJAX
+    // url = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/users`
     $.ajax({
         url : url,
         type : 'GET',
@@ -35,13 +38,15 @@ init_app = function(){
                 select_dropdown.append(`<option value="${user}">${user}</option>`);
                 
             })
-
-
+            
+            
         },
         error: function (response) {
+            debugger
             console.log("users get failed : " + JSON.stringify(response));
         }
-    });    
+    }); 
+ 
 }
 
 //
@@ -146,17 +151,20 @@ updateStatInfoTasks = function(json) {
 
         var icl_id = firstTask.image_compare_list;
 
-        var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
+        var dburl = ImageCompare.TaskFeeder.GetImageDbUrl(); // Might be deprecated
 
-        var fullurl = dburl + "_design/basic_views/_view/image_compare_lists?key=\"" + icl_id + "\"";
-        
+        // FLASK AJAX
+        let url= `http://${DNS}:${HTTP_PORT}/get_image_compare_lists?key=${icl_id}`
+        // COUCHDB AJAX
+        // var fullurl = dburl + "_design/basic_views/_view/image_compare_lists?key=\"" + icl_id + "\"";
         $.ajax({
-            url : fullurl,
+            url : url,
             // beforeSend: function (xhr) {
-            //     xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
-            // },
+                //     xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
+                // },
             type : 'GET',
             success : function (json) {
+                // debugger
                 //console.log("get succeeded : " + JSON.stringify(json));
                 var result = json;
 
@@ -187,22 +195,13 @@ updateStatInfoTasks = function(json) {
 var getTasks = function(username, successFn) {
 
     console.log('In getTasks:\n')
-
+    // COUCHDB AJAX
     // Old Code that directly talks to couchdb
     // var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
     // var fullurl = dburl + "_design/basic_views/_view/incomplete_compare_tasks?key=\"" + username + "\"";
 
-    // $.ajax({
-    //     url : fullurl,
-    //     // beforeSend: function (xhr) {
-    //     //     xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
-    //     // },
-    //     type : 'GET',
-    //     success : successFn,
-    //     error: function (response) {
-    //         console.log("get failed : " + JSON.stringify(response));
-    //     }
-    // });
+    // FLASK AJAX
+    let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`
 
     // New Code that asks flask to handle credential level transactions
     if(typeof DNS === 'undefined'){
@@ -212,11 +211,11 @@ var getTasks = function(username, successFn) {
         
     }else{
         $.ajax({
-            url: `http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`,
+            url: fullurl,
             type: 'GET',
             success: successFn,
             error: function(response){
-                console.log("error:"+response)
+                console.log("get failed : " + JSON.stringify(response));
             }
     
         })
@@ -258,18 +257,24 @@ createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
 
     dataStr += "}";
 
-    console.log ("Putting: " + dataStr);
-
+    console.log ("Putting (Posting if with Flask): " + dataStr);
+    // debugger
+    // FLASK AJAX
+    let url = `http://${DNS}:${HTTP_PORT}/task_results`;
+    // COUCHDB AJAX
+    // let url = dbName + generateUUID()
     var def = $.ajax({
-        url : dbName + generateUUID(),
+        url : url,
         // beforeSend: function (xhr) {
         //     xhr.setRequestHeader ("Authorization", "Basic " + btoa(DB_USER+":"+DB_PASS));
         // },
-        type : 'PUT',
+        // type : 'PUT', // Non-Flask type
+        type : 'POST', // Flask Type
         headers : {'Content-Type': 'application/json'},
         //dataType : "jsonp",
         data: dataStr,
         success : function(json) {
+            // debugger
             console.log ("put succeeded: " + JSON.stringify(json));
         },
         error: function (response) {
@@ -288,10 +293,14 @@ createICResult = function(winVal, img0, img1, user, comment, task, task_idx) {
 updateTask = function(task, user) {
 console.log('updateTask') 
 // first get the length of the icl for the task, (to see if the task is now complete)
-    var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
-    var fullurl = dburl + "_design/basic_views/_view/icl_lengths?key=\"" + task.image_compare_list + "\"";
-    var icl_count = -1;
+    // COUCHDB AJAX
+    // var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
+    // var fullurl = dburl + "_design/basic_views/_view/icl_lengths?key=\"" + task.image_compare_list + "\"";
+    // FLASK AJAX
+    console.log(`task.image_compare_list: ${task.image_compare_list}`)
+    let fullurl= `http://${DNS}:${HTTP_PORT}/icl_lengths?key=${task.image_compare_list}`
 
+    var icl_count = -1;
 
     var defered = $.ajax({
         url : fullurl,
@@ -300,19 +309,21 @@ console.log('updateTask')
         // },
         type : 'GET',
         success : function(json) {
-
             var result = json;
             icl_count = result.rows[0].value;
 
             // now that that worked, update the task
-            var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
-            var fullurl = dburl + task._id;
+            // COUCHDB AJAX
+            // var dburl = ImageCompare.TaskFeeder.GetImageDbUrl(); //http://pop-os:5984/image_comparator/c9c326a7b0858614fa570f01b200c2d9
+            // var fullurl = dburl + task._id;
+            // FLASK AJAX
+            let fullurl= `http://${DNS}:${HTTP_PORT}/update_tasks/${task._id}`
+
 
             task.current_idx++;
             if (task.current_idx >= icl_count) {
                 task.completed = true;
             }
-
             $.ajax({
                 url : fullurl,
                 // beforeSend: function (xhr) {
