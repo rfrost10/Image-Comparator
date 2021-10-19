@@ -2,5 +2,6 @@
 data/
 Configuration.rb
 .env
-Image-Comparator-Data/*
 __pycache__
+Image-Comparator-Data/
+git_access_token.txt

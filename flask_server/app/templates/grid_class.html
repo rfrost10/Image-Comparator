@@ -100,6 +100,20 @@
         <hr>
     </div> 
 
+    <div class="container">
+        <div class="row">
+            <div class="col-lg">
+                <label for="img_columns">How many columns would you like</label>
+                <select name="img_columns" id="img_columns" onchange="GridTaskFeeder.buildUI(GridTaskFeeder.imageList)">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                </select>        
+            </div>
+        </div>    
+    </div>
 
     <div id="grid_of_images" class="container">
         <!-- <div class="row">

@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
 
     handleUrlFilter(document.location.search);
@@ -270,10 +269,61 @@ saveResultSetImages = function (diagnosis) {
       document.getElementById('home').focus()
 }
 
+
+document.addEventListener('keydown', function(event) {
+    
+    if(practice === true) {
+        if(event.keyCode == 49) {
+            alert('1 was pressed');
+        }
+        else if(event.keyCode == 50) {
+            alert('2 was pressed');
+        }
+        else if(event.keyCode == 51) {
+            alert('3 was pressed');
+        }
+        else if(event.keyCode == 52) {
+            alert('4 was pressed');
+        }
+    }else if(practice === false){
+        if(event.keyCode == 49) {
+            OnClassify($("#option1")[0])
+        }
+        else if(event.keyCode == 50) {
+            OnClassify($("#option2")[0])
+        }
+        else if(event.keyCode == 51) {
+            OnClassify($("#option3")[0])
+        }
+        else if(event.keyCode == 52) {
+            OnClassify($("#option4")[0])
+        }
+    }
+
+});
+
 OnClassify = function(btn) {
+    // debugger
     console.log('In OnClassify:\n')
     saveResultSetImages(btn.id);
 };
+
+
+var practice=true
+function toggle_practice_mode(){
+    p_mode = document.getElementById('practice_mode')
+    if (practice === true){
+        p_mode.innerHTML = 'Off'
+        practice=false
+        console.log(p_mode.innerHTML)
+        console.log(practice)
+    }else{
+        p_mode.innerHTML = 'On'
+        practice=true
+        console.log(p_mode.innerHTML)
+        console.log(practice)
+    }
+}
 
 
 

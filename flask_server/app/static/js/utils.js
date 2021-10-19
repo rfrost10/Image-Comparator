@@ -5,14 +5,13 @@ let PORT=""
 let DB="image_comparator"
 let VIEWS_CATEGORY_NAME="basic_views"
 
-let VIEW="taskresults"
+let VIEW="imageSet2ImageId_deleteme"
 
 function delete_docs_in_view(VIEW){
 
     var getViewDocs = `http://${HOST}:${PORT}/${DB}/_design/${VIEWS_CATEGORY_NAME}/_view/${VIEW}`;
     $.getJSON(getViewDocs, function(data) {
         data.rows.forEach(function (doc) {
-            // debugger;
             $.ajax({
                 url: `http://${HOST}:${PORT}/${DB}/${doc.id}?rev=${doc.value._rev}`,
                 type: 'DELETE',
@@ -25,7 +24,7 @@ function delete_docs_in_view(VIEW){
 
 }
 
-// delete_docs_in_view(VIEW)
+delete_docs_in_view(VIEW)
 
 // Dangerous!!!
 views_to_clear = ['users','taskresults','tasks', 'classifyResults', 'image_classify_lists', 'image_compare_lists', 'image_grid_lists', 'imageSet2ImageId_deleteme']

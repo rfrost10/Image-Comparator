@@ -76,16 +76,16 @@
                         <a href="#">Contact</a>
                     </li>
                     <li>
-                        <select id="database" onchange="OnSetDB(this)">
+                        <select id="database" onchange="OnSetDB(this)" style="display: none;">
                             <option value="ec2">AWS EC2 AMI</option>
                             <option value="localhost">Localhost</option>
                         </select>
                     </li>
                     <li>
                         <select id="username" onchange="OnSetUser(this.value)">
-                            <option value="test_user1">test_user1</option>
-                            <option value="benjamin">benjamin</option>
-                            <option value="jayashree">jayashree</option>
+                            <option value="Choose user">Choose user</option>
+                            <!-- <option value="benjamin">benjamin</option>
+                            <option value="jayashree">jayashree</option> -->
                         </select>
                     </li>
                 </ul>
@@ -124,6 +124,76 @@
                 <h1 id="to-do-message" class="page-header">Please Select Class:</h1>
                 <!-- <p>Note: Predicted algorithm claass shown in <button type="button" class="btn btn-warning">orange</button></p> -->
                 
+
+
+                <button onclick="toggle_practice_mode()">Toggle Practice Mode:</button><span id=practice_mode>On</span>
+
+                <!-- Button trigger modal -->
+                <button type="button" data-toggle="modal" data-target="#Instructions">Instructions</button>
+                <!-- Modal -->
+                <div class="modal fade" id="Instructions" tabindex="-1" role="dialog" aria-labelledby="InstructionsLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="InstructionsLabel">Overview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>App Instructions:</p>
+                            <ol>
+                                <li>Select your user from the drop down at the top.</li>
+                                <li>You will be redirected to the same page with survey questions for you to fill out.
+                                    <ul>
+                                      <li>
+                                        <p style="color:red;">If placeholders come up instead of images after creating a user, hit refresh.</p>
+                                      </li>
+                                    </ul>
+                                </li>
+
+                            </ol>
+                            <p>Optional: Click button "Toggle Practice Mode:" to allow for arrow keys to choose images. Otherwise you can click with your mouse. Controls are below.</p>
+                            <p>***************</p>
+                            <p>Number keys enabled (practice mode "Off"):</p>
+                            <p>* Number 1: option1</p>
+                            <p>* Number 2: option2</p>
+                            <p>* Number 3: option3</p>
+                            <p>* Number 4: option4</p>
+                            <p>***************</p>
+
+                            <hr>
+
+                            <!-- <p>Task Overview:</p>
+                            <img src="{{ url_for('static', filename='img/kathis_example_1.png') }}" class="img-fluid" style="width: 85%;" alt="">
+                            <p>Brain tumor illustration without an outline. The turquoise area represents the tumor, i.e. the target area that should get captured by the outline.</p>
+                            <p style="font-weight: bold;">In the following, we will show you different brain tumor outlines for the image above and ask you to decide which you prefer.</p>
+                            Example:
+                            <img src="{{ url_for('static', filename='img/kathis_example_2.png') }}" class="img-fluid" style="width: 85%;" alt="">
+                            <p style="font-weight: bold;">For the two ilustrations above, for example, the left outline would be preferable because it captures the full tumor (the whole turquoise area is patterned) and in the right image more than half of the tumor is missed by the outline.</p>
+                            <p style="font-weight: bold;">You will also get the option to say that you think both outlines are of the same quality. In this case, we'd ask you for a justification.</p> -->
+
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <script>
+                  window.onload = function() {
+                    $('*[data-target="#Instructions"]')[0].click()
+                  };
+                </script>
+
+
+
+
+
+
+
+
             </div>
         </div>
         <!-- row -->
@@ -138,9 +208,10 @@
             </div>
             <div id="class_buttons" class="col-md-2">
                 <h2 id="to-do-message" class="page-header">Class Choices:</h2> 
-                    <button type="button" class="btn btn-primary" id="Test1" onclick="OnClassify(this)">Test1</button>
-                    <button type="button" class="btn btn-primary" id="Test2" onclick="OnClassify(this)">Test2</button>
-                    <button type="button" class="btn btn-primary" id="Test3" onclick="OnClassify(this)">Test3</button>
+                    <button type="button" class="btn btn-primary" id="option1" onclick="OnClassify(this)">option1</button>
+                    <button type="button" class="btn btn-primary" id="option2" onclick="OnClassify(this)">option2</button>
+                    <button type="button" class="btn btn-primary" id="option3" onclick="OnClassify(this)">option3</button>
+                    <button type="button" class="btn btn-primary" id="option4" onclick="OnClassify(this)">option4</button>
                 <hr>
             </div>
         </div>
