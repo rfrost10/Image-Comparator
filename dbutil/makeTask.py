@@ -13,10 +13,13 @@ DB_DNS = os.getenv("DB_DNS")
 IMAGES_DB = os.getenv("IMAGES_DB")
 DB_PORT = os.getenv("DB_PORT")
 HTTP_PORT = os.getenv("HTTP_PORT")
-ADMIN_PARTY = os.getenv("ADMIN_PARTY")
+ADMIN_PARTY = True if os.getenv("ADMIN_PARTY") == 'True' else False
 
 # https://couchdb-python.readthedocs.io/en/latest/getting-started.html
-couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+if ADMIN_PARTY:
+    couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
+else:
+    couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
 
 # couch package ex for later
     # db = couch[IMAGES_DB]
@@ -25,7 +28,7 @@ couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
     # imageIDs = [str(i) for i in imageIDs]
 
 # def getURL(uuid: str) -> str:
-#     url = f"http://{DNS}:{DB_PORT}/{IMAGES_DB}"
+#     url = f"http://{DB_DNS}:{DB_PORT}/{IMAGES_DB}"
 #     view = f'/{uuid}'
 #     URL = url + view
 #     return URL

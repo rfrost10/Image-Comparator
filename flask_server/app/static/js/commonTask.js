@@ -43,9 +43,13 @@ function findTaskAndSetImage(json, username, listViewName) {
         });
         
     }
-
+    // debugger
+    // FLASK AJAX
+    let fullurl=`http://${DNS}:${HTTP_PORT}/get_image_classify_lists`
+    // COUCHDB AJAX
+    // let fullurl=listViewName
     $.ajax({
-        url : listViewName,
+        url : fullurl,
         type : 'GET',
         success: function (json) {
             // okay, this seems wrong, we got all the tasks - way too much data over the wire
@@ -69,21 +73,23 @@ function findTaskAndSetImage(json, username, listViewName) {
                 alert("No pending tasks");
                 return;
             }
-
+            debugger
             var idx0 = nextimage;
-            var img0 = document.getElementById("image0");
-            //img0.src = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx0.toString() + "/image";
-            url_for_image_record = ImageCompare.TaskFeeder.hostname + ImageCompare.TaskFeeder.imageDbName + idx0.toString()
-            setImageClassData(url_for_image_record);
-            $("#image0").fadeOut(100, function() {
-                var newSrc = ImageCompare.TaskFeeder.hostname + ImageCompare.TaskFeeder.imageDbName + idx0.toString() + "/image";
-                var newImg = new Image(); // by having a new image, onload is called even if the image is already cached
-                newImg.onload = function() {
-                    $("#image0").attr("src", newImg.src);
-                    $("#image0").fadeIn(100);
-                };
-                newImg.src = newSrc;//.fadeIn(400);
-            });
+            image0_src_attribute = ImageCompare.TaskFeeder.getBase64DataOfImageFromCouch(idx0.toString(), htmlID="image0")
+            
+            // var img0 = document.getElementById("image0");
+            // img0.src = IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName + idx0.toString() + "/image";
+            // url_for_image_record = ImageCompare.TaskFeeder.hostname + ImageCompare.TaskFeeder.imageDbName + idx0.toString()
+            // // setImageClassData(url_for_image_record); // BB - needed to tell annotator ahead of time what class the image is.
+            // $("#image0").fadeOut(100, function() {
+            //     var newSrc = ImageCompare.TaskFeeder.hostname + ImageCompare.TaskFeeder.imageDbName + idx0.toString() + "/image";
+            //     var newImg = new Image(); // by having a new image, onload is called even if the image is already cached
+            //     newImg.onload = function() {
+            //         $("#image0").attr("src", newImg.src);
+            //         $("#image0").fadeIn(100);
+            //     };
+            //     newImg.src = newSrc;//.fadeIn(400);
+            // });
 
             ImageCompare.TaskFeeder.Image0 = idx0;
 

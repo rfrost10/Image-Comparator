@@ -201,12 +201,12 @@ var getTasks = function(username, successFn) {
     // var fullurl = dburl + "_design/basic_views/_view/incomplete_compare_tasks?key=\"" + username + "\"";
 
     // FLASK AJAX
-    let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`
+    let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks/compare?username=${username}`
 
     // New Code that asks flask to handle credential level transactions
     if(typeof DNS === 'undefined'){
         // debugger;
-        // let current_url = location.href;
+        // letcompare current_url = location.href;
         setTimeout(window.location.reload, 1000)
         
     }else{

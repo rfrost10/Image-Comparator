@@ -36,9 +36,10 @@ config_initialization = $.ajax({
 // 08/27/2021
 function TaskFeeder(config_obj) {
   // Most Attributes and Methods are deigned to be overwritted by inheritance
-
+  
   // Attributes (may change as db model changes)
   // Meant to be updated and represent app state
+  this.app = config_obj['app'];
   this.user = "default";
   this.message = config_obj['message'];
   this.incompleteTasks = [];
@@ -55,14 +56,16 @@ function TaskFeeder(config_obj) {
   // Flask Endpoints
   this.endpoint_task_results = "task_results"
 
-  // DB URLs
+  // DB URLs - Deprecated as we never want the front end talking to the database directly
   this.url_incomplete_tasks_base = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/${this.endpoint_incompleteTasks}`;
   this.url_image_list_base = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/${this.endpoint_image_lists}`;
   this.url_results_base = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/${this.endpoint_resultsDB}`;
 
   // Flask URLs
   this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
+  this.url_image_list_base = `http://${DNS}:${HTTP_PORT}/get_image_grid_lists`;
   this.get_base64_data_of_image_from_couch = `http://${DNS}:${HTTP_PORT}/get_image/`;
+  this.url_incomplete_tasks_base = `http://${DNS}:${HTTP_PORT}/get_tasks/${this.app}`;
   // this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
   
   
@@ -88,7 +91,7 @@ function TaskFeeder(config_obj) {
     ImageCompare.user = this.user; // should retire as soon as TaskFeeder does everything it does
     this.updateUserAndDB();
     // this.getIncompleteTasks(this.user, this.updateStatInfoTasks);
-    this.getIncompleteTasks(this.user)
+    this.getIncompleteTasks()
       .then((response) => {return this.updateStatInfoTasks(response)})
       .then((response) => {return this.getHighestPriorityTask(response)})
       .then((response) => {return this.getTaskImageList(response)})
@@ -120,14 +123,17 @@ function TaskFeeder(config_obj) {
 
   };
 
-  this.getIncompleteTasks = function(user) {
+  this.getIncompleteTasks = function() {
   // this.getIncompleteTasks = function(user, successFn) {
     console.log('In getIncompleteTasks:\n')
     // We should have this set a "state" or attribute of TaskFeeder that is the user's incomplete tasks so 
     // other functions can just reference it.
+    // FLASK AJAX
+    // COUCHDB AJAX
+    // debugger
     return new Promise((resolve, reject) => {
       $.ajax({
-        url : this.url_incomplete_tasks_base,
+        url : this.url_incomplete_tasks_base+`?username=${this.user}`,
         type : 'GET',
         success: function(response){
           resolve(response);
@@ -192,8 +198,9 @@ function TaskFeeder(config_obj) {
       return "no tasks left"
     }else{
       return new Promise((resolve, reject) => {
+        // debugger
         $.ajax({
-          url : this.url_image_list_base+`?key=%22${task.list_name}%22`,
+          url : this.url_image_list_base+`?key=${task.list_name}`,
           type : 'GET',
           success: function(response){
             GTF.imageList = response.rows[0].value.list;

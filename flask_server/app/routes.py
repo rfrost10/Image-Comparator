@@ -104,12 +104,13 @@ def get_users():
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/get_tasks', methods=['GET'])
-def get_tasks():
+@app.route('/get_tasks/<app>', methods=['GET'])
+def get_tasks(app):
     username = request.args['username']
     base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
-    view = f"_design/basic_views/_view/incomplete_compare_tasks?key=\"{username}\""
+    view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""
     url = f"{base}/{view}"
+    # pdb.set_trace()
     response = check_if_admin_party_then_make_request(url)
 
     return json.loads(response.content.decode('utf-8'))
@@ -129,6 +130,44 @@ def get_image_compare_lists():
         return json.loads(response.content.decode('utf-8'))
     print("past except")
     view = f"_design/basic_views/_view/image_compare_lists?key=\"{key}\""
+    url = f"{base}/{view}"
+    response = check_if_admin_party_then_make_request(url)
+    return json.loads(response.content.decode('utf-8'))
+
+@app.route('/get_image_classify_lists', methods=['GET'])
+def get_image_classify_lists():
+    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    # pdb.set_trace()
+    try:
+        key=request.args['key']
+    except:
+        print("in except")
+        # pdb.set_trace()
+        view = f"_design/basic_views/_view/image_classify_lists"
+        url = f"{base}/{view}"
+        response = check_if_admin_party_then_make_request(url)
+        return json.loads(response.content.decode('utf-8'))
+    print("past except")
+    view = f"_design/basic_views/_view/image_classify_lists?key=\"{key}\""
+    url = f"{base}/{view}"
+    response = check_if_admin_party_then_make_request(url)
+    return json.loads(response.content.decode('utf-8'))
+
+@app.route('/get_image_grid_lists', methods=['GET'])
+def get_image_grid_lists():
+    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    # pdb.set_trace()
+    try:
+        key=request.args['key']
+    except:
+        print("in except")
+        # pdb.set_trace()
+        view = f"_design/basic_views/_view/image_grid_lists"
+        url = f"{base}/{view}"
+        response = check_if_admin_party_then_make_request(url)
+        return json.loads(response.content.decode('utf-8'))
+    print("past except")
+    view = f"_design/basic_views/_view/image_grid_lists?key=\"{key}\""
     url = f"{base}/{view}"
     response = check_if_admin_party_then_make_request(url)
     return json.loads(response.content.decode('utf-8'))
@@ -164,6 +203,7 @@ def get_image(image_id):
     response.raw.decode_content = True
     # type(response.content) # bytes
     image_response = base64.b64encode(response.content)
+    # pdb.set_trace()
     return send_file(
         # io.BytesIO(response.content),
         io.BytesIO(image_response),
@@ -175,15 +215,12 @@ def get_image(image_id):
 @app.route('/task_results', methods=['POST'])
 def task_results():
     print("in /task_results")
-    # WILL NEED SOMETHING FOR NOT BEING IN ADMIN PARTY - FIX
     if ADMIN_PARTY:
         couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
-        db = couch[app.config["IMAGES_DB"]]
     else:
         # pdb.set_trace()
         couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
-        db = couch[app.config["IMAGES_DB"]]
-        # db = couch['image_comparator']
+    db = couch[app.config["IMAGES_DB"]]
     results = json.loads(request.data)
     doc_id, doc_rev = db.save(results)
     doc = db.get(doc_id)

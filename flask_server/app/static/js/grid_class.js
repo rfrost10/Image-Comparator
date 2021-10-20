@@ -7,9 +7,12 @@ function init_app() {
   const config_obj = {
       endpoint_image_list:"image_grid_lists",
       message:"Relabel incorrect images",
+      app:"grid"
   }
   GridTaskFeeder = new TaskFeeder(config_obj);
   // Override methods and attributes of interest
+
+  // - Methods
   GridTaskFeeder.buildUI = function(imageList) {
     if(imageList === "no tasks left"){
       return "no tasks means no UI to build"

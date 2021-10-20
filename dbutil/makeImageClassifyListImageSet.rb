@@ -26,7 +26,6 @@ if (ARGV.size != 3) then
 end
 
 
-
 # get the number of documents as a command line arg
 #ARGV.each { |arg| puts "Argument: #{arg}" }
 imgSetName = ARGV[0]
@@ -36,7 +35,6 @@ pctRep =ARGV[2]
 # find range from searching db for images that have image_set_name
 url = "http://#{DNS}:#{DB_PORT}/#{IMAGES_DB}"
 view = "/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
-
 ### viewUrl = "http://localhost:5984/ret_images/_design/basic_views/_view/imageSet2ImageId?key=\"#{imgSetName}\""
 
 Url = url+view

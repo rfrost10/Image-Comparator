@@ -17,10 +17,13 @@ DB_DNS = os.getenv("DB_DNS")
 IMAGES_DB = os.getenv("IMAGES_DB")
 DB_PORT = os.getenv("DB_PORT")
 HTTP_PORT = os.getenv("HTTP_PORT")
-ADMIN_PARTY = os.getenv("ADMIN_PARTY")
+ADMIN_PARTY = True if os.getenv("ADMIN_PARTY") == 'True' else False
 
 # https://couchdb-python.readthedocs.io/en/latest/getting-started.html
-couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+if ADMIN_PARTY:
+    couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
+else:
+    couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
 
 # couch package ex for later
     # db = couch[IMAGES_DB]
@@ -29,17 +32,17 @@ couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
     # imageIDs = [str(i) for i in imageIDs]
 
 def getURL(imageSet: str) -> str:
-
-    url = f"http://{DNS}:{DB_PORT}/{IMAGES_DB}"
+    url = f"http://{DB_DNS}:{DB_PORT}/{IMAGES_DB}"
     view = f'/_design/basic_views/_view/imageSet2ImageId?key="{imageSet}"'
     URL = url + view
     return URL
 
 def getImageIDs(url: str) -> list:
-    if ADMIN_PARTY == False:
-        response = requests.get(url, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
-    else:
+    # pdb.set_trace()
+    if ADMIN_PARTY:
         response = requests.get(url)
+    else:
+        response = requests.get(url, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
     response = response.content.decode('utf-8')
     response = json.loads(response)    
     imageIDs = [int(row['id']) for row in response['rows']]

@@ -40,6 +40,7 @@ updateStatusInfo = function() {
 // called on getTasks success, input are the rows from the view
 // todo: should not be global
 updateStatInfoTasks = function(json) {
+
     console.log('In updateStatInfoTasks:\n')
     
     var result = json;
@@ -71,8 +72,14 @@ updateStatInfoTasks = function(json) {
 
         var icl_id = firstTask.image_classify_list;
 
-        var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
-        var fullurl = dburl + "_design/basic_views/_view/image_classify_lists?key=\"" + icl_id + "\"";
+        // non-secure way
+        // var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
+        // var fullurl = dburl + "_design/basic_views/_view/image_classify_lists?key=\"" + icl_id + "\"";
+
+        // FLASK AJAX
+        let fullurl= `http://${DNS}:${HTTP_PORT}/get_image_classify_lists?key=${icl_id}`
+        // COUCHDB AJAX
+        // var fullurl = dburl + "_design/basic_views/_view/image_compare_lists?key=\"" + icl_id + "\"";
 
         $.ajax({
             url : fullurl,
@@ -109,9 +116,12 @@ updateStatInfoTasks = function(json) {
 
 var getIncompleteClassifyTasks = function(username, successFn) {
     console.log('In getIncompleteClassifyTasks:\n')
-    var dburl = ImageCompare.TaskFeeder.GetImageDbUrl();
-    var fullurl = dburl + "_design/basic_views/_view/incomplete_classify_tasks?key=\"" + username + "\"";
-
+    
+    // FLASK AJAX
+    let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks/classify?username=${username}`
+    // COUCHDB AJAX
+    // var dburl = ImageCompare.TaskFeeder.GetImageDbUrl(); //deprecated
+    // var fullurl = dburl + "_design/basic_views/_view/incomplete_classify_tasks?key=\"" + username + "\"";
     $.ajax({
         url : fullurl,
         type : 'GET',

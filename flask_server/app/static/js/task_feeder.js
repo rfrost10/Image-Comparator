@@ -66,7 +66,7 @@ var ImageCompare = (function (IC) {
         // COUCHDB AJAX
         // var fullurl = dbName + '_design/basic_views/_view/incomplete_compare_tasks?key=\"' + username+ "\"";
         // FLASK AJAX
-        let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks?username=${username}`
+        let fullurl=`http://${DNS}:${HTTP_PORT}/get_tasks/compare?username=${username}`
         $.ajax({
             url : fullurl,
             // beforeSend: function (xhr) {
