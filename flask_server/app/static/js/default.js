@@ -3,9 +3,9 @@
 // - BB It also adds some global variables that can be used by other js and html files
 
 config_initialization = $.ajax({
-  url : "/configuration",
-  type : 'GET',
-  success: function(response){
+  url: "/configuration",
+  type: 'GET',
+  success: function (response) {
     // Still super insecure, but at least we're converted to flask
     DNS = response['DNS']
     IMAGES_DB = response['IMAGES_DB']
@@ -13,20 +13,20 @@ config_initialization = $.ajax({
     HTTP_PORT = response['HTTP_PORT']
     DB_ADMIN_USER = response['DB_ADMIN_USER']
     DB_ADMIN_PASS = response['DB_ADMIN_PASS']
-      
+
     // Set initial values for dropdowns and other default elements 
 
     database_dropdown = document.getElementById('database')
-    database_dropdown.innerHTML = "<option value='"+ DNS +"'>"+ DNS +"</option>"
+    database_dropdown.innerHTML = "<option value='" + DNS + "'>" + DNS + "</option>"
 
     database_dropdown = document.getElementById('si_db')
     database_dropdown.innerHTML = DNS
-    
+
     // Init App
     init_app(); // Each will separately set this function up
   },
   error: function (response) {
-      console.log("config setup failed : " + JSON.stringify(response));
+    console.log("config setup failed : " + JSON.stringify(response));
   }
 })
 
@@ -36,7 +36,7 @@ config_initialization = $.ajax({
 // 08/27/2021
 function TaskFeeder(config_obj) {
   // Most Attributes and Methods are deigned to be overwritted by inheritance
-  
+
   // Attributes (may change as db model changes)
   // Meant to be updated and represent app state
   this.app = config_obj['app'];
@@ -63,44 +63,73 @@ function TaskFeeder(config_obj) {
 
   // Flask URLs
   this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
-  this.url_image_list_base = `http://${DNS}:${HTTP_PORT}/get_image_grid_lists`;
+  this.url_image_list_base = `http://${DNS}:${HTTP_PORT}/get_image_${this.app}_lists`;
   this.get_base64_data_of_image_from_couch = `http://${DNS}:${HTTP_PORT}/get_image/`;
   this.url_incomplete_tasks_base = `http://${DNS}:${HTTP_PORT}/get_tasks/${this.app}`;
   // this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
-  
-  
+
+
 
 
   // Methods
-  this.setPrompt = function(message=this.message){
+  this.setPrompt = function (message = this.message) {
+    // debugger
     $('#to-do-message').html(message)
   };
+
+  this.handleUrlFilter = (urlSearchStr) => {
+    console.log('In handleUrlFilter:\n')
+    //alert(urlSearchStr);
+    qs = new QueryString(urlSearchStr);
+    var user = qs.value("username");
+    if (user) {
+      // debugger
+      ImageCompare.username = user;
+      $("#current_user")[0].innerHTML = user
+      $("#current_user")[0].style.color = "green"
+
+      this.OnSetUser(user);
+    }
+
+    // if urlSearchStr is not empty, remove the dropdown (db and user options)
+    if (urlSearchStr) {
+      var elem;
+      elem = document.getElementById("database");
+      elem.style.display = 'none'; // or ... style.visibility="hidden"; vis takes the same space, but is not shown
+      elem = document.getElementById("username");
+      // elem.style.display='none';
+
+      // also remove the Status info about the db
+      elem = document.getElementById("si_database");
+      elem.style.display = 'none';
+    }
+  };
+
   /* This (OnSetUser) kicks off most tasks.
      It's importanat as much as possible that we have this high level function kick off
      as many tasks so that future developers don't have to 
      navigate chains of callbacks and ajax calls to find the final
      method or function being called in a string of calls.
      Inevitably JavaScript is event driven and some things really have to wait for
-     others to finish so they can act on that data. 
+     others to finish so they can act on the returned data. 
      In those cases, nesting of function calls is hard to avoid.
-  */ 
-  this.OnSetUser = function(user) {
+  */
+  this.OnSetUser = function (user) {
     console.log('In OnSetUser:\n')
-    console.log ("User changed to: " + user);
+    console.log("User changed to: " + user);
     this.user = user;
-    ImageCompare.user = this.user; // should retire as soon as TaskFeeder does everything it does
+    // ImageCompare.user = this.user; // should retire as soon as TaskFeeder does everything it does
     this.updateUserAndDB();
-    // this.getIncompleteTasks(this.user, this.updateStatInfoTasks);
     this.getIncompleteTasks()
-      .then((response) => {return this.updateStatInfoTasks(response)})
-      .then((response) => {return this.getHighestPriorityTask(response)})
-      .then((response) => {return this.getTaskImageList(response)})
-      .then((response) => {this.buildUI(response)})
-    
+      .then((response) => { return this.updateStatInfoTasks(response) })
+      .then((response) => { return this.getHighestPriorityTask(response) })
+      .then((response) => { return this.getTaskImageList(response) })
+      .then((response) => { this.buildUI(response) })
+
     // ImageCompare.TaskFeeder.SetImage(user); //delete when you know you don't need it anymore
   };
 
-  this.updateUserAndDB = function() {
+  this.updateUserAndDB = function () {
     console.log('In updateUserAndDB:\n')
 
     // update user
@@ -109,8 +138,9 @@ function TaskFeeder(config_obj) {
     var selUser = user_elem.options[user_elem.selectedIndex];
     si_user.textContent = selUser.text;
     var label = $("#si_user_label");
-    var isDanger = (selUser.value === "testuser");
-    setLabelDanger(isDanger, label);
+    var current_user = document.getElementById("current_user");
+    current_user.innerText = this.user;
+    current_user.style.color = "green";
 
     // update database
     var is_db = document.getElementById("si_db"); // is this being used?
@@ -118,13 +148,11 @@ function TaskFeeder(config_obj) {
     var seldb = db_elem.options[db_elem.selectedIndex];
     si_db.textContent = seldb.text;
     var label = $("#si_db_label");
-    var isDanger = (seldb.value === "localhost");
-    setLabelDanger(isDanger, label);
 
   };
 
-  this.getIncompleteTasks = function() {
-  // this.getIncompleteTasks = function(user, successFn) {
+  this.getIncompleteTasks = function () {
+    // this.getIncompleteTasks = function(user, successFn) {
     console.log('In getIncompleteTasks:\n')
     // We should have this set a "state" or attribute of TaskFeeder that is the user's incomplete tasks so 
     // other functions can just reference it.
@@ -133,32 +161,32 @@ function TaskFeeder(config_obj) {
     // debugger
     return new Promise((resolve, reject) => {
       $.ajax({
-        url : this.url_incomplete_tasks_base+`?username=${this.user}`,
-        type : 'GET',
-        success: function(response){
+        url: this.url_incomplete_tasks_base + `?username=${this.user}`,
+        type: 'GET',
+        success: function (response) {
           resolve(response);
         },
         error: function (response) {
-            console.log("get of tasks failed : " + JSON.stringify(response));
-            reject(Error("get of tasks failed : " + JSON.stringify(response)))
+          console.log("get of tasks failed : " + JSON.stringify(response));
+          reject(Error("get of tasks failed : " + JSON.stringify(response)))
         }
-      });      
+      });
     }) // Promise
 
   };
-  
-  this.updateStatInfoTasks = function(json) {
+
+  this.updateStatInfoTasks = function (json) {
     // okay, this seems wrong, we got all the tasks - way too much data over the wire
     // filtering should happen on the server side - is this what reduce is for?
     var tasks = json.rows;
     var si_tasks_elem = document.getElementById("si_tasks");
     // this is to be updated - hide it if there are no pending tasks
     var curTaskElem = document.getElementById("si_curtask");
-
-    relevant_tasks_for_this_app=[];
-    tasks.forEach((v,i,a) => {
+    // debugger
+    relevant_tasks_for_this_app = [];
+    tasks.forEach((v, i, a) => {
       task = v;
-      if (task.value.task_type === "grid" && task.value.user === this.user){
+      if (task.value.task_type === this.app && task.value.user === this.user) {
         relevant_tasks_for_this_app.push(task.value)
       }
     })
@@ -166,49 +194,55 @@ function TaskFeeder(config_obj) {
     if (relevant_tasks_for_this_app.length > 0) {
       si_tasks_elem.innerText = `${this.incompleteTasks.length} unfinished tasks`
       curTaskElem.hidden = false;
-    }else{
+    } else {
       // curTaskElem.hidden = true;
       si_tasks_elem.innerText = "0 unfinished tasks"
       curTaskElem.innerText = "Currently no tasks found"
     }
+
     return 'updateStatInfoTasks is done'
   };
 
-  this.getHighestPriorityTask = function(input){ // input is a bad name for what is coming through 'updateStatInfoTasks is done'
+  this.getHighestPriorityTask = function (input) { // input is a bad name for what is coming through 'updateStatInfoTasks is done'
     tasks = this.incompleteTasks
     var lastHighestPriority = 1000000
     var highestPriorityTaskIndex = 0
-    tasks.forEach((v,i,a) => {
-      if(i != 0){ // if not the first item
-        if (v.task_order < lastHighestPriority){
+    tasks.forEach((v, i, a) => {
+      if (i != 0) { // if not the first item
+        if (v.task_order < lastHighestPriority) {
           highestPriorityTaskIndex = i
         }
-      }else {
+      } else {
         lastHighestPriority = v.task_order
-      }      
+      }
     })
 
-  this.currentTask = this.incompleteTasks[highestPriorityTaskIndex]
-  return this.currentTask;
+    this.currentTask = this.incompleteTasks[highestPriorityTaskIndex]
+    return this.currentTask;
   };
-  
-  this.getTaskImageList = function(task) {
-    GTF = this; // otherwise "this" becomes the $.ajax object
-    if(task === undefined){
+
+  this.getTaskImageList = function (task) {
+    TF = this; // otherwise "this" becomes the $.ajax object
+    if (task === undefined) {
       return "no tasks left"
-    }else{
+    } else {
       return new Promise((resolve, reject) => {
         // debugger
         $.ajax({
-          url : this.url_image_list_base+`?key=${task.list_name}`,
-          type : 'GET',
-          success: function(response){
-            GTF.imageList = response.rows[0].value.list;
-            resolve(GTF.imageList);
+          url: this.url_image_list_base + `?key=${task.list_name}`,
+          type: 'GET',
+          success: function (response) {
+            // debugger
+            if (TF.app === 'compare' | TF.app === 'classify') {
+              var curTaskElem = document.getElementById("si_curtask");
+              curTaskElem.textContent = "You are on comparison " + (task.current_idx + 1) + " of " + response.rows[0].value.count;
+            }
+            TF.imageList = response.rows[0].value.list;
+            resolve(TF.imageList);
           },
           error: function (response) {
-              console.log("get of tasks failed : " + JSON.stringify(response));
-              reject("get of tasks failed : " + JSON.stringify(response))
+            console.log("get of tasks failed : " + JSON.stringify(response));
+            reject("get of tasks failed : " + JSON.stringify(response))
           }
         });
       })
@@ -216,96 +250,25 @@ function TaskFeeder(config_obj) {
     }
   };
 
-  this.buildUI = function(imageList) {
-    alert("app not set up to inherit properly")
+  this.buildUI = function (imageList) {
+    alert("app not set up to inherit properly") // If you see this it's true. If not, that's a good sign.
   };
 
-  this.getBase64DataOfImageFromCouch = (image_id=1)=>{ // For later, not being used yet
-    var url1 = `http://{DNS}:${HTTP_PORT}/get_image/${image_id}`
+  this.getBase64DataOfImageFromCouch = (image_id = 1, htmlID = "image0") => { // For later, not being used yet
+    var url1 = `http://${DNS}:${HTTP_PORT}/get_image/${image_id}`
     fetch(url1)
       .then(response => {
+        // debugger
         return response.text();
       })
       .then(data => {
-        debugger
-        $("#image-from-flask").attr("src", 'data:image/png;base64,' + data)
+        // debugger
+        $(`#${htmlID}`).attr("src", 'data:image/png;base64,' + data)
+        // $("#image-from-flask").attr("src", 'data:image/png;base64,' + data)
+        // vanilla js
         // document.getElementById('image-from-flask').src = 'data:image/png;base64,' + data;
-        
+
       })
   };
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// - BB - meant to be deleted - OLD BUT STILL NEEDED FOR COMPATRE APP
-
-
-var ImageCompare = (function (IC) {
-  IC.TaskFeeder = IC.TaskFeeder || {};
-
-  IC.TaskFeeder.GetImageDbUrl = function () {
-      var  db_config_elem = document.getElementById("database");
-      IC.TaskFeeder.db_config = db_config_elem.options[db_config_elem.selectedIndex].value;
-
-      var  db_config_elem = document.getElementById("database");
-      IC.TaskFeeder.db_config = db_config_elem.options[db_config_elem.selectedIndex].value;
-      IC.TaskFeeder.hostname = IC.TaskFeeder.db_config = "http://"+DNS+":"+DB_PORT+"/"
-      IC.TaskFeeder.imageDbName = IMAGES_DB+"/";
-      return IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName;
-
-
-
-      //IC.TaskFeeder.hostname = IC.TaskFeeder.db_config = "http://ec2-18-220-36-255.us-east-2.compute.amazonaws.com:54956/";
-      // if(typeof DNS === 'undefined'){
-      //   setTimeout(window.location.reload, 1000)
-      // }else{
-      //   IC.TaskFeeder.hostname = IC.TaskFeeder.db_config = "http://"+DNS+":"+DB_PORT+"/"
-      //   IC.TaskFeeder.imageDbName = IMAGES_DB+"/";
-      //   return IC.TaskFeeder.hostname + IC.TaskFeeder.imageDbName;
-      // }
-  };
-  
-  return IC;
-}(ImageCompare || {}));
-// - BB - meant to be deleted 

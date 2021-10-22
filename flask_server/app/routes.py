@@ -20,6 +20,7 @@ DB_ADMIN_USER = app.config["DB_ADMIN_USER"]
 DB_ADMIN_PASS = app.config["DB_ADMIN_PASS"]
 ADMIN_PARTY = True if app.config["ADMIN_PARTY"] == 'True' else False
 
+
 def check_if_admin_party_then_make_request(url, method="GET", data="no data"):
     """
     Checks if we are in admin part and if so sends necessary credentials
@@ -29,14 +30,17 @@ def check_if_admin_party_then_make_request(url, method="GET", data="no data"):
         if ADMIN_PARTY:
             response = requests.get('{}'.format(url))
         else:
-            response = requests.get('{}'.format(url), auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
+            response = requests.get('{}'.format(
+                url), auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
     elif method == "PUT":
         # pdb.set_trace()
         if ADMIN_PARTY:
             response = requests.put(url, data=data)
         else:
-            response = requests.put(url, data=data, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
+            response = requests.put(
+                url, data=data, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
     return response
+
 
 @app.route('/configuration', methods=['GET'])
 def config():
@@ -56,6 +60,8 @@ def config():
     return jsonify(config)
 
 # Apps
+
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
@@ -64,18 +70,22 @@ def index():
 @app.route('/two_image', methods=['GET'])
 def two_image():
     con = json.loads(config().data)
-    # pdb.set_trace()
+    con['app'] = 'Compare'
     return render_template('two_image.html', app_config=con)
 
 
 @app.route('/image_class', methods=['GET'])
 def image_class():
-    return render_template('image_class.html')
+    con = json.loads(config().data)
+    con['app'] = 'Classify'
+    return render_template('image_class.html', app_config=con)
 
 
 @app.route('/grid_class', methods=['GET'])
 def grid_class():
-    return render_template('grid_class.html')
+    con = json.loads(config().data)
+    con['app'] = 'Grid'
+    return render_template('grid_class.html', app_config=con)
 
 
 @app.route('/image_order', methods=['GET'])
@@ -83,6 +93,8 @@ def image_order():
     return render_template('image_order.html')
 
 # Pages
+
+
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
@@ -115,12 +127,13 @@ def get_tasks(app):
 
     return json.loads(response.content.decode('utf-8'))
 
+
 @app.route('/get_image_compare_lists', methods=['GET'])
 def get_image_compare_lists():
     base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
     # pdb.set_trace()
     try:
-        key=request.args['key']
+        key = request.args['key']
     except:
         print("in except")
         # pdb.set_trace()
@@ -134,12 +147,13 @@ def get_image_compare_lists():
     response = check_if_admin_party_then_make_request(url)
     return json.loads(response.content.decode('utf-8'))
 
+
 @app.route('/get_image_classify_lists', methods=['GET'])
 def get_image_classify_lists():
     base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
     # pdb.set_trace()
     try:
-        key=request.args['key']
+        key = request.args['key']
     except:
         print("in except")
         # pdb.set_trace()
@@ -153,12 +167,13 @@ def get_image_classify_lists():
     response = check_if_admin_party_then_make_request(url)
     return json.loads(response.content.decode('utf-8'))
 
+
 @app.route('/get_image_grid_lists', methods=['GET'])
 def get_image_grid_lists():
     base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
     # pdb.set_trace()
     try:
-        key=request.args['key']
+        key = request.args['key']
     except:
         print("in except")
         # pdb.set_trace()
@@ -189,21 +204,22 @@ def update_tasks(task_id):
     base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
     url = f"{base}/{task_id}"
     results = json.loads(request.data)
-    response = check_if_admin_party_then_make_request(url, method="PUT", data=json.dumps(results))
+    response = check_if_admin_party_then_make_request(
+        url, method="PUT", data=json.dumps(results))
     return response.content
-
 
 
 @app.route('/get_image/<image_id>', methods=['GET'])
 def get_image(image_id):
+    # pdb.set_trace()
     # Get Image ID
     IMAGE_ID = image_id
     url_for_couchdb_image_fetch = f'http://{DB_DNS}:{DB_PORT}/{IMAGES_DB}/{IMAGE_ID}/image'
-    response = check_if_admin_party_then_make_request(url_for_couchdb_image_fetch)
+    response = check_if_admin_party_then_make_request(
+        url_for_couchdb_image_fetch)
     response.raw.decode_content = True
     # type(response.content) # bytes
     image_response = base64.b64encode(response.content)
-    # pdb.set_trace()
     return send_file(
         # io.BytesIO(response.content),
         io.BytesIO(image_response),
@@ -219,18 +235,17 @@ def task_results():
         couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
     else:
         # pdb.set_trace()
-        couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
+        couch = couchdb.Server(
+            f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
     db = couch[app.config["IMAGES_DB"]]
     results = json.loads(request.data)
+    # 1 save results to db
     doc_id, doc_rev = db.save(results)
-    doc = db.get(doc_id)
+    doc = db.get(doc_id)  # the doc we saved if we need it
 
     # Determine task type
-    if results['type'] != "imageCompareResult":
+    if results['type'] == "gridResult":  # fix to be grid specific
         # pdb.set_trace()
-        # 1 save results to db
-
-        # 1 save results to db
         # 2 needs to mark grid task being referenced as "completed"
         task_name = results['task_list_name']
         x = db.find({'selector': {'list_name': task_name, 'type': 'task'}})
@@ -238,10 +253,56 @@ def task_results():
         grid_list = db[_id]
         grid_list['completed'] = True
         db[_id] = grid_list
+    elif results['type'] == "compareResult":
+        # pdb.set_trace()
+        # 2 needs to mark compare task being referenced as "completed" if this was the last task
+        #   or we need to increment the current_idx on the task
+        task_name = results['task_list_name']
+        # Get Task
+        task_map = db.find({'selector': {
+                           "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
+        # Get Compare List
+        compare_list_map = db.find(
+            {'selector': {"_id": results['task_list_name'], "type": "image_compare_list"}})
+        task = task_map.__next__()
+        compare_list = compare_list_map.__next__()
+        if task['current_idx'] == compare_list['count'] - 1:
+            # That was the last task so mark task as complete
+            # pdb.set_trace()
+            task['completed'] = True
+            db[task['_id']] = task
+        else:
+            # pdb.set_trace()
+            task['current_idx'] += 1
+            db[task['_id']] = task
 
-        return jsonify('asdf') # ! What is this
+        return jsonify('asdf')  # ! What is this
+    elif results['type'] == "classifyResult":
+        # 2 needs to mark compare task being referenced as "completed" if this was the last task
+        #   or we need to increment the current_idx on the task
+        task_name = results['task_list_name']
+        # Get Task
+        task_map = db.find({'selector': {
+                           "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
+        # Get Compare List
+        classify_list_map = db.find(
+            {'selector': {"_id": results['task_list_name'], "type": "image_classify_list"}})
+        task = task_map.__next__()
+        classify_list = classify_list_map.__next__()
+        if task['current_idx'] == classify_list['count'] - 1:
+            # That was the last task so mark task as complete
+            # pdb.set_trace()
+            task['completed'] = True
+            db[task['_id']] = task
+        else:
+            # pdb.set_trace()
+            task['current_idx'] += 1
+            db[task['_id']] = task
 
-    return jsonify('asdf') # ! What is this
+        return jsonify('asdf')  # ! What is this
+
+    return jsonify('asdf')  # ! What is this
+
 
 @app.route('/create_user', methods=['POST'])
 def create_user():

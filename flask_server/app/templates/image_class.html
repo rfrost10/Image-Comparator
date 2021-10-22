@@ -1,249 +1,220 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- TEMPLATE -->
+{% extends "app_template.html" %}
 
-<head>
+<!-- TITLE -->
+{% block title %}Classify Images{% endblock %}
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<!-- CSS -->
+{% block custom_css %}
+<link href="{{ url_for('static', filename='css/image_class.css') }}" rel="stylesheet">
+{% endblock %}
 
-    <title>Classify Ret images</title>
+<!-- BODY -->
+{% block content %}
 
-    <!-- Bootstrap Core CSS -->
-    <!-- <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"> -->
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/image_class.css') }}" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
-    <!-- Custom CSS -->
-    <!-- <link href="../vendor/bootstrap/css/2-col-portfolio.css" rel="stylesheet"> -->
-    <!-- <link href="two_image.css" rel="stylesheet"> -->
+<!-- Create User Start-->
+<div class="row">
+    <div id=create_new_user_div>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
+            User</button>
+        <p>Current User: <span id="current_user" style="color: red">User Not Created</span></p>
 
-    <!-- Google Analytics -->
-    <!--
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-65274027-2', 'auto');
-      ga('send', 'pageview');
+        <!-- Modal -->
+        <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createUserModalLabel">Create User Dialog</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
 
-    </script>
-    -->
+                        <!-- Form for User input -->
+                        <!-- request.form['username'] -->
+                        <!-- request.form.get('username') -->
+                        <form action="http://{{ app_config.DNS }}:{{ app_config.HTTP_PORT }}/create_user" method="post">
 
-    <!--
-    This is so wrong! First, css should be in another file
-    But worse, this is a hack to hide the focus highlight (used for accessibilty)
-    When buttons are pressed, they get the focus - and get highlighted to show it.
-    There is still a small black outline....
-    Also! any other buttons will get this effect - incorrectly
-    -->
+                            <label for="username">Username:</label><br>
+                            <input name="username" type="text" style="all: revert;"><br>
+                            <!-- Years of Experience -->
+                            <label>How many years of experience do you have working with brain tumor
+                                imaging?</label><br>
 
-    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
-    <style>
-        .btn:focus {
-          background-color: #428bca;
-        }
-    </style>
+                            <input type="radio" id="years-exp-0-2" name="years-exp" style="all: revert;" value="0-2">
+                            <label for="years-exp-0-2">0-2</label><br>
 
-</head>
+                            <input type="radio" id="years-exp-3-5" name="years-exp" style="all: revert;" value="3-5">
+                            <label for="years-exp-3-5">3-5</label><br>
 
-<body>
+                            <input type="radio" id="years-exp-6-8" name="years-exp" style="all: revert;" value="6-8">
+                            <label for="years-exp-6-8">6-8</label><br>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a id="home" class="navbar-brand" href="#">Home</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                    <li>
-                        <select id="database" onchange="OnSetDB(this)" style="display: none;">
-                            <option value="ec2">AWS EC2 AMI</option>
-                            <option value="localhost">Localhost</option>
-                        </select>
-                    </li>
-                    <li>
-                        <select id="username" onchange="OnSetUser(this.value)">
-                            <option value="Choose user">Choose user</option>
-                            <!-- <option value="benjamin">benjamin</option>
-                            <option value="jayashree">jayashree</option> -->
-                        </select>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+                            <input type="radio" id="years-exp-8+" name="years-exp" style="all: revert;" value="8+">
+                            <label for="years-exp-8+">8+</label><br>
 
-        </div>
-        <!-- /.container -->
-    </nav>
+                            <!-- Specialty -->
+                            <label>What do you specialize in?</label><br>
 
-    <!-- Page Content -->
-    <div class="container">
-        <div class="row">
-            <h3>Status Info</h3>
-            <div>
-                <span id="si_user_label" class="label label-primary">User</span>
-                <span id="si_user">Bubba</span>
-            </div>
-            <div id="si_database">
-                <span id="si_db_label" class="label label-primary">Database</span>
-                <span id="si_db">Localhost</span>
-            </div>
-            <div>
-                <span id="si_task_label" class="label label-primary">Tasks</span>
-                <span id="si_tasks">0 unfinished tasks</span>
-            </div>
-            <div>
-                <span id="si_curtask_label" class="label label-primary">Current Task</span>
-                <span id="si_curtask">Comparison x of y</span>
+                            <input type="radio" id="neuro-oncology" name="specialty" style="all: revert;"
+                                value="neuro-oncology">
+                            <label for="neuro-oncology">neuro-oncology</label><br>
+
+                            <input type="radio" id="neuroradiology" name="specialty" style="all: revert;"
+                                value="neuroradiology">
+                            <label for="neuroradiology">neuroradiology</label><br>
+
+                            <input type="radio" id="radiation oncology" name="specialty" style="all: revert;"
+                                value="radiation oncology">
+                            <label for="radiation oncology">radiation oncology</label><br>
+
+                            <input type="radio" id="other" name="specialty" style="all: revert;" value="other">
+                            <label for="other">other</label><br>
+
+                            <button class="btn btn-primary">Submit</button>
+                            <p style="color:red;">If placeholders come up instead of images after creating a
+                                user, hit
+                                refresh.
+                            </p>
+                        </form>
+
+
+                        <!-- Form for User input -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <!-- <button type="button" class="btn btn-primary">Submit</button> -->
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+</div>
+<!-- Create User End-->
 
-        <!-- Page Header -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 id="to-do-message" class="page-header">Please Select Class:</h1>
-                <!-- <p>Note: Predicted algorithm claass shown in <button type="button" class="btn btn-warning">orange</button></p> -->
-                
+<!-- Page Header -->
+<div class="row">
+    <div class="col-lg-12">
+        <h1 id="to-do-message" class="page-header">Please Select Class:</h1>
+        <!-- <p>Note: Predicted algorithm claass shown in <button type="button" class="btn btn-warning">orange</button></p> -->
 
 
-                <button onclick="toggle_practice_mode()">Toggle Practice Mode:</button><span id=practice_mode>On</span>
 
-                <!-- Button trigger modal -->
-                <button type="button" data-toggle="modal" data-target="#Instructions">Instructions</button>
-                <!-- Modal -->
-                <div class="modal fade" id="Instructions" tabindex="-1" role="dialog" aria-labelledby="InstructionsLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
+        <button onclick="ClassifyTaskFeeder.togglePracticeMode()">Toggle Practice Mode:</button><span
+            id=practice_mode>On</span>
+
+        <!-- Button trigger modal -->
+        <button type="button" data-toggle="modal" data-target="#Instructions">Instructions</button>
+        <!-- Modal -->
+        <div class="modal fade" id="Instructions" tabindex="-1" role="dialog" aria-labelledby="InstructionsLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="InstructionsLabel">Overview</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>App Instructions:</p>
-                            <ol>
-                                <li>Select your user from the drop down at the top.</li>
-                                <li>You will be redirected to the same page with survey questions for you to fill out.
-                                    <ul>
-                                      <li>
-                                        <p style="color:red;">If placeholders come up instead of images after creating a user, hit refresh.</p>
-                                      </li>
-                                    </ul>
-                                </li>
+                    </div>
+                    <div class="modal-body">
+                        <p>App Instructions:</p>
+                        <ol>
+                            <li>Select your user from the drop down at the top.</li>
+                            <li>You will be redirected to the same page with survey questions for you to fill
+                                out.
+                                <ul>
+                                    <li>
+                                        <p style="color:red;">If placeholders come up instead of images after
+                                            creating a user, hit refresh.</p>
+                                    </li>
+                                </ul>
+                            </li>
 
-                            </ol>
-                            <p>Optional: Click button "Toggle Practice Mode:" to allow for arrow keys to choose images. Otherwise you can click with your mouse. Controls are below.</p>
-                            <p>***************</p>
-                            <p>Number keys enabled (practice mode "Off"):</p>
-                            <p>* Number 1: option1</p>
-                            <p>* Number 2: option2</p>
-                            <p>* Number 3: option3</p>
-                            <p>* Number 4: option4</p>
-                            <p>***************</p>
+                        </ol>
+                        <p>Optional: Click button "Toggle Practice Mode:" to allow for arrow keys to choose
+                            images. Otherwise you can click with your mouse. Controls are below.</p>
+                        <p>***************</p>
+                        <p>Number keys enabled (practice mode "Off"):</p>
+                        <p>* Number 1: option1</p>
+                        <p>* Number 2: option2</p>
+                        <p>* Number 3: option3</p>
+                        <p>* Number 4: option4</p>
+                        <p>***************</p>
 
-                            <hr>
+                        <hr>
 
-                            <!-- <p>Task Overview:</p>
-                            <img src="{{ url_for('static', filename='img/kathis_example_1.png') }}" class="img-fluid" style="width: 85%;" alt="">
-                            <p>Brain tumor illustration without an outline. The turquoise area represents the tumor, i.e. the target area that should get captured by the outline.</p>
-                            <p style="font-weight: bold;">In the following, we will show you different brain tumor outlines for the image above and ask you to decide which you prefer.</p>
-                            Example:
-                            <img src="{{ url_for('static', filename='img/kathis_example_2.png') }}" class="img-fluid" style="width: 85%;" alt="">
-                            <p style="font-weight: bold;">For the two ilustrations above, for example, the left outline would be preferable because it captures the full tumor (the whole turquoise area is patterned) and in the right image more than half of the tumor is missed by the outline.</p>
-                            <p style="font-weight: bold;">You will also get the option to say that you think both outlines are of the same quality. In this case, we'd ask you for a justification.</p> -->
+                        <!-- <p>Task Overview:</p>
+                                <img src="{{ url_for('static', filename='img/kathis_example_1.png') }}" class="img-fluid" style="width: 85%;" alt="">
+                                <p>Brain tumor illustration without an outline. The turquoise area represents the tumor, i.e. the target area that should get captured by the outline.</p>
+                                <p style="font-weight: bold;">In the following, we will show you different brain tumor outlines for the image above and ask you to decide which you prefer.</p>
+                                Example:
+                                <img src="{{ url_for('static', filename='img/kathis_example_2.png') }}" class="img-fluid" style="width: 85%;" alt="">
+                                <p style="font-weight: bold;">For the two ilustrations above, for example, the left outline would be preferable because it captures the full tumor (the whole turquoise area is patterned) and in the right image more than half of the tumor is missed by the outline.</p>
+                                <p style="font-weight: bold;">You will also get the option to say that you think both outlines are of the same quality. In this case, we'd ask you for a justification.</p> -->
 
-                        </div>
-                        <div class="modal-footer">
+                    </div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-                        </div>
-                    </div>
                     </div>
                 </div>
-                <script>
-                  window.onload = function() {
-                    $('*[data-target="#Instructions"]')[0].click()
-                  };
-                </script>
-
-
-
-
-
-
-
-
             </div>
         </div>
-        <!-- row -->
+        <script>
+            window.onload = function () {
+                $('*[data-target="#Instructions"]')[0].click()
+            };
+        </script>
 
 
 
 
-        <!-- Projects Row -->
-        <div id="image-row" class="row">
-            <div class="col-md-8">
-                <img id="image0" class="img-responsive" src="http://placehold.it/700x400">
-            </div>
-            <div id="class_buttons" class="col-md-2">
-                <h2 id="to-do-message" class="page-header">Class Choices:</h2> 
-                    <button type="button" class="btn btn-primary" id="option1" onclick="OnClassify(this)">option1</button>
-                    <button type="button" class="btn btn-primary" id="option2" onclick="OnClassify(this)">option2</button>
-                    <button type="button" class="btn btn-primary" id="option3" onclick="OnClassify(this)">option3</button>
-                    <button type="button" class="btn btn-primary" id="option4" onclick="OnClassify(this)">option4</button>
-                <hr>
-            </div>
-        </div>
 
+
+
+
+    </div>
+</div>
+<!-- row -->
+
+<!-- Projects Row -->
+<div id="image-row" class="row">
+    <div class="col-md-8">
+        <img id="image0" class="img-responsive" src="http://placehold.it/700x400">
+    </div>
+    <div id="class_buttons" class="col-md-2">
+        <h2 id="to-do-message" class="page-header">Class Choices:</h2>
+        <button type="button" class="btn btn-primary" id="option1"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">option1</button>
+        <button type="button" class="btn btn-primary" id="option2"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">option2</button>
+        <button type="button" class="btn btn-primary" id="option3"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">option3</button>
+        <button type="button" class="btn btn-primary" id="option4"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">option4</button>
         <hr>
-    </div> 
+    </div>
+</div>
+{% endblock %}
 
 
+<!-- JS -->
+{% block js_scripts %}
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='js/jquery-2.1.0.min.js') }}"></script>
 
+<!-- Bootstrap Core JavaScript -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
+<!-- Feeder reference -->
+<script src="{{ url_for('static', filename='js/default.js') }}"></script>
 
-    <!-- jQuery -->
-    <script src="{{ url_for('static', filename='js/jquery-2.1.0.min.js') }}"></script>
+<!-- document ready behavior and handlers -->
+<script src="{{ url_for('static', filename='js/image_class.js') }}"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-    <!-- Feeder reference -->
-    <script src="{{ url_for('static', filename='js/default.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/classify_feeder.js') }}"></script>
-
-    <!-- Test Get Image -->
-    <!-- <script src="{{ url_for('static', filename='js/test_get_image.js') }}"></script> -->
-
-    <!-- document ready behavior and handlers -->
-    <script src="{{ url_for('static', filename='js/commonUIUtil.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/commonTask.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/image_class.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/queryStringParser.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='js/uuidutil.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

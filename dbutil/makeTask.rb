@@ -61,16 +61,20 @@ obj = { type:"task",
         completed:false}
 
 
-if task_type=="compare"
-  obj["image_compare_list"]=i_list
-elsif task_type=="classify" || task_type=="classify_nine" || task_type=="quadrant"
-  obj["image_classify_list"]=i_list
-elsif task_type=="OCTcompare"
-  obj["OCTimage_compare_list"]=i_list
-else
-  puts "refer to help2"
-  exit
-end
+obj["list_name"]=i_list
+
+
+# Delete if we don't need anymore
+# if task_type=="compare"
+#   obj["image_compare_list"]=i_list
+# elsif task_type=="classify" || task_type=="classify_nine" || task_type=="quadrant"
+#   obj["image_classify_list"]=i_list
+# elsif task_type=="OCTcompare"
+#   obj["OCTimage_compare_list"]=i_list
+# else
+#   puts "refer to help2"
+#   exit
+# end
 
 
 # BB - not sure if this is important - #
