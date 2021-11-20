@@ -19,14 +19,13 @@ load_dotenv("../flask_server/.env", verbose=True)
 DB_ADMIN_USER = os.getenv("DB_ADMIN_USER")
 DB_ADMIN_PASS = os.getenv("DB_ADMIN_PASS")
 DNS = os.getenv("DNS")
-DB_DNS = os.getenv("DB_DNS")
 IMAGES_DB = os.getenv("IMAGES_DB")
 DB_PORT = os.getenv("DB_PORT")
 HTTP_PORT = os.getenv("HTTP_PORT")
 ADMIN_PARTY = os.getenv("ADMIN_PARTY")
 
 # https://couchdb-python.readthedocs.io/en/latest/getting-started.html
-couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
+couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
 
 # couch package ex for later
 # db = couch[IMAGES_DB]

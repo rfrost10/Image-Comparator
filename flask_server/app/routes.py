@@ -38,6 +38,13 @@ def check_if_admin_party_then_make_request(url, method="GET", data="no data"):
         else:
             response = requests.put(
                 url, data=data, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
+    elif method == "DELETE":
+        # pdb.set_trace()
+        if ADMIN_PARTY:
+            response = requests.delete(url)
+        else:
+            response = requests.delete(
+                url, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
     return response
 
 
@@ -360,3 +367,66 @@ def create_user():
 
     # results = json.loads("create_user - success")
     return redirect('/two_image')
+
+
+@app.route('/reset_to_previous_result/<app>', methods=['POST'])
+def reset_to_previous_result(app):
+    currentTask = json.loads(request.data)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+
+    # get old result
+    view = f"_design/basic_views/_view/{app}Results?key=\"{currentTask['user']}\""
+    url = f"{base}/{view}"
+    response = check_if_admin_party_then_make_request(url)
+    all_results = json.loads(response.content.decode('utf-8'))
+    # pdb.set_trace()
+    for row in all_results['rows']:
+        # [row['value']['task_idx'] for row in all_results['rows']]
+        if row['value']['task_idx'] + 1 == currentTask['current_idx']:
+            # pdb.set_trace()
+            old_result_id, old_result_rev = row['value']['_id'], row['value']['_rev']
+    if len(old_result_id) == 0 or len(old_result_rev) == 0:
+        pdb.set_trace() # quick error handling till I properly implement
+
+    # delete old result
+    view = f"{old_result_id}?rev={old_result_rev}"
+    url = f"{base}/{view}"
+    # pdb.set_trace()
+    response = check_if_admin_party_then_make_request(url, method="DELETE")
+    delete_response_content = json.loads(response.content.decode('utf-8'))
+
+    # adjust task idx
+    view = f"{currentTask['_id']}?rev={currentTask['_rev']}"
+    url = f"{base}/{view}"
+    if currentTask['current_idx'] != 0 and not currentTask['current_idx'] < 0:
+        currentTask['current_idx'] -= 1
+    response = check_if_admin_party_then_make_request(url, method="PUT", data=json.dumps(currentTask))
+    adjust_task_idx_response_content = json.loads(response.content.decode('utf-8'))
+
+    return jsonify({'deleted_result_id':old_result_id,'previous_result_id':old_result_rev})
+
+@app.route('/get_classification_results/', methods=['GET'])
+def get_classification_results():
+    username = request.args['username']
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    view = f"_design/basic_views/_view/classifyResults?key=\"{username}\""
+    url = f"{base}/{view}"
+    # pdb.set_trace()
+    response = check_if_admin_party_then_make_request(url)
+
+    return json.loads(response.content.decode('utf-8'))
+
+
+# @app.route('/delete_result/<app>', methods=['DELETE'])
+
+def delete_result(_id, _rev):
+    results = json.loads(request.data)
+    # pdb.set_trace()
+    # var url = `http://${DNS}:${DB_PORT}/image_comparator/${doc._id}?rev=${doc._rev}`
+    username = request.args['username']
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""
+    url = f"{base}/{view}"
+    response = check_if_admin_party_then_make_request(url)
+
+    

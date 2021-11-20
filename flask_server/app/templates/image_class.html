@@ -105,8 +105,8 @@
 
 
 
-        <button onclick="ClassifyTaskFeeder.togglePracticeMode()">Toggle Practice Mode:</button><span
-            id=practice_mode>On</span>
+        <button onclick="ClassifyTaskFeeder.toggleKeyboardShortcuts()">Keyboard Shortcuts:</button><span
+            id=keyboardShortcuts>Off</span>
 
         <!-- Button trigger modal -->
         <button type="button" data-toggle="modal" data-target="#Instructions">Instructions</button>
@@ -136,7 +136,7 @@
                             </li>
 
                         </ol>
-                        <p>Optional: Click button "Toggle Practice Mode:" to allow for arrow keys to choose
+                        <p>Optional: Click button "Keyboard Shortcuts:" to allow for arrow keys to choose
                             images. Otherwise you can click with your mouse. Controls are below.</p>
                         <p>***************</p>
                         <p>Number keys enabled (practice mode "Off"):</p>
@@ -184,20 +184,27 @@
 
 <!-- Projects Row -->
 <div id="image-row" class="row">
-    <div class="col-md-8">
+    <div class="col-md-7">
         <img id="image0" class="img-responsive" src="http://placehold.it/700x400">
     </div>
-    <div id="class_buttons" class="col-md-2">
+    <div id="class_buttons" class="col-md-5">
         <h2 id="to-do-message" class="page-header">Class Choices:</h2>
         <button type="button" class="btn btn-primary" id="option1"
             onclick="ClassifyTaskFeeder.classifySubmit(this)">option1</button>
+        <br>
         <button type="button" class="btn btn-primary" id="option2"
             onclick="ClassifyTaskFeeder.classifySubmit(this)">option2</button>
+        <br>
         <button type="button" class="btn btn-primary" id="option3"
             onclick="ClassifyTaskFeeder.classifySubmit(this)">option3</button>
+        <br>
         <button type="button" class="btn btn-primary" id="option4"
             onclick="ClassifyTaskFeeder.classifySubmit(this)">option4</button>
         <hr>
+        <!-- Back Button -->
+        <button type="button" class="btn btn-danger" id="previousClassification"
+            onclick="ClassifyTaskFeeder.resetToPreviousClassification(this)">Go
+            Back One</button>
     </div>
 </div>
 {% endblock %}
@@ -211,10 +218,10 @@
 <!-- Bootstrap Core JavaScript -->
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
-<!-- Feeder reference -->
-<script src="{{ url_for('static', filename='js/default.js') }}"></script>
-
 <!-- document ready behavior and handlers -->
 <script src="{{ url_for('static', filename='js/image_class.js') }}"></script>
+
+<!-- Feeder reference -->
+<script src="{{ url_for('static', filename='js/default.js') }}"></script>
 
 {% endblock %}

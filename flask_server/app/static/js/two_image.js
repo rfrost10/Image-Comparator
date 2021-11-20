@@ -16,7 +16,8 @@ function init_app() {
     // - Attributes
     CompareTaskFeeder.currentPair = [];
     CompareTaskFeeder.nextPair = [];
-
+    CompareTaskFeeder.keyboardShortcuts = false; // turn keyboard listener on\off
+    
     // - Methods
     CompareTaskFeeder.buildUI = function (imageList) {
         if (imageList === "no tasks left") {
@@ -29,15 +30,25 @@ function init_app() {
             this.currentPair = this.imageList[this.currentTask.current_idx]
             // //img0
             var idx0 = this.currentPair[0];
-            image0_src_attribute = this.getBase64DataOfImageFromCouch(idx0.toString(), htmlID = "image0")
             // //img1
             var idx1 = this.currentPair[1];
-            image1_src_attribute = this.getBase64DataOfImageFromCouch(idx1.toString(), htmlID = "image1")
+
+            this.getBase64DataOfImageFromCouch(idx0.toString(), htmlID = "image0")
+            .then((response)=>{
+                this.getBase64DataOfImageFromCouch(idx1.toString(), htmlID = "image1")
+                .then((response)=>{
+                    // debugger
+                  this.enableButtons();
+                })
+            })
+
+            
         }
     };
 
     CompareTaskFeeder.compareSubmit = function (selection) {
         console.log("compareSubmit");
+        this.disableButtons();
         // Gather all imageIDs
         TF = this;
         const user = this.user;
@@ -91,10 +102,74 @@ function init_app() {
         alert('If you want to provide an optional justification for your decision (left/right/tie), please enter it before you click left/right/tie. The text box will refresh after a decision is made.')
     }
 
+    CompareTaskFeeder.initKeyboardListener = function () {
+        TF = this;
+        document.addEventListener('keydown', function (event) {
+            if (!($("#rejectModal").css("display") === "block")) {
+                if (TF.keyboardShortcuts === false) {
+                    if(event.keyCode == 37) {
+                        alert('Left was pressed');
+                    }
+                    else if(event.keyCode == 39) {
+                        alert('Right was pressed');
+                    }
+                    else if(event.keyCode == 38) {
+                        alert('Up was pressed');
+                    }
+                    
+                } else if (TF.keyboardShortcuts === true && document.getElementById('image0').style.pointerEvents === 'auto') {
+                    if(event.keyCode == 37) {
+                        // CompareTaskFeeder.compareSubmit(1)
+                        $("#image0").click()
+                    }
+                    else if(event.keyCode == 39) {
+                        $("#tie-button").click()
+                        // CompareTaskFeeder.compareSubmit(-1)
+                    }
+                    else if(event.keyCode == 38) {
+                        // $('*[data-target="#tieModal"]')[0].click() // for forced tie justification
+                        $("#image1").click()
+                        // CompareTaskFeeder.compareSubmit(0)
+                    }
+                }
+            }
+        });
+    };
+
+    CompareTaskFeeder.toggleKeyboardShortcuts = function () {
+        p_mode = document.getElementById('keyboardShortcuts')
+        if (this.keyboardShortcuts === true) {
+            p_mode.innerHTML = 'Off'
+            this.keyboardShortcuts = false
+            console.log(p_mode.innerHTML)
+            console.log(this.keyboardShortcuts)
+        } else {
+            p_mode.innerHTML = 'On'
+            this.keyboardShortcuts = true
+            console.log(p_mode.innerHTML)
+            console.log(this.keyboardShortcuts)
+        }
+    };
+
+    CompareTaskFeeder.enableButtons = function () {
+        document.getElementById('image0').style.pointerEvents = 'auto';
+        document.getElementById('tie-button').style.pointerEvents = 'auto';
+        document.getElementById('image1').style.pointerEvents = 'auto';
+
+    };
+
+    CompareTaskFeeder.disableButtons = function () {
+        document.getElementById('image0').style.pointerEvents = 'none';
+        document.getElementById('tie-button').style.pointerEvents = 'none';
+        document.getElementById('image1').style.pointerEvents = 'none';
+    };
+
+
     /* Begin Compare app specific functionality */
     // debugger
     CompareTaskFeeder.setPrompt();
     CompareTaskFeeder.handleUrlFilter(document.location.search);
+    CompareTaskFeeder.initKeyboardListener();
 
 
 }

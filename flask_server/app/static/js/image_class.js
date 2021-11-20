@@ -16,7 +16,7 @@ function init_app() {
     // - Attributes
     ClassifyTaskFeeder.currentImg = null;
     ClassifyTaskFeeder.nextImg = null;
-    ClassifyTaskFeeder.practice = true; // turn keyboard listener on\off
+    ClassifyTaskFeeder.keyboardShortcuts = false; // turn keyboard listener on\off
 
     // - Methods
     ClassifyTaskFeeder.buildUI = function (imageList) {
@@ -28,13 +28,17 @@ function init_app() {
             // debugger
             this.currentImg = this.imageList[this.currentTask.current_idx]
             // //img0
-            this.getBase64DataOfImageFromCouch(this.currentImg.toString(), htmlID = "image0");
+            this.getBase64DataOfImageFromCouch(this.currentImg.toString(), htmlID = "image0")
+                .then(response => {
+                    // enable buttons now that submission is over
+                    this.enableButtons();
+                })
         }
     };
 
     ClassifyTaskFeeder.classifySubmit = function (selection) {
         console.log("classifySubmit");
-
+        this.disableButtons();
         // Gather all imageIDs
         // debugger
         TF = this;
@@ -86,50 +90,88 @@ function init_app() {
     ClassifyTaskFeeder.initKeyboardListener = function () {
         TF = this;
         document.addEventListener('keydown', function (event) {
-            if (TF.practice === true) {
-                if (event.keyCode == 49) {
-                    alert('1 was pressed');
-                }
-                else if (event.keyCode == 50) {
-                    alert('2 was pressed');
-                }
-                else if (event.keyCode == 51) {
-                    alert('3 was pressed');
-                }
-                else if (event.keyCode == 52) {
-                    alert('4 was pressed');
-                }
-            } else if (TF.practice === false) {
-                if (event.keyCode == 49) {
-                    $("#option1").click()
-                }
-                else if (event.keyCode == 50) {
-                    $("#option2").click()
-                }
-                else if (event.keyCode == 51) {
-                    $("#option3").click()
-                }
-                else if (event.keyCode == 52) {
-                    $("#option4").click()
+            if (!($("#rejectModal").css("display") === "block")) {
+                if (TF.keyboardShortcuts === false) {
+                    if (event.keyCode == 49) {
+                        alert('1 was pressed');
+                    }
+                    else if (event.keyCode == 50) {
+                        alert('2 was pressed');
+                    }
+                    else if (event.keyCode == 51) {
+                        alert('3 was pressed');
+                    }
+                    else if (event.keyCode == 52) {
+                        alert('4 was pressed');
+                    }
+                } else if (TF.keyboardShortcuts === true && document.getElementById("option1").disabled === false) {
+                    if (event.keyCode == 49) {
+                        $("#option1").click()
+                    }
+                    else if (event.keyCode == 50) {
+                        $("#option2").click()
+                    }
+                    else if (event.keyCode == 51) {
+                        $("#option3").click()
+                    }
+                    else if (event.keyCode == 52) {
+                        $("#option4").click()
+                    }
                 }
             }
-
-        });
+        });  
     };
 
-    ClassifyTaskFeeder.togglePracticeMode = function () {
-        p_mode = document.getElementById('practice_mode')
-        if (this.practice === true) {
+    ClassifyTaskFeeder.toggleKeyboardShortcuts = function () {
+        p_mode = document.getElementById('keyboardShortcuts')
+        if (this.keyboardShortcuts === true) {
             p_mode.innerHTML = 'Off'
-            this.practice = false
+            this.keyboardShortcuts = false
             console.log(p_mode.innerHTML)
-            console.log(this.practice)
+            console.log(this.keyboardShortcuts)
         } else {
             p_mode.innerHTML = 'On'
-            this.practice = true
+            this.keyboardShortcuts = true
             console.log(p_mode.innerHTML)
-            console.log(this.practice)
+            console.log(this.keyboardShortcuts)
         }
+    };
+
+    ClassifyTaskFeeder.resetToPreviousClassification = function () {
+        TF = this;
+        if (TF.currentTask.current_idx === 0) {
+            alert('You are on the first task, cannot go back.')
+        } else {
+            TF.disableButtons();
+            $.ajax({
+                url: this.url_reset_to_previous_result,
+                type: 'POST',
+                data: JSON.stringify(this.currentTask),
+                headers: { 'Content-Type': 'application/json' },
+                success: (response) => {
+                    TF.OnSetUser(TF.user)
+                },
+                error: (response) => {
+                    console.log('resetToPreviousClassification error!')
+                },
+            });
+        }
+    };
+
+    ClassifyTaskFeeder.enableButtons = function () {
+        document.getElementById("option1").disabled = false;
+        document.getElementById("option2").disabled = false;
+        document.getElementById("option3").disabled = false;
+        document.getElementById("option4").disabled = false;
+        document.getElementById("previousClassification").disabled = false;
+    };
+
+    ClassifyTaskFeeder.disableButtons = function () {
+        document.getElementById("option1").disabled = true;
+        document.getElementById("option2").disabled = true;
+        document.getElementById("option3").disabled = true;
+        document.getElementById("option4").disabled = true;
+        document.getElementById("previousClassification").disabled = true;
     };
 
     /* Begin Classify app specific functionality */

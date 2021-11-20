@@ -11,8 +11,8 @@ config_initialization = $.ajax({
     IMAGES_DB = response['IMAGES_DB']
     DB_PORT = response['DB_PORT']
     HTTP_PORT = response['HTTP_PORT']
-    DB_ADMIN_USER = response['DB_ADMIN_USER']
-    DB_ADMIN_PASS = response['DB_ADMIN_PASS']
+
+
 
     // Set initial values for dropdowns and other default elements 
 
@@ -45,31 +45,18 @@ function TaskFeeder(config_obj) {
   this.incompleteTasks = [];
   this.currentTask = {};
   this.imageList = [];
-
-  // DB Endpoints
-  this.endpoint_rawImageDbName = "imageSet2ImageId/";
-  this.endpoint_allTasks = "tasks/";
-  this.endpoint_resultsDB = "taskresults/";
-  this.endpoint_image_lists = config_obj['endpoint_image_list'];
-  this.endpoint_incompleteTasks = "incomplete_tasks/";
-
-  // Flask Endpoints
-  this.endpoint_task_results = "task_results"
-
-  // DB URLs - Deprecated as we never want the front end talking to the database directly
-  this.url_incomplete_tasks_base = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/${this.endpoint_incompleteTasks}`;
-  this.url_image_list_base = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/${this.endpoint_image_lists}`;
-  this.url_results_base = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/_design/basic_views/_view/${this.endpoint_resultsDB}`;
+  this.gridAppRedirect = true; // Experimental option
 
   // Flask URLs
-  this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
+  this.url_results_base = `http://${DNS}:${HTTP_PORT}/task_results/`;
   this.url_image_list_base = `http://${DNS}:${HTTP_PORT}/get_image_${this.app}_lists`;
   this.get_base64_data_of_image_from_couch = `http://${DNS}:${HTTP_PORT}/get_image/`;
   this.url_incomplete_tasks_base = `http://${DNS}:${HTTP_PORT}/get_tasks/${this.app}`;
-  // this.url_results_base = `http://${DNS}:${HTTP_PORT}/${this.endpoint_task_results}/`;
+  this.url_reset_to_previous_result = `http://${DNS}:${HTTP_PORT}/reset_to_previous_result/${this.app}`;
+  this.url_get_classification_results = `http://${DNS}:${HTTP_PORT}/get_classification_results`;
 
-
-
+  // this.url_delete_result = `http://${DNS}:${HTTP_PORT}/delete_results/${this.app}`;
+  // this.url_results_base = `http://${DNS}:${HTTP_PORT}/task_results/`;
 
   // Methods
   this.setPrompt = function (message = this.message) {
@@ -79,15 +66,12 @@ function TaskFeeder(config_obj) {
 
   this.handleUrlFilter = (urlSearchStr) => {
     console.log('In handleUrlFilter:\n')
-    //alert(urlSearchStr);
     qs = new QueryString(urlSearchStr);
     var user = qs.value("username");
     if (user) {
-      // debugger
-      ImageCompare.username = user;
+      this.user = user;
       $("#current_user")[0].innerHTML = user
       $("#current_user")[0].style.color = "green"
-
       this.OnSetUser(user);
     }
 
@@ -118,15 +102,19 @@ function TaskFeeder(config_obj) {
     console.log('In OnSetUser:\n')
     console.log("User changed to: " + user);
     this.user = user;
-    // ImageCompare.user = this.user; // should retire as soon as TaskFeeder does everything it does
     this.updateUserAndDB();
-    this.getIncompleteTasks()
+    var promiseChain = this.getIncompleteTasks()
       .then((response) => { return this.updateStatInfoTasks(response) })
       .then((response) => { return this.getHighestPriorityTask(response) })
       .then((response) => { return this.getTaskImageList(response) })
+    if (this.gridAppRedirect && this.app === 'grid') {
+      // Add a call for classification results if we need their results
+      promiseChain = promiseChain
+        .then((response) => { return this.getClassificationResults(response) }) // Custom for MIDRC/IKBEOM...need classification results
+    }
+    promiseChain = promiseChain
       .then((response) => { this.buildUI(response) })
-
-    // ImageCompare.TaskFeeder.SetImage(user); //delete when you know you don't need it anymore
+      .then(() => { $("#home")[0].focus() })
   };
 
   this.updateUserAndDB = function () {
@@ -159,12 +147,20 @@ function TaskFeeder(config_obj) {
     // FLASK AJAX
     // COUCHDB AJAX
     // debugger
+    TF = this;
     return new Promise((resolve, reject) => {
       $.ajax({
         url: this.url_incomplete_tasks_base + `?username=${this.user}`,
         type: 'GET',
         success: function (response) {
-          resolve(response);
+          if (response.rows.length === 0 && TF.gridAppRedirect && TF.app === 'classify') {
+            // Redirect once done to grid app
+            // debugger;
+            var fullurl = `http://${DNS}:${HTTP_PORT}/grid_class?username=${TF.user}`;
+            window.location.replace(fullurl);
+          } else {
+            resolve(response);
+          }
         },
         error: function (response) {
           console.log("get of tasks failed : " + JSON.stringify(response));
@@ -256,19 +252,21 @@ function TaskFeeder(config_obj) {
 
   this.getBase64DataOfImageFromCouch = (image_id = 1, htmlID = "image0") => { // For later, not being used yet
     var url1 = `http://${DNS}:${HTTP_PORT}/get_image/${image_id}`
-    fetch(url1)
-      .then(response => {
-        // debugger
-        return response.text();
-      })
-      .then(data => {
-        // debugger
-        $(`#${htmlID}`).attr("src", 'data:image/png;base64,' + data)
-        // $("#image-from-flask").attr("src", 'data:image/png;base64,' + data)
-        // vanilla js
-        // document.getElementById('image-from-flask').src = 'data:image/png;base64,' + data;
-
-      })
+    return new Promise((resolve, reject) => {
+      fetch(url1)
+        .then(response => {
+          // debugger
+          return response.text();
+        })
+        .then(data => {
+          // debugger
+          $(`#${htmlID}`).attr("src", 'data:image/png;base64,' + data)
+          // $("#image-from-flask").attr("src", 'data:image/png;base64,' + data)
+          // vanilla js
+          // document.getElementById('image-from-flask').src = 'data:image/png;base64,' + data;
+          resolve(data)
+        })
+    })
   };
 
 }

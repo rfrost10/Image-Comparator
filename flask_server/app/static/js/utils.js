@@ -8,7 +8,7 @@ var DB_PASS = "password"
 var ADMIN_PARTY = false
 var VIEWS_CATEGORY_NAME = "basic_views"
 
-// let VIEW = "imageSet2ImageId_deleteme"
+// let VIEW = "imageSet2ImageId"
 
 function delete_docs_in_view(VIEW) {
 
