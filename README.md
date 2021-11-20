@@ -41,6 +41,8 @@ Create a copy called *Configuration.rb* and replace all variables with your cust
 To finish configuring a single node setup, run the following;
 ```
 DB_PORT=5984
+COUCHDB_USER=admin
+COUCHDB_PASSWORD=password
 # curl -X PUT http://0.0.0.0:$DB_PORT/_users
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/_users
 # curl -X PUT http://0.0.0.0:$DB_PORT/_replicator
@@ -53,7 +55,9 @@ DB_NAME=image_comparator # same as <db_name>
 
 # curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME # if in admin party
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME
+
 cd dbutil
+
 # curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @basic_views.json # if in admin party
 curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @basic_views.json
 ```
@@ -62,20 +66,7 @@ curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_de
 
 1. Add Images to DB:
 
-We need to add a ruby package *couchrest* to ruby. Run this command:
-
-Docker install:
-```bash
-$ docker exec image-comparator-flask gem install couchrest
-```
-or scratch install:
-```
-$ sudo gem install couchrest
-```
-
 Next add images to the database with script *addImagesToDb.rb*:
-
-In order to simplify the instructions for both docker and from scratch installs I will shell into the docker to demo, but the commands should be the same for both at this point.
 
 > Note: In either case you should start from the directory "Image-Comparator" your local machine. This will be your ```$PWD``` and we will shell into the container and run some init scripts.
 
@@ -183,17 +174,9 @@ ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
 
 ### Image-Classifier
 
-Make sure the database you intend to use is already setup.
-```bash
-$ curl -X PUT http://admin:<password>@localhost:5984/<db_name>
-$ cd /Image-Comparator/dbutil
-$ curl -X PUT http://admin:<password>@localhost:5984/<db_name>/_design/basic_views -d @basic_views.json
-```
-
 1. Use addImagesToDb_jkc.rb to add an image set  
 2. Use makeImageClassifyListImageSet.rb to make an image classify list  
 3. Use makeTask.rb 
-
 
 #### Add Images
 > Should be done, but if you want to add additional images do so now
@@ -207,6 +190,7 @@ and create:
 ```bash
 ruby makeImageClassifyListImageSet.rb <imageSet> <listName> <pctRepeat>
 ```
+
 
 #### Make Task
 ```bash

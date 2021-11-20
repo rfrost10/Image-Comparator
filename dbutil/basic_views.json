@@ -56,7 +56,7 @@
       "map": "function(doc) {\n  if (doc.type === \"task\" && doc.task_type=== \"grid\" && doc.completed === false) {\n    emit (doc.user, doc);\n  }\n}"
     },
     "classifyResults": {
-      "map": "function(doc) {\n  if (doc.type===\"imageClassifyResult\")\n    emit(doc.task, doc);\n}"
+      "map": "function(doc) {\n  if (doc.type===\"classifyResult\")\n    emit(doc.user, doc);\n}"
     },
     "gridResults": {
       "map": "function(doc) {\n  if (doc.type===\"gridResult\")\n    emit(doc.task, doc);\n}"

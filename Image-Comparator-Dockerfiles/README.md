@@ -53,7 +53,7 @@ SUPPLEMENTARY_NAME="" # optional for multiple containers
 CONTAINER_TAG=flask
 MACHINE_PORT="8080"
 
-docker build . -f Dockerfile_flask -t $CONTAINER_NAME:$CONTAINER_TAG
+docker build . -f Dockerfile_flask --force-rm -t $CONTAINER_NAME:$CONTAINER_TAG
 
 cd ../
 
@@ -65,8 +65,7 @@ cd ../
 docker run \
   -it \
   --rm \
-  --link=image-comparator-couchdb \
-  --expose="$COUCH_PORT" \
+  --network="host" \
   -p $MACHINE_PORT:8080 \
   -v $PWD/flask_server:/flask_server \
   -v $PWD:$PWD \
@@ -85,44 +84,3 @@ pip3 install -r requirements.txt
 flask run --port 8080 --host 0.0.0.0
 ```
 
-
-### Setting up Image-Comparator in a Docker container...no flask...deprecated
-
-The dockerfile will automatically create a docker image for the Image-Comaparator. A docker image can be run as a virtual linux system, which will be used to deploy the web server. Once the docker image is built and run, the admin can insert custom image datasets and create image classify/compare tasks.
-
-Clone github directory:
-```
-WORKING_DIR=$PWD
-cd $WORKING_DIR
-git clone https://github.com/QTIM-Lab/Image-Comparator.git
-cd Image-Comparator
-```
-
-To build the docker images, run the following command:
-```
-cd Image-Comparator-Dockerfiles # be in the correct directory
-
-CONTAINER_NAME=image-comparator
-CONTAINER_TAG=latest
-docker build . -t $CONTAINER_NAME:$CONTAINER_TAG
-```
-
-Now run container:
-```
-cd ../ # Return to main directory
-
-WEB_APP_PORT=8080
-docker run \
- --rm \
- -d \
- -v $WORKING_DIR:$WORKING_DIR \
- -w $WORKING_DIR/Image-Comparator \
- -p $WEB_APP_PORT:$WEB_APP_PORT \
- --name $CONTAINER_NAME \
- $CONTAINER_NAME:$CONTAINER_TAG
-```
-
-To stop container (if needed):
-```
-docker stop image-comparator
-```

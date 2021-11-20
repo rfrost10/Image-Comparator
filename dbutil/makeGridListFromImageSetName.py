@@ -13,7 +13,6 @@ load_dotenv("../flask_server/.env",verbose=True)
 DB_ADMIN_USER = os.getenv("DB_ADMIN_USER")
 DB_ADMIN_PASS = os.getenv("DB_ADMIN_PASS")
 DNS = os.getenv("DNS")
-DB_DNS = os.getenv("DB_DNS")
 IMAGES_DB = os.getenv("IMAGES_DB")
 DB_PORT = os.getenv("DB_PORT")
 HTTP_PORT = os.getenv("HTTP_PORT")
@@ -21,9 +20,9 @@ ADMIN_PARTY = True if os.getenv("ADMIN_PARTY") == 'True' else False
 
 # https://couchdb-python.readthedocs.io/en/latest/getting-started.html
 if ADMIN_PARTY:
-    couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
+    couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
 else:
-    couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
+    couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
 
 # couch package ex for later
     # db = couch[IMAGES_DB]
@@ -32,7 +31,7 @@ else:
     # imageIDs = [str(i) for i in imageIDs]
 
 def getURL(imageSet: str) -> str:
-    url = f"http://{DB_DNS}:{DB_PORT}/{IMAGES_DB}"
+    url = f"http://{DNS}:{DB_PORT}/{IMAGES_DB}"
     view = f'/_design/basic_views/_view/imageSet2ImageId?key="{imageSet}"'
     URL = url + view
     return URL

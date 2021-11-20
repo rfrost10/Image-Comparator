@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 # Config
 # For Server Side
 DNS = app.config['DNS']
-DB_DNS = app.config['DB_DNS']
 DB_PORT = app.config["DB_PORT"]
 IMAGES_DB = app.config["IMAGES_DB"]
 DB_ADMIN_USER = app.config["DB_ADMIN_USER"]
@@ -109,7 +108,7 @@ def contact():
 @app.route('/get_users', methods=['GET'])
 def get_users():
     print("in /get_users")
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     view = f"_design/basic_views/_view/users"
     url = f"{base}/{view}"
     response = check_if_admin_party_then_make_request(url)
@@ -119,7 +118,7 @@ def get_users():
 @app.route('/get_tasks/<app>', methods=['GET'])
 def get_tasks(app):
     username = request.args['username']
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""
     url = f"{base}/{view}"
     # pdb.set_trace()
@@ -130,7 +129,7 @@ def get_tasks(app):
 
 @app.route('/get_image_compare_lists', methods=['GET'])
 def get_image_compare_lists():
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     # pdb.set_trace()
     try:
         key = request.args['key']
@@ -150,7 +149,7 @@ def get_image_compare_lists():
 
 @app.route('/get_image_classify_lists', methods=['GET'])
 def get_image_classify_lists():
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     # pdb.set_trace()
     try:
         key = request.args['key']
@@ -170,7 +169,7 @@ def get_image_classify_lists():
 
 @app.route('/get_image_grid_lists', methods=['GET'])
 def get_image_grid_lists():
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     # pdb.set_trace()
     try:
         key = request.args['key']
@@ -191,7 +190,7 @@ def get_image_grid_lists():
 @app.route('/icl_lengths', methods=['GET'])
 def icl_lengths():
     print("in /icl_lengths")
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     icl_id = request.args['key']
     view = f"_design/basic_views/_view/icl_lengths?key=\"{icl_id}\""
     url = f"{base}/{view}"
@@ -201,7 +200,7 @@ def icl_lengths():
 
 @app.route('/update_tasks/<task_id>', methods=['PUT'])
 def update_tasks(task_id):
-    base = "http://{}:{}/{}".format(DB_DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
     url = f"{base}/{task_id}"
     results = json.loads(request.data)
     response = check_if_admin_party_then_make_request(
@@ -214,7 +213,7 @@ def get_image(image_id):
     # pdb.set_trace()
     # Get Image ID
     IMAGE_ID = image_id
-    url_for_couchdb_image_fetch = f'http://{DB_DNS}:{DB_PORT}/{IMAGES_DB}/{IMAGE_ID}/image'
+    url_for_couchdb_image_fetch = f'http://{DNS}:{DB_PORT}/{IMAGES_DB}/{IMAGE_ID}/image'
     response = check_if_admin_party_then_make_request(
         url_for_couchdb_image_fetch)
     response.raw.decode_content = True
@@ -232,11 +231,11 @@ def get_image(image_id):
 def task_results():
     print("in /task_results")
     if ADMIN_PARTY:
-        couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
+        couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
     else:
         # pdb.set_trace()
         couch = couchdb.Server(
-            f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DB_DNS}:{DB_PORT}')
+            f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
     db = couch[app.config["IMAGES_DB"]]
     results = json.loads(request.data)
     # 1 save results to db
@@ -307,7 +306,7 @@ def task_results():
 @app.route('/create_user', methods=['POST'])
 def create_user():
     print("in /create_user")
-    couch = couchdb.Server(f'http://{DB_DNS}:{DB_PORT}')
+    couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
     db = couch[app.config["IMAGES_DB"]]
     con = json.loads(config().data)
     # Check Form
