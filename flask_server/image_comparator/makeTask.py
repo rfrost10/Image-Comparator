@@ -1,7 +1,3 @@
-# require 'net/http'
-# require 'uri'
-# require 'json'
-
 import os
 import sys
 import requests
@@ -25,7 +21,11 @@ HTTP_PORT = os.getenv("HTTP_PORT")
 ADMIN_PARTY = os.getenv("ADMIN_PARTY")
 
 # https://couchdb-python.readthedocs.io/en/latest/getting-started.html
-couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+if ADMIN_PARTY:
+    couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+else:
+    couch = couchdb.Server(
+        f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
 
 # couch package ex for later
 # db = couch[IMAGES_DB]
@@ -42,28 +42,18 @@ couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
 
 def makeTask(user: str, imageListName: str, imageListType: str, taskOrder: int) -> None:
     t = datetime.now() - timedelta(hours=4)
-    if imageListType == "grid":
-        obj = {"type": "task",
-               "task_type": imageListType,
-               "list_name": imageListName,
-               "task_order": taskOrder,
-               "user": user,
-               "time_added": t.strftime('%Y-%m-%d %H:%M:%S'),
-               "current_idx": 0,
-               "completed": False}
-    elif imageListType == "compare":
-        obj = {"type": "task",
-               "task_type": imageListType,
-               "task_order": taskOrder,
-               "user": user,
-               "time_added": t.strftime('%Y-%m-%d %H:%M:%S'),
-               "current_idx": 0,
-               "completed": False,
-               "image_compare_list": imageListName}
+    obj = {"type": "task",
+           "task_type": imageListType,
+           "list_name": imageListName,
+           "task_order": taskOrder,
+           "user": user,
+           "time_added": t.strftime('%Y-%m-%d %H:%M:%S'),
+           "current_idx": 0,
+           "completed": False}
     db = couch[IMAGES_DB]
+    # pdb.set_trace()
     doc_id, doc_rev = db.save(obj)
     print(pp.pprint(f"created object {obj}"))
-
 
 def main(user: str, imageListName: str, imageListType: str, taskOrder: int):
     # uid = uuid.uuid1()
