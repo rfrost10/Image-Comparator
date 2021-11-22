@@ -4,3 +4,4 @@ flask_cors
 requests
 mypy # type checking
 couchdb
+pytest

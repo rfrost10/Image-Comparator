@@ -1,23 +1,39 @@
-from app import app
-from app import makeTask
-
-from flask import render_template, jsonify, send_file, request, flash, redirect
+# import functools - https://flask.palletsprojects.com/en/2.0.x/tutorial/views/
 import requests
 import couchdb
 import io
 import json
 import base64
 import pdb
-from dotenv import load_dotenv
 
-# Config
-# For Server Side
-DNS = app.config['DNS']
-DB_PORT = app.config["DB_PORT"]
-IMAGES_DB = app.config["IMAGES_DB"]
-DB_ADMIN_USER = app.config["DB_ADMIN_USER"]
-DB_ADMIN_PASS = app.config["DB_ADMIN_PASS"]
-ADMIN_PARTY = True if app.config["ADMIN_PARTY"] == 'True' else False
+from flask import (
+    current_app, 
+    Blueprint, 
+    flash, 
+    g, # not using yet
+    redirect, 
+    render_template, 
+    request, 
+    session, # not used yet
+    url_for, # not used yet
+    jsonify,
+    send_file
+)
+# from werkzeug.security import check_password_hash, generate_password_hash
+
+bp = Blueprint('routes_blueprint', __name__, url_prefix='/')
+
+# a simple page that says hello
+@bp.route('/hello')
+def hello():
+    print(app)
+    print(current_app.config["DNS"])
+    print(current_app.config["DB_PORT"])
+    print(current_app.config["IMAGES_DB"])
+    print(current_app.config["DB_ADMIN_USER"])
+    print(current_app.config["DB_ADMIN_PASS"])
+    print(current_app.config["ADMIN_PARTY"])
+    return 'Hello, World!'
 
 
 def check_if_admin_party_then_make_request(url, method="GET", data="no data"):
@@ -26,106 +42,104 @@ def check_if_admin_party_then_make_request(url, method="GET", data="no data"):
     """
     if method == "GET":
         # pdb.set_trace()
-        if ADMIN_PARTY:
+        if current_app.config['ADMIN_PARTY']:
             response = requests.get('{}'.format(url))
         else:
             response = requests.get('{}'.format(
-                url), auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
+                url), auth=(current_app.config["DB_ADMIN_USER"], current_app.config["DB_ADMIN_PASS"]))
     elif method == "PUT":
         # pdb.set_trace()
-        if ADMIN_PARTY:
+        if current_app.config['ADMIN_PARTY']:
             response = requests.put(url, data=data)
         else:
             response = requests.put(
-                url, data=data, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
+                url, data=data, auth=(current_app.config["DB_ADMIN_USER"], current_app.config["DB_ADMIN_PASS"]))
     elif method == "DELETE":
         # pdb.set_trace()
-        if ADMIN_PARTY:
+        if current_app.config['ADMIN_PARTY']:
             response = requests.delete(url)
         else:
             response = requests.delete(
-                url, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
+                url, auth=(current_app.config["DB_ADMIN_USER"], current_app.config["DB_ADMIN_PASS"]))
     return response
 
 
-@app.route('/configuration', methods=['GET'])
+@bp.route('/configuration', methods=['GET'])
 def config():
     # pdb.set_trace()
     """
     For the front end
     """
     config = {
-        "DB_ADMIN_USER": app.config['DB_ADMIN_USER'],
-        "DB_ADMIN_PASS": app.config['DB_ADMIN_PASS'],
-        "DNS": app.config['DNS'],
-        "IMAGES_DB": app.config['IMAGES_DB'],
-        "DB_PORT": app.config['DB_PORT'],
-        "HTTP_PORT": app.config['HTTP_PORT'],
-        "ADMIN_PARTY": app.config['ADMIN_PARTY'],
+        "DNS": current_app.config['DNS'],
+        "IMAGES_DB": current_app.config['IMAGES_DB'],
+        "DB_PORT": current_app.config['DB_PORT'],
+        "HTTP_PORT": current_app.config['HTTP_PORT'],
+        "ADMIN_PARTY": current_app.config['ADMIN_PARTY'],
     }
     return jsonify(config)
 
 # Apps
 
 
-@app.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
 
-@app.route('/two_image', methods=['GET'])
+@bp.route('/two_image', methods=['GET'])
 def two_image():
     con = json.loads(config().data)
     con['app'] = 'Compare'
     return render_template('two_image.html', app_config=con)
 
 
-@app.route('/image_class', methods=['GET'])
+@bp.route('/image_class', methods=['GET'])
 def image_class():
     con = json.loads(config().data)
     con['app'] = 'Classify'
     return render_template('image_class.html', app_config=con)
 
 
-@app.route('/grid_class', methods=['GET'])
+@bp.route('/grid_class', methods=['GET'])
 def grid_class():
     con = json.loads(config().data)
     con['app'] = 'Grid'
     return render_template('grid_class.html', app_config=con)
 
 
-@app.route('/image_order', methods=['GET'])
+@bp.route('/image_order', methods=['GET'])
 def image_order():
     return render_template('image_order.html')
 
 # Pages
 
 
-@app.route('/about', methods=['GET'])
+@bp.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
 
 
-@app.route('/contact', methods=['GET'])
+@bp.route('/contact', methods=['GET'])
 def contact():
     return render_template('contact.html')
 
 
 # Action APIs
-@app.route('/get_users', methods=['GET'])
+@bp.route('/get_users', methods=['GET'])
 def get_users():
     print("in /get_users")
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/users"
     url = f"{base}/{view}"
     response = check_if_admin_party_then_make_request(url)
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/get_tasks/<app>', methods=['GET'])
+@bp.route('/get_tasks/<app>', methods=['GET'])
 def get_tasks(app):
     username = request.args['username']
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config['DB_PORT'], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""
     url = f"{base}/{view}"
     # pdb.set_trace()
@@ -134,9 +148,9 @@ def get_tasks(app):
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/get_image_compare_lists', methods=['GET'])
+@bp.route('/get_image_compare_lists', methods=['GET'])
 def get_image_compare_lists():
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     # pdb.set_trace()
     try:
         key = request.args['key']
@@ -154,9 +168,9 @@ def get_image_compare_lists():
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/get_image_classify_lists', methods=['GET'])
+@bp.route('/get_image_classify_lists', methods=['GET'])
 def get_image_classify_lists():
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     # pdb.set_trace()
     try:
         key = request.args['key']
@@ -174,9 +188,9 @@ def get_image_classify_lists():
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/get_image_grid_lists', methods=['GET'])
+@bp.route('/get_image_grid_lists', methods=['GET'])
 def get_image_grid_lists():
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     # pdb.set_trace()
     try:
         key = request.args['key']
@@ -194,10 +208,10 @@ def get_image_grid_lists():
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/icl_lengths', methods=['GET'])
+@bp.route('/icl_lengths', methods=['GET'])
 def icl_lengths():
     print("in /icl_lengths")
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     icl_id = request.args['key']
     view = f"_design/basic_views/_view/icl_lengths?key=\"{icl_id}\""
     url = f"{base}/{view}"
@@ -205,9 +219,9 @@ def icl_lengths():
     return json.loads(response.content.decode('utf-8'))
 
 
-@app.route('/update_tasks/<task_id>', methods=['PUT'])
+@bp.route('/update_tasks/<task_id>', methods=['PUT'])
 def update_tasks(task_id):
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(DNS, current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     url = f"{base}/{task_id}"
     results = json.loads(request.data)
     response = check_if_admin_party_then_make_request(
@@ -215,12 +229,12 @@ def update_tasks(task_id):
     return response.content
 
 
-@app.route('/get_image/<image_id>', methods=['GET'])
+@bp.route('/get_image/<image_id>', methods=['GET'])
 def get_image(image_id):
     # pdb.set_trace()
     # Get Image ID
     IMAGE_ID = image_id
-    url_for_couchdb_image_fetch = f'http://{DNS}:{DB_PORT}/{IMAGES_DB}/{IMAGE_ID}/image'
+    url_for_couchdb_image_fetch = f'http://{current_app.config["DNS"]}:{current_app.config["DB_PORT"]}/{current_app.config["IMAGES_DB"]}/{IMAGE_ID}/image'
     response = check_if_admin_party_then_make_request(
         url_for_couchdb_image_fetch)
     response.raw.decode_content = True
@@ -234,16 +248,16 @@ def get_image(image_id):
         attachment_filename='test.png')
 
 
-@app.route('/task_results', methods=['POST'])
+@bp.route('/task_results', methods=['POST'])
 def task_results():
     print("in /task_results")
     if ADMIN_PARTY:
-        couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
+        couch = couchdb.Server(f'http://{current_app.config["DNS"]}:{current_app.config["DB_PORT"]}')
     else:
         # pdb.set_trace()
         couch = couchdb.Server(
-            f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
-    db = couch[app.config["IMAGES_DB"]]
+            f'http://{current_app.config["DB_ADMIN_USER"]}:{current_app.config["DB_ADMIN_PASS"]}@{current_app.config["DNS"]}:{current_app.config["DB_PORT"]}')
+    db = couch[current_app.config["IMAGES_DB"]]
     results = json.loads(request.data)
     # 1 save results to db
     doc_id, doc_rev = db.save(results)
@@ -310,11 +324,11 @@ def task_results():
     return jsonify('asdf')  # ! What is this
 
 
-@app.route('/create_user', methods=['POST'])
+@bp.route('/create_user', methods=['POST'])
 def create_user():
     print("in /create_user")
-    couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
-    db = couch[app.config["IMAGES_DB"]]
+    couch = couchdb.Server(f'http://{current_app.config["DNS"]}:{current_app.config["DB_PORT"]}')
+    db = couch[current_app.config["IMAGES_DB"]]
     con = json.loads(config().data)
     # Check Form
     if request.form['username'] == '':
@@ -369,10 +383,10 @@ def create_user():
     return redirect('/two_image')
 
 
-@app.route('/reset_to_previous_result/<app>', methods=['POST'])
+@bp.route('/reset_to_previous_result/<app>', methods=['POST'])
 def reset_to_previous_result(app):
     currentTask = json.loads(request.data)
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
 
     # get old result
     view = f"_design/basic_views/_view/{app}Results?key=\"{currentTask['user']}\""
@@ -405,10 +419,10 @@ def reset_to_previous_result(app):
 
     return jsonify({'deleted_result_id':old_result_id,'previous_result_id':old_result_rev})
 
-@app.route('/get_classification_results/', methods=['GET'])
+@bp.route('/get_classification_results/', methods=['GET'])
 def get_classification_results():
     username = request.args['username']
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/classifyResults?key=\"{username}\""
     url = f"{base}/{view}"
     # pdb.set_trace()
@@ -417,14 +431,14 @@ def get_classification_results():
     return json.loads(response.content.decode('utf-8'))
 
 
-# @app.route('/delete_result/<app>', methods=['DELETE'])
+# @bp.route('/delete_result/<app>', methods=['DELETE'])
 
 def delete_result(_id, _rev):
     results = json.loads(request.data)
     # pdb.set_trace()
-    # var url = `http://${DNS}:${DB_PORT}/image_comparator/${doc._id}?rev=${doc._rev}`
+    # var url = `http://${current_app.config['DNS']}:${current_app.config["DB_PORT"]}/image_comparator/${doc._id}?rev=${doc._rev}`
     username = request.args['username']
-    base = "http://{}:{}/{}".format(DNS, DB_PORT, IMAGES_DB)
+    base = "http://{}:{}/{}".format(current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""
     url = f"{base}/{view}"
     response = check_if_admin_party_then_make_request(url)
