@@ -1,17 +1,19 @@
 # Image-Comparator Dockerfile
 FROM ubuntu
-MAINTAINER bbearce <bbearce@mgh.harvard.edu>
 
 # These are essential
 RUN apt update -y;
-RUN apt install -y python3.8
-RUN apt-get -y install python3-pip
-RUN apt-get install -y ruby
-RUN apt-get install -y vim
-RUN apt-get install -y curl
+RUN apt install python3.8 -y;
+RUN apt-get install python3-pip -y;
+RUN apt-get install vim -y;
 
-# CMD ["bash"]
+# to be deleted when ruby is faded out
+RUN apt-get install ruby -y;
+# to be deleted when ruby is faded out
+RUN gem install couchrest;
+# to be deleted when ruby is faded out
+RUN gem install pry;
 
-ENTRYPOINT ["python3.8","-m", "http.server"]
-CMD ["8080"]
+RUN apt-get install curl -y;
 
+ENTRYPOINT ["bash"]

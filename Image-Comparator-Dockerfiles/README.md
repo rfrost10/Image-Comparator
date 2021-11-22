@@ -3,6 +3,7 @@ Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a 
 ```
 mkdir -p /opt/couchdb/data # if it doesn't exist already
 
+# Change in production
 COUCHDB_USER=admin
 COUCHDB_PASSWORD=password
 COUCH_PORT=5984
@@ -22,10 +23,10 @@ docker run \
 
 Once logged into couchdb goto settings to enable CORS:
 
-![Initial Setup](../images/couchdb_cors.jpg)
+![Initial Setup](../readme_images/couchdb_cors.jpg)
 
 Create an Admin (if you delete them):
-![create couch admin](../images/couchdb_create_admin.jpg)
+![create couch admin](../readme_images/couchdb_create_admin.jpg)
 
 Debugging...
 
@@ -39,9 +40,9 @@ To stop container (if needed):
 docker stop image-comparator-couchdb
 ```
 
-### Setting up Image-Comparator in a Docker Container Using Flask
+### Set up Image-Comparator in a Docker Container Using Flask
 
-We will be using the *Dockerfile_flask* file in ```Image-Comparator-Dockerfiles```.
+We will be using the *Dockerfile* file in ```Image-Comparator-Dockerfiles```.
 
 #### Build the container
 
@@ -53,14 +54,9 @@ SUPPLEMENTARY_NAME="" # optional for multiple containers
 CONTAINER_TAG=flask
 MACHINE_PORT="8080"
 
-docker build . -f Dockerfile_flask --force-rm -t $CONTAINER_NAME:$CONTAINER_TAG
+docker build . -f Dockerfile --force-rm -t $CONTAINER_NAME:$CONTAINER_TAG
 
 cd ../
-
-# sometimes you will need ```--network="host"```
-# soln to the host issue is also solved more appropriately with: what is in the following code
-# source: https://stackoverflow.com/questions/38344941/two-dockers-container-see-each-others-in-the-same-machine
-# if you can't resolve DNS. Not the most secure though...
 
 docker run \
   -it \
