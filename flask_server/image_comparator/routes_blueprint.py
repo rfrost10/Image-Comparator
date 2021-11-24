@@ -110,9 +110,11 @@ def grid_class():
     return render_template('grid_class.html', app_config=con)
 
 
-@bp.route('/accept_reject', methods=['GET'])
-def accept_reject():
-    return render_template('accept_reject.html')
+@bp.route('/pair_image', methods=['GET'])
+def pair_image():
+    con = json.loads(config().data)
+    con['app'] = 'Pair'
+    return render_template('pair_image.html', app_config=con)
 
 # @bp.route('/image_order', methods=['GET'])
 # def image_order():
@@ -150,7 +152,6 @@ def get_tasks(app):
         current_app.config['DNS'], current_app.config['DB_PORT'], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""
     url = f"{base}/{view}"
-    # pdb.set_trace()
     response = check_if_admin_party_then_make_request(url)
 
     return json.loads(response.content.decode('utf-8'))
@@ -219,6 +220,27 @@ def get_image_grid_lists():
     return json.loads(response.content.decode('utf-8'))
 
 
+@bp.route('/get_image_pair_lists', methods=['GET'])
+def get_image_pair_lists():
+    base = "http://{}:{}/{}".format(
+        current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
+    # pdb.set_trace()
+    try:
+        key = request.args['key']
+    except:
+        print("in except")
+        # pdb.set_trace()
+        view = f"_design/basic_views/_view/image_pair_lists"
+        url = f"{base}/{view}"
+        response = check_if_admin_party_then_make_request(url)
+        return json.loads(response.content.decode('utf-8'))
+    print("past except")
+    view = f"_design/basic_views/_view/image_pair_lists?key=\"{key}\""
+    url = f"{base}/{view}"
+    response = check_if_admin_party_then_make_request(url)
+    return json.loads(response.content.decode('utf-8'))
+
+
 @bp.route('/icl_lengths', methods=['GET'])
 def icl_lengths():
     print("in /icl_lengths")
@@ -264,7 +286,7 @@ def get_image(image_id):
 @bp.route('/task_results', methods=['POST'])
 def task_results():
     print("in /task_results")
-    if ADMIN_PARTY:
+    if current_app.config["ADMIN_PARTY"]:
         couch = couchdb.Server(
             f'http://{current_app.config["DNS"]}:{current_app.config["DB_PORT"]}')
     else:

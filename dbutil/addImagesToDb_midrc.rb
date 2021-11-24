@@ -77,6 +77,7 @@ ims.each_with_index  do |im, idx|
   image_patient = ""
   image_qa_case_design = ""
   
+  
   if (im.class == Array) 
     image_name = im[0]
     image_class = im[1][0]
@@ -101,15 +102,14 @@ ims.each_with_index  do |im, idx|
   :timeAdded => Time.now(),
   :class => image_class,
   :dataset => image_dataset,
-  :patient => image_dataset,
+  :patient => image_patient,
   :image_qa_case_design => image_qa_case_design,
   }
   
-  
+  # binding.pry  
   obj['_id']=(idx+imgCount+1).to_s
   puts obj
   response =@db.save_doc(obj)
-  # binding.pry
   @db.put_attachment(obj, "image", File.open("#{imageFolder}/"+thisIm), :content_type => "image/#{imClass}")
 end
 

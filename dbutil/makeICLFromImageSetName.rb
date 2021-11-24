@@ -55,8 +55,8 @@ response = JSON.parse(response.body)
 #inputs response
 imageIdRows = response['rows']
 imageIds = []
-binding.pry
-imageIdRows.each {|x| imageIds.push(x['value'].to_i) }
+# binding.pry
+imageIdRows.each {|x| imageIds.push(x['value']['_id'].to_i) }
 imageIds = imageIds.sort()
 puts imageIds
 

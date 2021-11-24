@@ -1,6 +1,6 @@
 // source: https://gist.github.com/paldepind/7211654
 
-var HOST = "pop-os"
+var HOST = "terry"
 var PORT = "5984"
 var DB = "image_comparator"
 var DB_USER = "admin"
@@ -50,6 +50,7 @@ function delete_docs_in_view(VIEW) {
 
 // Dangerous!!!
 // views_to_clear = ['users', 'taskresults', 'tasks', 'classifyResults', 'image_classify_lists', 'image_compare_lists', 'image_grid_lists', 'imageSet2ImageId_deleteme']
+views_to_clear = ['imageSet2ImageId_deleteme'] //, 'taskresults', 'tasks', 'classifyResults', 'image_classify_lists', 'image_compare_lists', 'image_grid_lists']
 
 views_to_clear.forEach((v, i, a) => {
     delete_docs_in_view(v) //delete al docs in this view

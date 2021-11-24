@@ -153,6 +153,7 @@ function TaskFeeder(config_obj) {
         url: this.url_incomplete_tasks_base + `?username=${this.user}`,
         type: 'GET',
         success: function (response) {
+
           if (response.rows.length === 0 && TF.gridAppRedirect && TF.app === 'classify') {
             // Redirect once done to grid app
             // debugger;
@@ -222,14 +223,15 @@ function TaskFeeder(config_obj) {
     if (task === undefined) {
       return "no tasks left"
     } else {
+      debugger
       return new Promise((resolve, reject) => {
         // debugger
         $.ajax({
           url: this.url_image_list_base + `?key=${task.list_name}`,
           type: 'GET',
           success: function (response) {
-            // debugger
-            if (TF.app === 'compare' | TF.app === 'classify') {
+            debugger
+            if (TF.app === 'compare' | TF.app === 'classify' | TF.app === 'pair') {
               var curTaskElem = document.getElementById("si_curtask");
               curTaskElem.textContent = "You are on comparison " + (task.current_idx + 1) + " of " + response.rows[0].value.count;
             }

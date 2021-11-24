@@ -1,0 +1,233 @@
+<!-- TEMPLATE -->
+{% extends "app_template.html" %}
+
+<!-- TITLE -->
+{% block title %}Paired Images{% endblock %}
+
+<!-- CSS -->
+{% block custom_css %}
+<link href="{{ url_for('static', filename='css/pair_image.css') }}" rel="stylesheet">
+{% endblock %}
+
+<!-- BODY -->
+{% block content %}
+<p></p>
+<div class="row">
+  <div id=create_new_user_div>
+    <!-- Button trigger modal -->
+    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
+      User</button> -->
+    <p>Current User: <span id="current_user" style="color: red">User Not Created</span></p>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createUserModalLabel">Create User Dialog</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+
+            <!-- Form for User input -->
+            <!-- request.form['username'] -->
+            <!-- request.form.get('username') -->
+            <form action="http://{{ app_config.DNS }}:{{ app_config.HTTP_PORT }}/create_user" method="post">
+
+              <label for="username">Username:</label><br>
+              <input name="username" type="text" style="all: revert;"><br>
+              <!-- Years of Experience -->
+              <label>How many years of experience do you have working with brain tumor imaging?</label><br>
+
+              <input type="radio" id="years-exp-0-2" name="years-exp" style="all: revert;" value="0-2">
+              <label for="years-exp-0-2">0-2</label><br>
+
+              <input type="radio" id="years-exp-3-5" name="years-exp" style="all: revert;" value="3-5">
+              <label for="years-exp-3-5">3-5</label><br>
+
+              <input type="radio" id="years-exp-6-8" name="years-exp" style="all: revert;" value="6-8">
+              <label for="years-exp-6-8">6-8</label><br>
+
+              <input type="radio" id="years-exp-8+" name="years-exp" style="all: revert;" value="8+">
+              <label for="years-exp-8+">8+</label><br>
+
+              <!-- Specialty -->
+              <label>What do you specialize in?</label><br>
+
+              <input type="radio" id="neuro-oncology" name="specialty" style="all: revert;" value="neuro-oncology">
+              <label for="neuro-oncology">neuro-oncology</label><br>
+
+              <input type="radio" id="neuroradiology" name="specialty" style="all: revert;" value="neuroradiology">
+              <label for="neuroradiology">neuroradiology</label><br>
+
+              <input type="radio" id="radiation oncology" name="specialty" style="all: revert;"
+                value="radiation oncology">
+              <label for="radiation oncology">radiation oncology</label><br>
+
+              <input type="radio" id="other" name="specialty" style="all: revert;" value="other">
+              <label for="other">other</label><br>
+
+              <button class="btn btn-primary">Submit</button>
+              <p style="color:red;">If placeholders come up instead of images after creating a user, hit refresh.
+              </p>
+            </form>
+
+
+            <!-- Form for User input -->
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <!-- <button type="button" class="btn btn-primary">Submit</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<p>Messages from form submission:</p>
+<ul class=flashes>
+  {% for message in messages %}
+  {% if message.find("Created User") != -1 %}
+  <li style="color:green;">{{ message }}</li>
+  {% else %}
+  <li style="color:red;">{{ message }}</li>
+  {% endif %}
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<!-- Page Header -->
+<div class="row">
+  <!-- <div class="col-lg-12"> -->
+  <h1 id="to-do-message" class="page-header"></h1>
+  <button onclick="PairTaskFeeder.toggleKeyboardShortcuts()">Keyboard Shortcuts:</button><span
+    id=keyboardShortcuts>Off</span>
+
+  <!-- Button trigger modal -->
+  <button type="button" data-toggle="modal" data-target="#Instructions">Instructions</button>
+  <!-- Modal -->
+  <div class="modal fade" id="Instructions" tabindex="-1" role="dialog" aria-labelledby="InstructionsLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="InstructionsLabel">Overview</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            onclick="PairTaskFeeder.commentAlert()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>App Instructions:</p>
+          <ol>
+            <li>You will be redirected to the same page with survey questions for you to fill out.
+              <ul>
+                <li>
+                  <p style="color:red;">If placeholders come up instead of images after creating a user, hit
+                    refresh.</p>
+                </li>
+              </ul>
+            </li>
+            <!-- <li>Select yourself (the username you made) from the dropdown at the top of page.</li> -->
+          </ol>
+          <p>Optional: Click button "Keyboard Shortcuts:" to allow for arrow keys to choose images. Otherwise
+            you can click with your mouse. Controls are below.</p>
+          <p>***************</p>
+          <p>Arrow keys enabled (practice mode "Off"):</p>
+          <p>* Left Arrow: Left Image</p>
+          <p>* Right Arrow: Right Image</p>
+          <p>* Up Arrow: Tie</p>
+          <p>***************</p>
+
+          <hr>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"
+            onclick="PairTaskFeeder.commentAlert()">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.onload = function () {
+      $('*[data-target="#Instructions"]')[0].click()
+    };
+  </script>
+
+
+
+
+  <!-- </div> -->
+  <!-- col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<!-- Projects Row -->
+<div id="image-row" class="row">
+
+  <div class="col-md-5 portfolio-item" style="display:inline-block;">
+    <img id="image0" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive portfolio-item"
+      src="https://via.placeholder.com/1250x500" alt="" style="width:85%;">
+  </div>
+
+  <div class="col-md-5 portfolio-item" style="display:inline-block;">
+    <img id="image1" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive portfolio-item"
+      src="https://via.placeholder.com/1250x500" alt="" style="width:85%;">
+  </div>
+
+  <div class="col-md-1 portfolio-item">
+    <!-- [*] Use if Reject comment not forced -->
+    <button id=reject-button type="button" class="btn btn-warning" onclick="PairTaskFeeder.pairSubmit()"
+      style="display:block; margin:auto;">Reject</button>
+      <br>
+    <button id=accept-button type="button" class="btn btn-warning" onclick="PairTaskFeeder.pairSubmit()"
+    style="display:block; margin:auto;">Accept</button>
+
+  </div>
+
+
+</div>
+<!-- /.row -->
+<hr>
+
+<!-- [*] Comment Box if Tie comment not forced -->
+<div class="row">
+  <div>
+    <h5 id="tieModalLabel">Enter Optional Justification Before Making a Choice:</h5>
+  </div>
+  <div>
+    <textarea id="justification" rows="4" cols="50">optional justification</textarea>
+  </div>
+</div>
+
+<hr>
+{% endblock %}
+
+
+
+<!-- JS -->
+{% block js_scripts %}
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='js/jquery-2.1.0.min.js') }}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<!-- document ready behavior and handlers -->
+<script src="{{ url_for('static', filename='js/pair_image.js') }}"></script>
+
+<!-- Feeder reference -->
+<script src="{{ url_for('static', filename='js/default.js') }}"></script>
+
+{% endblock %}

@@ -43,7 +43,7 @@ def getURL(imageSet: str) -> str:
     return URL
 
 
-def getImageIDs(url: str) -> list:
+def getImages(url: str) -> list:
     # pdb.set_trace()
     if ADMIN_PARTY:
         response = requests.get(url)
@@ -51,31 +51,43 @@ def getImageIDs(url: str) -> list:
         response = requests.get(url, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
     response = response.content.decode('utf-8')
     response = json.loads(response)
-    imageIDs = [int(row['id']) for row in response['rows']]
-    imageIDs.sort()
+    response['rows'][0]['value']['patient']
+    response['rows'][0]['value']['_id']
+    images = {int(row['value']['_id']):row['value']['patient'] for row in response['rows']}
 
-    return imageIDs
+    return images
 
 
-def makeList(listName: str, imageIDs: list) -> None:
+def makeList(listName: str, images: list) -> None:
     uid = uuid.uuid1()
     t = datetime.now() - timedelta(hours=4)
-    obj = {"type": "image_grid_list",
+    # Pair image ids by patient
+    pairs = []
+    patients = set(images.values())
+
+    for patient in patients:
+        pair = []
+        for i, p in images.items():
+            if p == patient:
+                pair.append(i)
+                if len(pair) == 2:
+                    pairs.append(pair)
+                    pair = []
+    # pdb.set_trace()
+
+    obj = {"type": "image_pair_list",
            "list_name": listName,
-           "unique_image_count": len(imageIDs),
-           # If we add pctRepeat in this could be larger
-           "count": len(imageIDs),
-           "list": imageIDs,
+           "count": len(pairs),
+           "list": pairs,
            "time_added": t.strftime('%Y-%m-%d %H:%M:%S')}
     db = couch[IMAGES_DB]
-    # pdb.set_trace()
-    print(f"Created Grid List: {listName}")
+    print(f"Created Pair List: {listName}")
     doc_id, doc_rev = db.save(obj)
 
 
 def main(imageSet: str, listName: str):
     url = getURL(imageSet)
-    imageIDs = getImageIDs(url)
+    imageIDs = getImages(url)
     makeList(listName, imageIDs)
 
 
