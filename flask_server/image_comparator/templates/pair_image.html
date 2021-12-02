@@ -176,23 +176,30 @@
 <!-- Projects Row -->
 <div id="image-row" class="row">
 
-  <div class="col-md-5 portfolio-item" style="display:inline-block;">
-    <img id="image0" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive portfolio-item"
-      src="https://via.placeholder.com/1250x500" alt="" style="width:85%;">
+  <div class="col-sm-5" style="display:inline-block;">
+    <img id="image0" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive image_frame"
+      src="https://via.placeholder.com/1250x500" alt="">
   </div>
 
-  <div class="col-md-5 portfolio-item" style="display:inline-block;">
-    <img id="image1" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive portfolio-item"
-      src="https://via.placeholder.com/1250x500" alt="" style="width:85%;">
+  <div class="col-sm-5" style="display:inline-block;">
+    <img id="image1" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive image_frame"
+      src="https://via.placeholder.com/1250x500" alt="">
   </div>
 
-  <div class="col-md-1 portfolio-item">
+  <div class="col-sm-1">
     <!-- [*] Use if Reject comment not forced -->
-    <button id=reject-button type="button" class="btn btn-warning" onclick="PairTaskFeeder.pairSubmit()"
+    <button id=reject-button type="button" class="btn btn-danger btn-lg" onclick="PairTaskFeeder.pairSubmit()"
       style="display:block; margin:auto;">Reject</button>
-      <br>
-    <button id=accept-button type="button" class="btn btn-warning" onclick="PairTaskFeeder.pairSubmit()"
-    style="display:block; margin:auto;">Accept</button>
+    <br>
+    <button id=accept-button type="button" class="btn btn-success btn-lg" onclick="PairTaskFeeder.pairSubmit()"
+      style="display:block; margin:auto;">Accept</button>
+    <br>
+    <p>Assign Img Class:</p>
+    <button id=frontal-button type="button" class="btn btn-default" onclick="PairTaskFeeder.assignClassification(this)"
+      style="display:block; margin:auto; background-color: #428bca; color: white;">Frontal</button>
+    <br>
+    <button id=lateral-button type="button" class="btn btn-warning" onclick="PairTaskFeeder.assignClassification(this)"
+      style="display:block; margin:auto;">Lateral</button>
 
   </div>
 

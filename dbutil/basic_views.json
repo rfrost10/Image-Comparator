@@ -2,55 +2,26 @@
   "_id": "_design/basic_views",
   "language": "javascript",
   "views": {
-    "count_docs": {
-      "map": "function(doc) {\n  emit(null, doc);\n}",
-      "reduce": "_count(keys, vals, rereduce)"
-    },
-    "count_image_docs": {
-      "map": "function(doc) {\n  if (doc._attachments && doc._attachments.image)\n    emit (doc.id);\n}",
-      "reduce": "_count(keys, vals, rereduce)"
+    "users": {
+      "map": "function(doc) {\n  if (doc.type===\"user\")\n    emit(doc.id, doc.username);\n}"
     },
     "tasks": {
       "map": "function(doc) {\n  if (doc.type === \"task\") {\n    emit (doc.user, doc);\n  }\n}"
     },
-    "image_pair_lists": {
-      "map": "function(doc) {\n  if (doc.type === \"image_pair_list\") {\n\n     emit(doc._id, doc);\n  }\n}"
-    },
     "image_compare_lists": {
       "map": "function(doc) {\n  if (doc.type === \"image_compare_list\") {\n\n     emit(doc._id, doc);\n  }\n}"
+    },
+    "image_classify_lists": {
+      "map": "function(doc) {\n  if (doc.type===\"image_classify_list\")\n   emit(doc._id, doc);\n}"
     },
     "image_grid_lists": {
       "map": "function(doc) {\n  if (doc.type === \"image_grid_list\") {\n     emit(doc.list_name, doc);\n  }\n}"
     },
+    "image_pair_lists": {
+      "map": "function(doc) {\n  if (doc.type === \"image_pair_list\") {\n\n     emit(doc._id, doc);\n  }\n}"
+    },
     "incomplete_tasks": {
       "map": "function(doc) {\n  if (doc.type === \"task\" && doc.completed === false) {\n    emit (doc.user, doc);\n  }\n}"
-    },
-    "completed_tasks": {
-      "map": "function(doc) {\n  if (doc.type === \"task\" && doc.completed === true) {\n    emit (doc.user, doc);\n  }\n}"
-    },
-    "icl_lengths": {
-      "map": "function(doc) {\n  if (doc.type === \"image_compare_list\" || doc.type === \"image_classify_list\")  {\n    emit (doc._id, doc.count);\n  }\n}"
-    },
-    "taskresults": {
-      "map": "function(doc) {if (doc.type===\"compareResult\")\n  emit(doc.task, doc);\n}"
-    },
-    "task2icl": {
-      "map": "function(doc) {\n  if (doc.type === \"task\")\n    emit(doc.user, doc.image_compare_list);\n}"
-    },
-    "imageSet2ImageId": {
-      "map": "function(doc) {\n  \n  if (doc.type === \"imageDoc\")\n    emit(doc.imageSetName, doc._id);\n}"
-    },
-    "imageSet2ImageId_deleteme": {
-      "map": "function(doc) {\n  \n  if (doc.type === \"imageDoc\")\n    emit(doc.imageSetName, doc);\n}"
-    },
-    "icl_dup_lists": {
-      "map": "function(doc) {\n  if (doc.type == \"icl_dup_list\") {\n    emit(doc.icl, doc);\n  }\n}"
-    },
-    "task2iclByTaskId": {
-      "map": "function(doc) {\n  if (doc.type == \"task\") {\n    emit(doc._id, doc.image_compare_list);\n  }\n}"
-    },
-    "image_classify_lists": {
-      "map": "function(doc) {\n  if (doc.type===\"image_classify_list\")\n   emit(doc._id, doc);\n}"
     },
     "incomplete_compare_tasks": {
       "map": "function(doc) {\n  if (doc.type === \"task\" && doc.task_type=== \"compare\" && doc.completed === false) {\n    emit (doc.user, doc);\n  }\n}"
@@ -64,15 +35,32 @@
     "incomplete_pair_tasks": {
       "map": "function(doc) {\n  if (doc.type === \"task\" && doc.task_type=== \"pair\" && doc.completed === false) {\n    emit (doc.user, doc);\n  }\n}"
     },
+    "taskresults": {
+      "map": "function(doc) {if (doc.type===\"compareResult\")\n  emit(doc.task, doc);\n}"
+    },
     "classifyResults": {
       "map": "function(doc) {\n  if (doc.type===\"classifyResult\")\n    emit(doc.user, doc);\n}"
     },
     "gridResults": {
       "map": "function(doc) {\n  if (doc.type===\"gridResult\")\n    emit(doc.task, doc);\n}"
     },
-    "users": {
-      "map": "function(doc) {\n  if (doc.type===\"user\")\n    emit(doc.id, doc.username);\n}"
+    "pairResults": {
+      "map": "function(doc) {\n  if (doc.type===\"pairResult\")\n    emit(doc.task, doc);\n}"
+    },
+    "completed_tasks": {
+      "map": "function(doc) {\n  if (doc.type === \"task\" && doc.completed === true) {\n    emit (doc.user, doc);\n  }\n}"
+    },
+    "imageSet2ImageId": {
+      "map": "function(doc) {\n  \n  if (doc.type === \"imageDoc\")\n    emit(doc.imageSetName, doc);\n}"
+    },
+    "imageSet2ImageId_deleteme": {
+      "map": "function(doc) {\n  \n  if (doc.type === \"imageDoc\")\n    emit(doc.imageSetName, doc);\n}"
+    },
+    "count_image_docs": {
+      "map": "function(doc) {\n  if (doc._attachments && doc._attachments.image)\n    emit (doc.id);\n}",
+      "reduce": "_count(keys, vals, rereduce)"
     }
   }
 }
 
+y

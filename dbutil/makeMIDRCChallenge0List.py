@@ -44,16 +44,15 @@ def getURL(imageSet: str) -> str:
 
 
 def getImages(url: str) -> list:
-    # pdb.set_trace()
     if ADMIN_PARTY:
         response = requests.get(url)
     else:
         response = requests.get(url, auth=(DB_ADMIN_USER, DB_ADMIN_PASS))
     response = response.content.decode('utf-8')
     response = json.loads(response)
-    response['rows'][0]['value']['patient']
-    response['rows'][0]['value']['_id']
-    images = {int(row['value']['_id']):row['value']['patient'] for row in response['rows']}
+    # pdb.set_trace()
+    images = {int(row['value']['_id']): row['value']['patient']
+              for row in response['rows']}
 
     return images
 

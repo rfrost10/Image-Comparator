@@ -106,6 +106,13 @@ Run addImagesToDb_jkc.rb to add images:
 ruby addImagesToDb_jkc.rb <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
 ```
 
+Ex:
+```
+ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtrain training_classification.csv
+ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCvalidation validation_classification.csv
+ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtest test_classification.csv
+```
+
 * \<imageFolder> Image-Comparator-Data, but could be user specified.  
 * \<imageSetName> is the name for the image set.  
 * \<fromCSV> ```name of optional csv file in imageFolder```
@@ -155,6 +162,13 @@ docker exec -it image-comparator-flask bash
 ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
 ```
 
+Ex:
+```
+ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
+ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
+ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
+```
+
 * \<imageSetName> is the same name that was given to addImagesToDb.rb. This is you image set.  
 * \<pct repeat> is the percentage of repeated pairs to be displayed.  
 * \<list name> is a new Image Compare List name.  
@@ -175,7 +189,7 @@ ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
 
 #### Make Image Classify List
 ```bash
-ruby makeImageClassifyListImageSet.rb <imageSet> <listName> <pctRepeat>
+ruby makeImageClassifyList.rb <imageSet> <listName> <pctRepeat>
 ```
 
 #### Add a task to a user:
@@ -187,13 +201,36 @@ ruby makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<descr
 
 #### Make Image Grid List
 ```bash
-python3 makeGridListFromImageSetName.py <imageSet> <listName>
+python3 makeGridList.py <imageSet> <listName>
 ```
 
 #### Add a task to a user:
 ```bash
 python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
+
+### MIDRC-Challenge0
+
+#### Make Challenge-0 List
+```bash
+python3 makeMIDRCChallenge0List.py <imageSet> <listName>
+```
+
+Ex:
+```
+
+```
+
+#### Add a task to a user:
+```bash
+python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+
+Ex:
+```
+
+```
+
 
 ## Acknowledgements
 

@@ -40,7 +40,10 @@ else
   loop = 0
   CSV.foreach("#{imageFolder}/#{fromCSV}") do |row|
     if (loop > 0)
-        ims[row[0]] = row[1]
+        ims[row[0]] = {}
+        for i in 0..(row.length-2)
+          ims[row[0]][i] = row[i+1]
+        end
     end
     loop += 1
     
@@ -68,32 +71,45 @@ end
 
 
 ims.each_with_index  do |im, idx|
+  image_name = ""
   image_class = "None Provided"
+  image_dataset = ""
+  image_patient = ""
+  image_qa_case_design = ""
+  
   if (im.class == Array) 
-    image_class = im[1]
-    im = im[0]
+    image_name = im[0]
+    image_class = im[1][0]
+    image_dataset = im[1][1]
+    image_patient = im[1][2]
+    image_qa_case_design = im[1][3]
   end
-  puts im
+  puts image_name
   puts idx
-  thisIm=im.split('/').last
+  thisIm=image_name.split('/').last
   imClass=thisIm.split('.').last
   puts thisIm
   puts imClass
   uuid = SecureRandom.uuid
-
-  obj = { :origin => "#{thisIm}",
+  
+  
+  obj = { 
+  :origin => thisIm,
   :id => uuid,
   :type => "imageDoc",
   :imageSetName => imageSetName,
   :timeAdded => Time.now(),
-  :class => image_class
+  :class => image_class,
+  :dataset => image_dataset,
+  :patient => image_dataset,
+  :image_qa_case_design => image_qa_case_design,
   }
   
   
   obj['_id']=(idx+imgCount+1).to_s
   puts obj
-  # binding.pry
   response =@db.save_doc(obj)
+  # binding.pry
   @db.put_attachment(obj, "image", File.open("#{imageFolder}/"+thisIm), :content_type => "image/#{imClass}")
 end
 

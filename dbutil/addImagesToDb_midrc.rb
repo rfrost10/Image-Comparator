@@ -27,7 +27,7 @@ if (ARGV.size < 2) then
   puts "3 - <fromCSV> name of csv file in imageFolder."
   exit
 end
-
+ 
 # TBD: add warning if imageSetName already exists
 
 if (fromCSV.nil?)
@@ -52,7 +52,6 @@ else
   
 end
 
-
 #connect to db, create if does not exist
 puts ADMIN_PARTY
 if ADMIN_PARTY == true
@@ -68,7 +67,6 @@ if imgCount >0
   #sleep 10000
   imgCount= res["rows"][0]["value"].to_i
 end
-
 
 ims.each_with_index  do |im, idx|
   image_name = ""
@@ -93,7 +91,6 @@ ims.each_with_index  do |im, idx|
   puts imClass
   uuid = SecureRandom.uuid
   
-  
   obj = { 
   :origin => thisIm,
   :id => uuid,
@@ -105,7 +102,6 @@ ims.each_with_index  do |im, idx|
   :patient => image_patient,
   :image_qa_case_design => image_qa_case_design,
   }
-  
   # binding.pry  
   obj['_id']=(idx+imgCount+1).to_s
   puts obj

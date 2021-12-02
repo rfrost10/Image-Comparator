@@ -1,6 +1,6 @@
 // source: https://gist.github.com/paldepind/7211654
 
-var HOST = "terry"
+var HOST = "pop-os"
 var PORT = "5984"
 var DB = "image_comparator"
 var DB_USER = "admin"
@@ -30,6 +30,7 @@ function delete_docs_in_view(VIEW) {
         beforeSend: auth,
         success: (data) => {
             data.rows.forEach(function (doc) {
+                // debugger
                 // AJAX
                 $.ajax({
                     url: url_delete_doc + `/${doc.id}?rev=${doc.value._rev}`,

@@ -7,7 +7,7 @@ function init_app() {
     // Update global app feeder variable
     const config_obj = {
         endpoint_image_list: "image_pair_lists",
-        message: "Default Pair Message",
+        message: "Label frontal and lateral image",
         app: "pair"
     }
     PairTaskFeeder = new TaskFeeder(config_obj);
@@ -17,10 +17,10 @@ function init_app() {
     PairTaskFeeder.currentPair = [];
     PairTaskFeeder.nextPair = [];
     PairTaskFeeder.keyboardShortcuts = false; // turn keyboard listener on\off
-    PairTaskFeeder.leftAnnotation = null;
-    PairTaskFeeder.rightAnnotation = null;
+    PairTaskFeeder.image0Annotation = null;
+    PairTaskFeeder.image1Annotation = null;
     PairTaskFeeder.imageSelected = null;
-    
+
     // - Methods
     PairTaskFeeder.buildUI = function (imageList) {
         if (imageList === "no tasks left") {
@@ -37,15 +37,15 @@ function init_app() {
             var idx1 = this.currentPair[1];
 
             this.getBase64DataOfImageFromCouch(idx0.toString(), htmlID = "image0")
-            .then((response)=>{
-                this.getBase64DataOfImageFromCouch(idx1.toString(), htmlID = "image1")
-                .then((response)=>{
-                    // debugger
-                  this.enableButtons();
+                .then((response) => {
+                    this.getBase64DataOfImageFromCouch(idx1.toString(), htmlID = "image1")
+                        .then((response) => {
+                            // debugger
+                            this.enableButtons();
+                        })
                 })
-            })
 
-            
+
         }
     };
 
@@ -109,26 +109,26 @@ function init_app() {
         document.addEventListener('keydown', function (event) {
             if (!($("#rejectModal").css("display") === "block")) {
                 if (TF.keyboardShortcuts === false) {
-                    if(event.keyCode == 37) {
+                    if (event.keyCode == 37) {
                         alert('Left was pressed');
                     }
-                    else if(event.keyCode == 39) {
+                    else if (event.keyCode == 39) {
                         alert('Right was pressed');
                     }
-                    else if(event.keyCode == 38) {
+                    else if (event.keyCode == 38) {
                         alert('Up was pressed');
                     }
-                    
+
                 } else if (TF.keyboardShortcuts === true && document.getElementById('image0').style.pointerEvents === 'auto') {
-                    if(event.keyCode == 37) {
+                    if (event.keyCode == 37) {
                         // PairTaskFeeder.pairSubmit(1)
                         $("#image0").click()
                     }
-                    else if(event.keyCode == 39) {
+                    else if (event.keyCode == 39) {
                         $("#reject-button").click()
                         // PairTaskFeeder.pairSubmit(-1)
                     }
-                    else if(event.keyCode == 38) {
+                    else if (event.keyCode == 38) {
                         // $('*[data-target="#tieModal"]')[0].click() // for forced tie justification
                         $("#image1").click()
                         // PairTaskFeeder.pairSubmit(0)
@@ -153,16 +153,74 @@ function init_app() {
         }
     };
 
-    PairTaskFeeder.selectThisImage = function(image) {
+    PairTaskFeeder.selectThisImage = function (image) {
+        // Sotre currently selected image in current state
+        this.imageSelected = image
+        // Get image selected
+        var img_selected = this.imageSelected.id
+
+        // Clear old selections
         debugger
-        PairTaskFeeder.imageSelected  
+        $("#image0").removeClass("selected")
+        $("#image1").removeClass("selected")
+
+        // PairTaskFeeder.imageSelected
+        $(this.imageSelected).addClass("selected");
+        $(this.imageSelected).removeClass("frontal");
+        $(this.imageSelected).removeClass("lateral");
+
+        // Assign non-selected image's class that is stored but we are not changing
+        if (img_selected === "image0") {
+            if (this.image1Annotation != null) {
+                $("#image1").addClass(this.image1Annotation);
+            }
+        } else {
+            if (this.image0Annotation != null) {
+                $("#image0").addClass(this.image0Annotation);
+            }
+        }
+    };
+
+    PairTaskFeeder.assignClassification = function (button) {
+        debugger;
+        // selection qa
+        if (this.imageSelected === null) {
+            alert("Can\'t classify a non-selected image")
+        }
+
+        // Get classification
+        var classification = ""
+        if (button.id == "frontal-button") {
+            classification = "frontal"
+        } else {
+            classification = "lateral"
+        }
+
+        // Get image selected
+        var img_selected = this.imageSelected.id
+
+        // Assign annotation in state
+        if (img_selected === "image0") {
+            this.image0Annotation = classification
+        } else {
+            this.image1Annotation = classification
+        }
+
+        // Assign selected image's class chosen
+        $(this.imageSelected).removeClass("selected")
+        if (button.id === "frontal-button") {
+            $(this.imageSelected).addClass(classification);
+
+        } else if (button.id === "lateral-button") {
+            $(this.imageSelected).addClass(classification);
+        }
+
     };
 
     PairTaskFeeder.enableButtons = function () {
         document.getElementById('image0').style.pointerEvents = 'auto';
         document.getElementById('reject-button').style.pointerEvents = 'auto';
         document.getElementById('image1').style.pointerEvents = 'auto';
-
     };
 
     PairTaskFeeder.disableButtons = function () {
