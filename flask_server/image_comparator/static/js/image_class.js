@@ -56,7 +56,7 @@ function init_app() {
             user: user,
             type: "classifyResult",
             date: timeStr,
-            image0: img0,
+            image: img0,
             diagnosis: selection.id,
             task: task,
             task_list_name: this.currentTask.list_name,

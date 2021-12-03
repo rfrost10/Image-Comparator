@@ -31,9 +31,9 @@ function init_app() {
         } else {
             // debugger
             this.currentPair = this.imageList[this.currentTask.current_idx]
-            // //img0
+            //img0
             var idx0 = this.currentPair[0];
-            // //img1
+            //img1
             var idx1 = this.currentPair[1];
 
             this.getBase64DataOfImageFromCouch(idx0.toString(), htmlID = "image0")
@@ -51,21 +51,45 @@ function init_app() {
 
     PairTaskFeeder.pairSubmit = function (selection) {
         console.log("pairSubmit");
+        var accept_or_reject = 'accept'
+        if (selection.id === 'reject-button'){
+            accept_or_reject = 'reject'
+        }
+
+        // Classifications
+        var classification0 = this.image0Annotation
+        var classification1 = this.image1Annotation
+        
+        // qa for acceptance
+        if(accept_or_reject === 'accept'){
+            if (this.image0Annotation === this.image1Annotation){
+                alert("Cannot have the same annotation for each image")
+                return "same annotation error"
+            } else if (this.image0Annotation === null | this.image1Annotation === null){
+                if (this.image0Annotation === null){
+                    alert("Left image has no classification")
+                    return "image not classified error"
+                } else {
+                    alert("Right image has no classification")
+                    return "image not classified error"
+                }
+            }
+        }
+
         this.disableButtons();
         // Gather all imageIDs
         TF = this;
         const user = this.user;
         const currentTime = new Date();
-
+        
         const timeStr = currentTime.toString();
         const img0 = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/${this.currentPair[0]}`;
         const img1 = `http://${DNS}:${DB_PORT}/${IMAGES_DB}/${this.currentPair[1]}`;
-        const winnerId = selection;
+        
         // If Tie not mandatory and all submissions require comment or at least an optional comment
         const comment = $("#justification").val();
         const task = this.currentTask._id;
         const task_idx = this.currentTask.current_idx;
-        // debugger
 
         const save_results = {
             user: user,
@@ -73,30 +97,41 @@ function init_app() {
             date: timeStr,
             image0: img0,
             image1: img1,
-            winner: winnerId,
+            classification0: classification0,
+            classification1: classification1,
+            accept_or_reject: accept_or_reject,
             justification: comment,
             task: task,
             task_list_name: this.currentTask.list_name,
             task_idx: task_idx,
         }
-        debugger
-        // $.ajax({
-        //     url: `http://${DNS}:${HTTP_PORT}/task_results`,
-        //     data: JSON.stringify(save_results),
-        //     dataType: "json",
-        //     type: 'POST',
-        //     contentType: 'application/json',
-        //     success: function (response) {
-        //         // debugger
-        //         console.log('success')
-        //         // Reset incomplete tasks list
-        //         TF.OnSetUser(TF.user)
-        //     },
-        //     error: function (response) {
-        //         console.log("get of tasks failed : " + JSON.stringify(response));
-        //     }
-        // });
 
+        $.ajax({
+            url: `http://${DNS}:${HTTP_PORT}/task_results`,
+            data: JSON.stringify(save_results),
+            dataType: "json",
+            type: 'POST',
+            contentType: 'application/json',
+            success: function (response) {
+                // debugger
+                console.log('success saving image0')
+                // Reset image selections
+                $("#image0").removeClass("selected")
+                $("#image1").removeClass("selected")
+                $("#image0").removeClass("frontal")
+                $("#image1").removeClass("frontal")
+                $("#image0").removeClass("lateral")
+                $("#image1").removeClass("lateral")
+                PairTaskFeeder.image0Annotation = null;
+                PairTaskFeeder.image1Annotation = null;
+                PairTaskFeeder.imageSelected = null;
+                // Reset incomplete tasks list
+                TF.OnSetUser(TF.user)
+            },
+            error: function (response) {
+                console.log("saving of pairResult failed: " + JSON.stringify(response));
+            }
+        });
     };
 
 
@@ -160,7 +195,7 @@ function init_app() {
         var img_selected = this.imageSelected.id
 
         // Clear old selections
-        debugger
+        // debugger
         $("#image0").removeClass("selected")
         $("#image1").removeClass("selected")
 
@@ -182,7 +217,7 @@ function init_app() {
     };
 
     PairTaskFeeder.assignClassification = function (button) {
-        debugger;
+        // debugger;
         // selection qa
         if (this.imageSelected === null) {
             alert("Can\'t classify a non-selected image")

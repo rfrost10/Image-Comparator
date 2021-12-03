@@ -11,17 +11,12 @@ config_initialization = $.ajax({
     IMAGES_DB = response['IMAGES_DB']
     DB_PORT = response['DB_PORT']
     HTTP_PORT = response['HTTP_PORT']
-
-
-
     // Set initial values for dropdowns and other default elements 
-
     database_dropdown = document.getElementById('database')
     database_dropdown.innerHTML = "<option value='" + DNS + "'>" + DNS + "</option>"
 
     database_dropdown = document.getElementById('si_db')
     database_dropdown.innerHTML = DNS
-
     // Init App
     init_app(); // Each will separately set this function up
   },
@@ -45,7 +40,9 @@ function TaskFeeder(config_obj) {
   this.incompleteTasks = [];
   this.currentTask = {};
   this.imageList = [];
-  this.gridAppRedirect = true; // Experimental option
+  // Experimental option
+  this.gridAppRedirect = true;
+  this.fromApp = null; // Set in this.handleUrlFilter
 
   // Flask URLs
   this.url_results_base = `http://${DNS}:${HTTP_PORT}/task_results/`;
@@ -54,6 +51,7 @@ function TaskFeeder(config_obj) {
   this.url_incomplete_tasks_base = `http://${DNS}:${HTTP_PORT}/get_tasks/${this.app}`;
   this.url_reset_to_previous_result = `http://${DNS}:${HTTP_PORT}/reset_to_previous_result/${this.app}`;
   this.url_get_classification_results = `http://${DNS}:${HTTP_PORT}/get_classification_results`;
+  this.url_get_pair_results = `http://${DNS}:${HTTP_PORT}/get_pair_results`;
 
   // this.url_delete_result = `http://${DNS}:${HTTP_PORT}/delete_results/${this.app}`;
   // this.url_results_base = `http://${DNS}:${HTTP_PORT}/task_results/`;
@@ -68,6 +66,7 @@ function TaskFeeder(config_obj) {
     console.log('In handleUrlFilter:\n')
     qs = new QueryString(urlSearchStr);
     var user = qs.value("username");
+    this.fromApp = qs.value("fromApp");
     if (user) {
       this.user = user;
       $("#current_user")[0].innerHTML = user
@@ -108,12 +107,19 @@ function TaskFeeder(config_obj) {
       .then((response) => { return this.getHighestPriorityTask(response) })
       .then((response) => { return this.getTaskImageList(response) })
     if (this.gridAppRedirect && this.app === 'grid') {
-      // Add a call for classification results if we need their results
-      promiseChain = promiseChain
+      if(this.fromApp === 'classify'){
+        // Add a call for classification results if we need their results
+        promiseChain = promiseChain
         .then((response) => { return this.getClassificationResults(response) }) // Custom for MIDRC/IKBEOM...need classification results
+      }else if(this.fromApp === 'pair'){
+        debugger
+        promiseChain = promiseChain
+        .then((response) => { return this.getPairResults(response) }) // Custom for MIDRC...need pair results
+      }
+
     }
     promiseChain = promiseChain
-      .then((response) => { this.buildUI(response) })
+      .then((response) => { this.buildUI(response) }) // response is imageList from 
       .then(() => { $("#home")[0].focus() })
   };
 
@@ -153,11 +159,10 @@ function TaskFeeder(config_obj) {
         url: this.url_incomplete_tasks_base + `?username=${this.user}`,
         type: 'GET',
         success: function (response) {
-
-          if (response.rows.length === 0 && TF.gridAppRedirect && TF.app === 'classify') {
+          if (response.rows.length === 0 && TF.gridAppRedirect && (TF.app === 'classify' | TF.app === 'pair')) {
             // Redirect once done to grid app
             // debugger;
-            var fullurl = `http://${DNS}:${HTTP_PORT}/grid_class?username=${TF.user}`;
+            var fullurl = `http://${DNS}:${HTTP_PORT}/grid_class?username=${TF.user}&fromApp=${TF.app}`;
             window.location.replace(fullurl);
           } else {
             resolve(response);
@@ -220,6 +225,7 @@ function TaskFeeder(config_obj) {
 
   this.getTaskImageList = function (task) {
     TF = this; // otherwise "this" becomes the $.ajax object
+    // debugger
     if (task === undefined) {
       return "no tasks left"
     } else {

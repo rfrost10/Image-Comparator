@@ -340,12 +340,36 @@ def task_results():
         # Get Task
         task_map = db.find({'selector': {
                            "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
-        # Get Compare List
+        # Get Classify List
+        # pdb.set_trace()
         classify_list_map = db.find(
             {'selector': {"_id": results['task_list_name'], "type": "image_classify_list"}})
         task = task_map.__next__()
         classify_list = classify_list_map.__next__()
         if task['current_idx'] == classify_list['count'] - 1:
+            # That was the last task so mark task as complete
+            # pdb.set_trace()
+            task['completed'] = True
+            db[task['_id']] = task
+        else:
+            # pdb.set_trace()
+            task['current_idx'] += 1
+            db[task['_id']] = task
+
+        return jsonify('asdf')  # ! What is this
+    elif results['type'] == "pairResult":
+        # 2 needs to mark compare task being referenced as "completed" if this was the last task
+        #   or we need to increment the current_idx on the task
+        task_name = results['task_list_name']
+        # Get Task
+        task_map = db.find({'selector': {
+                           "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
+        # Get Pair List
+        pair_list_map = db.find(
+            {'selector': {"list_name": task_name, "type": "image_pair_list"}})
+        task = task_map.__next__()
+        pair_list = pair_list_map.__next__()
+        if task['current_idx'] == pair_list['count'] - 1:
             # That was the last task so mark task as complete
             # pdb.set_trace()
             task['completed'] = True
@@ -471,6 +495,19 @@ def get_classification_results():
     response = check_if_admin_party_then_make_request(url)
 
     return json.loads(response.content.decode('utf-8'))
+
+@bp.route('/get_pair_results/', methods=['GET'])
+def get_pair_results():
+    username = request.args['username']
+    base = "http://{}:{}/{}".format(
+        current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
+    view = f"_design/basic_views/_view/pairResults?key=\"{username}\""
+    url = f"{base}/{view}"
+    # pdb.set_trace()
+    response = check_if_admin_party_then_make_request(url)
+
+    return json.loads(response.content.decode('utf-8'))
+
 
 
 # @bp.route('/delete_result/<app>', methods=['DELETE'])
