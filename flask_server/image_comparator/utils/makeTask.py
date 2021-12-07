@@ -1,14 +1,6 @@
-import os
-import sys
-import requests
-import json
-import couchdb
-import uuid
-import pdb
-import pprint as pp
+import os, sys, requests, json, couchdb, uuid, pdb, pprint as pp
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
-
 
 load_dotenv("../flask_server/.env", verbose=True)
 
@@ -17,15 +9,13 @@ DB_ADMIN_PASS = os.getenv("DB_ADMIN_PASS")
 DNS = os.getenv("DNS")
 IMAGES_DB = os.getenv("IMAGES_DB")
 DB_PORT = os.getenv("DB_PORT")
-HTTP_PORT = os.getenv("HTTP_PORT")
 ADMIN_PARTY = os.getenv("ADMIN_PARTY")
 
 # https://couchdb-python.readthedocs.io/en/latest/getting-started.html
 if ADMIN_PARTY:
     couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
 else:
-    couch = couchdb.Server(
-        f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
+    couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
 
 # couch package ex for later
 # db = couch[IMAGES_DB]
@@ -39,6 +29,8 @@ else:
 #     URL = url + view
 #     return URL
 
+def testt():
+    print("testt")
 
 def makeTask(user: str, imageListName: str, imageListType: str, taskOrder: int) -> None:
     t = datetime.now() - timedelta(hours=4)
@@ -52,15 +44,12 @@ def makeTask(user: str, imageListName: str, imageListType: str, taskOrder: int) 
            "completed": False}
     db = couch[IMAGES_DB]
     # pdb.set_trace()
-    doc_id, doc_rev = db.save(obj)
+    doc_id, doc_rev = db.save(obj) # currently doc_id, doc_rev unused
     print(pp.pprint(f"created object {obj}"))
 
 def main(user: str, imageListName: str, imageListType: str, taskOrder: int):
-    # uid = uuid.uuid1()
-    # url = getURL(str(uid))
     # pdb.set_trace()
     makeTask(user, imageListName, imageListType, taskOrder)
-
 
 if __name__ == "__main__":
     try:

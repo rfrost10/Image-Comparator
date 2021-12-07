@@ -75,7 +75,7 @@ cd ../ # return to main directory
 
 ```
 docker exec -it -w $PWD image-comparator-flask bash
-cd dbutil;
+cd dbutil; # ruby
 ```
 
 Place your imaging data in "Image-Comparator-Data". 
@@ -98,6 +98,7 @@ MR.4.dcm,class_a
 ```
 
 Run addImagesToDb_jkc.rb to add images:
+Run addImages.py to add images:
 
 > < required arguments >
 
@@ -106,8 +107,24 @@ Run addImagesToDb_jkc.rb to add images:
 ruby addImagesToDb_jkc.rb <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
 ```
 
+```bash
+python3 image_comparator/utils/addImages.py <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
+```
+
+Ex:
+```bash
+python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST
+```
+
+```bash
+python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST test_classification.csv
+```
+
+
 Ex:
 ```
+ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtest
+
 ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtrain training_classification.csv
 ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCvalidation validation_classification.csv
 ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtest test_classification.csv
@@ -160,6 +177,19 @@ docker exec -it image-comparator-flask bash
 
 ```bash
 ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeCompareList.py <imageSetName> <list name> <pct repeat>
+```
+
+Ex:
+```bash
+python3 flask_server/image_comparator/utils/makeCompareList.py TEST TESTCompareList
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeCompareList.py TEST TESTCompareList 10
 ```
 
 Ex:

@@ -5,3 +5,5 @@ requests
 mypy # type checking
 couchdb
 pytest
+Pillow
+pandas

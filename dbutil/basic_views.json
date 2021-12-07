@@ -9,16 +9,16 @@
       "map": "function(doc) {\n  if (doc.type === \"task\") {\n    emit (doc.user, doc);\n  }\n}"
     },
     "image_compare_lists": {
-      "map": "function(doc) {\n  if (doc.type === \"image_compare_list\") {\n\n     emit(doc._id, doc);\n  }\n}"
+      "map": "function(doc) {\n  if (doc.type === \"image_compare_list\") {\n\n     emit(doc.list_name, doc);\n  }\n}"
     },
     "image_classify_lists": {
-      "map": "function(doc) {\n  if (doc.type===\"image_classify_list\")\n   emit(doc._id, doc);\n}"
+      "map": "function(doc) {\n  if (doc.type===\"image_classify_list\")\n   emit(doc.list_name, doc);\n}"
     },
     "image_grid_lists": {
       "map": "function(doc) {\n  if (doc.type === \"image_grid_list\") {\n     emit(doc.list_name, doc);\n  }\n}"
     },
     "image_pair_lists": {
-      "map": "function(doc) {\n  if (doc.type === \"image_pair_list\") {\n\n     emit(doc._id, doc);\n  }\n}"
+      "map": "function(doc) {\n  if (doc.type === \"image_pair_list\") {\n\n     emit(doc.list_name, doc);\n  }\n}"
     },
     "incomplete_tasks": {
       "map": "function(doc) {\n  if (doc.type === \"task\" && doc.completed === false) {\n    emit (doc.user, doc);\n  }\n}"
