@@ -1,11 +1,19 @@
-import os, sys, requests, json, couchdb, uuid, pdb, pprint as pp, pandas as pd
+import os
+import sys
+import requests
+import json
+import couchdb
+import uuid
+import pdb
+import pprint as pp
+import pandas as pd
 from PIL import Image
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 
 # UTILS_DIR = "flask_server/image_comparator/utils"
 
-load_dotenv("flask_server/.env",verbose=True)
+load_dotenv("flask_server/.env", verbose=True)
 DB_ADMIN_USER = os.getenv("DB_ADMIN_USER")
 DB_ADMIN_PASS = os.getenv("DB_ADMIN_PASS")
 DNS = os.getenv("DNS")
@@ -17,13 +25,15 @@ ADMIN_PARTY = True if os.getenv("ADMIN_PARTY") == 'True' else False
 if ADMIN_PARTY:
     couch = couchdb.Server(f'http://{DNS}:{DB_PORT}')
 else:
-    couch = couchdb.Server(f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
+    couch = couchdb.Server(
+        f'http://{DB_ADMIN_USER}:{DB_ADMIN_PASS}@{DNS}:{DB_PORT}')
 
 
-def main(path_to_images: str,imageSetName: str, fromCSV: str = None):
+def main(path_to_images: str, imageSetName: str, fromCSV: str = None):
     # get images
     images_unfiltered = os.listdir(path_to_images)
-    images = list(filter(lambda x: x.find(".jpg") != -1 or x.find(".png") != -1, images_unfiltered))
+    images = list(filter(lambda x: x.find(".jpg") != -
+                  1 or x.find(".png") != -1, images_unfiltered))
 
     # We need to check current current image counts
     db = couch[IMAGES_DB]
@@ -36,6 +46,7 @@ def main(path_to_images: str,imageSetName: str, fromCSV: str = None):
         for i, record in enumerate(records):
             t = datetime.now() - timedelta(hours=4)
             # mandatory fields
+            pdb.set_trace()
             record['_id'] = str(i+imgCount+1)
             record['origin'] = record.pop('image')
             record['id'] = str(uuid.uuid1())
@@ -45,28 +56,32 @@ def main(path_to_images: str,imageSetName: str, fromCSV: str = None):
 
             db.save(record)
             print(f"Saved record: {record['origin']}")
-            image_content = open(os.path.join(path_to_images,record['origin']), "rb")
+            image_content = open(os.path.join(
+                path_to_images, record['origin']), "rb")
             image_extension = record['origin'].split(".")[-1]
-            db.put_attachment(doc=record, content=image_content, filename="image", content_type=f'image/{image_extension}')
+            db.put_attachment(doc=record, content=image_content,
+                              filename="image", content_type=f'image/{image_extension}')
             print(f"Added image attachment ({image_extension})")
             # pdb.set_trace()
-            
+
     else:
         for i, image in enumerate(images):
             # pdb.set_trace()
             t = datetime.now() - timedelta(hours=4)
-            obj = {"_id":str(i+imgCount+1),
-            "origin":image,
-            "id":str(uuid.uuid1()),
-            "type":"imageDoc",
-            "imageSetName":imageSetName,
-            "timeAdded":t.strftime('%Y-%m-%d %H:%M:%S')}
+            obj = {"_id": str(i+imgCount+1),
+                   "origin": image,
+                   "id": str(uuid.uuid1()),
+                   "type": "imageDoc",
+                   "imageSetName": imageSetName,
+                   "timeAdded": t.strftime('%Y-%m-%d %H:%M:%S')}
 
             db.save(obj)
             # image_content = Image.open(os.path.join(path_to_images,image))
-            image_content = open(os.path.join(path_to_images,image), "rb")
+            image_content = open(os.path.join(path_to_images, image), "rb")
             image_extension = image.split(".")[-1]
-            db.put_attachment(doc=obj, content=image_content, filename="image", content_type=f'image/{image_extension}')
+            db.put_attachment(doc=obj, content=image_content,
+                              filename="image", content_type=f'image/{image_extension}')
+
 
 if __name__ == "__main__":
     try:

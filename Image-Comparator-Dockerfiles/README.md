@@ -70,11 +70,6 @@ docker run \
   image-comparator:flask
 ```
 
-#### Pip install requirements
-```bash
-pip3 install -r requirements.txt
-```
-
 #### Run flask server
 ```bash
 flask run --port 8080 --host 0.0.0.0

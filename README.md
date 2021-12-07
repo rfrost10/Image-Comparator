@@ -75,7 +75,6 @@ cd ../ # return to main directory
 
 ```
 docker exec -it -w $PWD image-comparator-flask bash
-cd dbutil; # ruby
 ```
 
 Place your imaging data in "Image-Comparator-Data". 
@@ -220,6 +219,15 @@ ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
 #### Make Image Classify List
 ```bash
 ruby makeImageClassifyList.rb <imageSet> <listName> <pctRepeat>
+```
+
+Ex:
+```bash
+python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassifyList
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassifyList 10
 ```
 
 #### Add a task to a user:
