@@ -166,7 +166,6 @@ def get_tasks(app):
 def get_image_compare_lists():
     base = "http://{}:{}/{}".format(
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
-    # pdb.set_trace()
     try:
         key = request.args['key']
     except:
@@ -176,6 +175,7 @@ def get_image_compare_lists():
         url = f"{base}/{view}"
         response = check_if_admin_party_then_make_request(url)
         return json.loads(response.content.decode('utf-8'))
+    # pdb.set_trace()
     print("past except")
     view = f"_design/basic_views/_view/image_compare_lists?key=\"{key}\""
     url = f"{base}/{view}"
@@ -208,7 +208,6 @@ def get_image_classify_lists():
 def get_image_grid_lists():
     base = "http://{}:{}/{}".format(
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
-    # pdb.set_trace()
     try:
         key = request.args['key']
     except:
@@ -221,6 +220,7 @@ def get_image_grid_lists():
     print("past except")
     view = f"_design/basic_views/_view/image_grid_lists?key=\"{key}\""
     url = f"{base}/{view}"
+    # pdb.set_trace()
     response = check_if_admin_party_then_make_request(url)
     return json.loads(response.content.decode('utf-8'))
 
@@ -308,8 +308,9 @@ def task_results():
     if results['type'] == "gridResult":  # fix to be grid specific
         # pdb.set_trace()
         # 2 needs to mark grid task being referenced as "completed"
-        task_name = results['task_list_name']
-        x = db.find({'selector': {'list_name': task_name, 'type': 'task'}})
+        x = db.find({'selector': {
+                        'list_name': results['task_list_name'], 
+                        'type': 'task'}})
         _id = x.__next__()['_id']
         grid_list = db[_id]
         grid_list['completed'] = True
@@ -318,13 +319,16 @@ def task_results():
         # pdb.set_trace()
         # 2 needs to mark compare task being referenced as "completed" if this was the last task
         #   or we need to increment the current_idx on the task
-        task_name = results['task_list_name']
         # Get Task
         task_map = db.find({'selector': {
-                           "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
+                               "_id": results['task'], 
+                               'list_name': results['task_list_name'], 
+                               'type': 'task', 
+                               'user': results['user']}})
         # Get Compare List
         compare_list_map = db.find(
-            {'selector': {"_id": results['task_list_name'], "type": "image_compare_list"}})
+            {'selector': {"list_name": results['task_list_name'], 
+                          "type": "image_compare_list"}})
         task = task_map.__next__()
         compare_list = compare_list_map.__next__()
         if task['current_idx'] == compare_list['count'] - 1:
@@ -333,23 +337,25 @@ def task_results():
             task['completed'] = True
             db[task['_id']] = task
         else:
-            # pdb.set_trace()
             task['current_idx'] += 1
             db[task['_id']] = task
-
         return jsonify('asdf')  # ! What is this
     elif results['type'] == "classifyResult":
         # 2 needs to mark compare task being referenced as "completed" if this was the last task
         #   or we need to increment the current_idx on the task
-        task_name = results['task_list_name']
         # Get Task
         task_map = db.find({'selector': {
-                           "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
+                               "_id": results['task'], 
+                               'list_name': results['task_list_name'], 
+                               'type': 'task', 
+                               'user': results['user']}})
         # Get Classify List
-        # pdb.set_trace()
         classify_list_map = db.find(
-            {'selector': {"_id": results['task_list_name'], "type": "image_classify_list"}})
+            {'selector': {
+                "list_name": results['task_list_name'], 
+                "type": "image_classify_list"}})
         task = task_map.__next__()
+        # pdb.set_trace()
         classify_list = classify_list_map.__next__()
         if task['current_idx'] == classify_list['count'] - 1:
             # That was the last task so mark task as complete
@@ -365,13 +371,17 @@ def task_results():
     elif results['type'] == "pairResult":
         # 2 needs to mark compare task being referenced as "completed" if this was the last task
         #   or we need to increment the current_idx on the task
-        task_name = results['task_list_name']
+        task_list_name = results['task_list_name']
         # Get Task
         task_map = db.find({'selector': {
-                           "_id": results['task'], 'list_name': task_name, 'type': 'task', 'user': results['user']}})
+                           "_id": results['task'], 
+                           'list_name': task_list_name, 
+                           'type': 'task', 
+                           'user': results['user']}})
         # Get Pair List
         pair_list_map = db.find(
-            {'selector': {"list_name": task_name, "type": "image_pair_list"}})
+            {'selector': {"list_name": task_list_name, 
+                          "type": "image_pair_list"}})
         task = task_map.__next__()
         pair_list = pair_list_map.__next__()
         if task['current_idx'] == pair_list['count'] - 1:

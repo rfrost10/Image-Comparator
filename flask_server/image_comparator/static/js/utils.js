@@ -51,7 +51,8 @@ function delete_docs_in_view(VIEW) {
 
 // Dangerous!!!
 // views_to_clear = ['users', 'taskresults', 'tasks', 'classifyResults', 'image_classify_lists', 'image_compare_lists', 'image_grid_lists', 'imageSet2ImageId_deleteme']
-views_to_clear = ['imageSet2ImageId_TEST'] //, 'taskresults', 'tasks', 'classifyResults', 'image_classify_lists', 'image_compare_lists', 'image_grid_lists']
+// views_to_clear = ['imageSet2ImageId_TEST']
+views_to_clear = ['classifyResults']
 
 views_to_clear.forEach((v, i, a) => {
     delete_docs_in_view(v) //delete al docs in this view

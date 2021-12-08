@@ -16,25 +16,6 @@ Once setup you should have two things running:
 ![Initial Setup](./readme_images/initial_setup.jpg)
 
 
-Before we continue we need to define some config variables so that all the internal ruby scripts can reference the right things. Find *Image-Comparator/dbutil/Configuration_template.rb*
-
-It should have this:
-
-```ruby
-module Configuration
-  DNS = 'localhost'
-  IMAGES_DB = '<db_name>'
-  DB_PORT = '5984'
-  HTTP_PORT = '8080'
-  DB_ADMIN_USER = '<admin>'
-  DB_ADMIN_PASS = '<password>'
-  ADMIN_PARTY = false
-end
-```
-
-Create a copy called *Configuration.rb* and replace all variables with your custom configurations.
-
-
 To finish configuring a single node setup, run the following;
 ```
 DB_PORT=5984
@@ -63,10 +44,10 @@ Add some views to the db:
 ```
 cd dbutil
 
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @basic_views.json
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @flask_server/image_comparator/utils/basic_views.json
 
 # Admin party:
-# curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @basic_views.json
+# curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @flask_server/image_comparator/utils/basic_views.json
 
 cd ../ # return to main directory
 ```
@@ -96,16 +77,7 @@ MR.4.dcm,class_a
 ...
 ```
 
-Run addImagesToDb_jkc.rb to add images:
 Run addImages.py to add images:
-
-> < required arguments >
-
-> [optional arguments]
-```bash
-ruby addImagesToDb_jkc.rb <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
-```
-
 ```bash
 python3 image_comparator/utils/addImages.py <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
 ```
@@ -114,40 +86,17 @@ Ex:
 ```bash
 python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST
 ```
-
 ```bash
 python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST test_classification.csv
-```
 
-
-Ex:
-```
-ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtest
-
-ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtrain training_classification.csv
-ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCvalidation validation_classification.csv
-ruby addImagesToDb_jkc.rb ../Image-Comparator-Data mimicMIDRCtest test_classification.csv
+python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCtrain training_classification.csv
+python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCvalidation validation_classification.csv
+python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCtest test_classification.csv
 ```
 
 * \<imageFolder> Image-Comparator-Data, but could be user specified.  
 * \<imageSetName> is the name for the image set.  
 * \<fromCSV> ```name of optional csv file in imageFolder```
-
-Sample Output:
-```
-root@a53f9696685a:/home/bb927/Image-Comparator/dbutil# ruby addImagesToDb_jkc.rb Image-Comparator-Data imageSet1
-{"rows"=>[]}
-../../image-comparator-data//MR.1.dcm
-0
-MR.1.dcm
-dcm
-../../image-comparator-data//MR.2.dcm
-1
-MR.2.dcm
-dcm
-../../image-comparator-data//MR.3.dcm
-...
-```
 
 ### Change flask_server/app/templates/app_template.html to have your users in this section:
 
@@ -163,11 +112,11 @@ dcm
 
 ## Apps
 
-> You need to have created an image set already with "addImagesToDb_jkc.rb". Go back to the "Add Images to DB" section above.
+> You need to have created an image set already with "addImages.py". Go back to the "Add Images to DB" section above.
 
 > Shell into container if you haven't already and make your way to "./dbutil"
-```bash
-docker exec -it image-comparator-flask bash
+```
+docker exec -it -w $PWD image-comparator-flask bash
 ```
 
 ### Image-Comparator
@@ -205,7 +154,13 @@ ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
 #### Add a task to a user:
 
 ```bash
-ruby makeTask.rb <user> <list name> <image-list-type> <task-order>
+python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1
+
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1 test_description
 ```
 
 * \<user> is who should complete the task  
@@ -232,26 +187,42 @@ python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassif
 
 #### Add a task to a user:
 ```bash
-ruby makeTask.rb <user> <image-list-name> <image-list-type> <task-order> [<description>]
+python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1
+
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1 test_desc
 ```
 
 ### Grid-Classifier
 
 #### Make Image Grid List
 ```bash
-python3 makeGridList.py <imageSet> <listName>
+python3 flask_server/image_comparator/utils/makeGridList.py <imageSet> <listName>
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeGridList.py TEST TESTGridList
 ```
 
 #### Add a task to a user:
 ```bash
-python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+python3 flask_server/image_comparator/utils/makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTGridList grid 1
+
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTGridList grid 1 test_description
 ```
 
 ### MIDRC-Challenge0
 
 #### Make Challenge-0 List
 ```bash
-python3 makeMIDRCChallenge0List.py <imageSet> <listName>
+python3 flask_server/image_comparator/utils/makeMIDRCChallenge0List.py <imageSet> <listName>
 ```
 
 Ex:
@@ -261,7 +232,7 @@ Ex:
 
 #### Add a task to a user:
 ```bash
-python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+python3 flask_server/image_comparator/utils/makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
 
 Ex:

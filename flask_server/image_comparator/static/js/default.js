@@ -41,8 +41,8 @@ function TaskFeeder(config_obj) {
   this.currentTask = {};
   this.imageList = [];
   // Experimental option
-  this.gridAppRedirect = true;
-  this.fromApp = null; // Set in this.handleUrlFilter
+  this.gridAppRedirect = false;
+  this.fromApp = null; // Don't touch, this is set in this.handleUrlFilter()
 
   // Flask URLs
   this.url_results_base = `http://${DNS}:${HTTP_PORT}/task_results/`;
@@ -54,7 +54,6 @@ function TaskFeeder(config_obj) {
   this.url_get_pair_results = `http://${DNS}:${HTTP_PORT}/get_pair_results`;
 
   // this.url_delete_result = `http://${DNS}:${HTTP_PORT}/delete_results/${this.app}`;
-  // this.url_results_base = `http://${DNS}:${HTTP_PORT}/task_results/`;
 
   // Methods
   this.setPrompt = function (message = this.message) {
@@ -230,7 +229,6 @@ function TaskFeeder(config_obj) {
       return "no tasks left"
     } else {
       return new Promise((resolve, reject) => {
-        // debugger
         $.ajax({
           url: this.url_image_list_base + `?key=${task.list_name}`,
           type: 'GET',

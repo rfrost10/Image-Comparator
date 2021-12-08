@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 
 
-load_dotenv("../flask_server/.env",verbose=True)
+load_dotenv("flask_server/.env",verbose=True)
  
 DB_ADMIN_USER = os.getenv("DB_ADMIN_USER")
 DB_ADMIN_PASS = os.getenv("DB_ADMIN_PASS")
