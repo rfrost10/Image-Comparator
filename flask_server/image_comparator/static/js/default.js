@@ -41,7 +41,7 @@ function TaskFeeder(config_obj) {
   this.currentTask = {};
   this.imageList = [];
   // Experimental option
-  this.gridAppRedirect = false;
+  this.gridAppRedirect = true;
   this.fromApp = null; // Don't touch, this is set in this.handleUrlFilter()
 
   // Flask URLs
@@ -106,14 +106,13 @@ function TaskFeeder(config_obj) {
       .then((response) => { return this.getHighestPriorityTask(response) })
       .then((response) => { return this.getTaskImageList(response) })
     if (this.gridAppRedirect && this.app === 'grid') {
-      if(this.fromApp === 'classify'){
+      if (this.fromApp === 'classify') {
         // Add a call for classification results if we need their results
         promiseChain = promiseChain
-        .then((response) => { return this.getClassificationResults(response) }) // Custom for MIDRC/IKBEOM...need classification results
-      }else if(this.fromApp === 'pair'){
-        debugger
+          .then((response) => { return this.getClassificationResults(response) }) // Custom for MIDRC/IKBEOM...need classification results
+      } else if (this.fromApp === 'pair') {
         promiseChain = promiseChain
-        .then((response) => { return this.getPairResults(response) }) // Custom for MIDRC...need pair results
+          .then((response) => { return this.getPairResults(response) }) // Custom for MIDRC...need pair results
       }
 
     }

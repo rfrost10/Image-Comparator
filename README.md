@@ -42,14 +42,10 @@ curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME
 
 Add some views to the db:
 ```
-cd dbutil
-
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @flask_server/image_comparator/utils/basic_views.json
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @flask_server/image_comparator/static/js/basic_views.json
 
 # Admin party:
 # curl -X PUT http://0.0.0.0:$DB_PORT/$DB_NAME/_design/basic_views -d @flask_server/image_comparator/utils/basic_views.json
-
-cd ../ # return to main directory
 ```
 
 ### Add Images to DB:
@@ -85,8 +81,6 @@ python3 image_comparator/utils/addImages.py <path to Image-Comparator-Data> <ima
 Ex:
 ```bash
 python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST
-```
-```bash
 python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST test_classification.csv
 
 python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCtrain training_classification.csv
@@ -124,50 +118,13 @@ docker exec -it -w $PWD image-comparator-flask bash
 #### Make Image Compare List:
 
 ```bash
-ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
-```
-
-```bash
 python3 flask_server/image_comparator/utils/makeCompareList.py <imageSetName> <list name> <pct repeat>
 ```
 
-Ex:
 ```bash
 python3 flask_server/image_comparator/utils/makeCompareList.py TEST TESTCompareList
-```
-
-```bash
 python3 flask_server/image_comparator/utils/makeCompareList.py TEST TESTCompareList 10
 ```
-
-Ex:
-```
-ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
-ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
-ruby makeICLFromImageSetName.rb <imageSetName> <pct repeat> <list name>
-```
-
-* \<imageSetName> is the same name that was given to addImagesToDb.rb. This is you image set.  
-* \<pct repeat> is the percentage of repeated pairs to be displayed.  
-* \<list name> is a new Image Compare List name.  
-
-#### Add a task to a user:
-
-```bash
-python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
-```
-
-```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1
-
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1 test_description
-```
-
-* \<user> is who should complete the task  
-* \<list name> <list name> from above in (makeICLFromImageSetName.rb)  
-* \<image-list-type> compare, OCTcompare, classify, classify_nine or quandrant.  
-* \<task-order> is what precedence the image compare task takes relative to others assigned to this user.  
-
 
 ### Image-Classifier
 
@@ -179,21 +136,7 @@ ruby makeImageClassifyList.rb <imageSet> <listName> <pctRepeat>
 Ex:
 ```bash
 python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassifyList
-```
-
-```bash
 python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassifyList 10
-```
-
-#### Add a task to a user:
-```bash
-python3 makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
-```
-
-```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1
-
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1 test_desc
 ```
 
 ### Grid-Classifier
@@ -207,39 +150,41 @@ python3 flask_server/image_comparator/utils/makeGridList.py <imageSet> <listName
 python3 flask_server/image_comparator/utils/makeGridList.py TEST TESTGridList
 ```
 
-#### Add a task to a user:
+### Pair-Classifier
+
+#### Make Pair Classifier List
+```bash
+python3 flask_server/image_comparator/utils/makePairList.py <imageSet> <listName>
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makePairList.py TEST TESTPairList
+```
+
+### Add a task to a user for one of the Apps:
 ```bash
 python3 flask_server/image_comparator/utils/makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1 test_description
+```
+
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1 test_description
 ```
 
 ```bash
 python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTGridList grid 1
-
 python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTGridList grid 1 test_description
 ```
 
-### MIDRC-Challenge0
-
-#### Make Challenge-0 List
 ```bash
-python3 flask_server/image_comparator/utils/makeMIDRCChallenge0List.py <imageSet> <listName>
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTPairList pair 1
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTPairList pair 1 test_description
 ```
-
-Ex:
-```
-
-```
-
-#### Add a task to a user:
-```bash
-python3 flask_server/image_comparator/utils/makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
-```
-
-Ex:
-```
-
-```
-
 
 ## Acknowledgements
 

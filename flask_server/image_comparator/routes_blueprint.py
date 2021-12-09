@@ -22,7 +22,7 @@ from flask import (
 # from werkzeug.security import check_password_hash, generate_password_hash
 
 # self written utils
-from .utils.makeTask import makeTask # for use in create_user
+from .utils.makeTask import makeTask  # for use in create_user
 
 # from .utils.makeTask import testt # for use in create_user
 # testt()
@@ -30,6 +30,7 @@ from .utils.makeTask import makeTask # for use in create_user
 bp = Blueprint('routes_blueprint', __name__, url_prefix='/')
 
 # a simple page that says hello
+
 
 @bp.route('/hello')
 def hello():
@@ -309,8 +310,8 @@ def task_results():
         # pdb.set_trace()
         # 2 needs to mark grid task being referenced as "completed"
         x = db.find({'selector': {
-                        'list_name': results['task_list_name'], 
-                        'type': 'task'}})
+            'list_name': results['task_list_name'],
+            'type': 'task'}})
         _id = x.__next__()['_id']
         grid_list = db[_id]
         grid_list['completed'] = True
@@ -321,13 +322,13 @@ def task_results():
         #   or we need to increment the current_idx on the task
         # Get Task
         task_map = db.find({'selector': {
-                               "_id": results['task'], 
-                               'list_name': results['task_list_name'], 
-                               'type': 'task', 
-                               'user': results['user']}})
+            "_id": results['task'],
+            'list_name': results['task_list_name'],
+            'type': 'task',
+            'user': results['user']}})
         # Get Compare List
         compare_list_map = db.find(
-            {'selector': {"list_name": results['task_list_name'], 
+            {'selector': {"list_name": results['task_list_name'],
                           "type": "image_compare_list"}})
         task = task_map.__next__()
         compare_list = compare_list_map.__next__()
@@ -345,14 +346,14 @@ def task_results():
         #   or we need to increment the current_idx on the task
         # Get Task
         task_map = db.find({'selector': {
-                               "_id": results['task'], 
-                               'list_name': results['task_list_name'], 
-                               'type': 'task', 
-                               'user': results['user']}})
+            "_id": results['task'],
+            'list_name': results['task_list_name'],
+            'type': 'task',
+            'user': results['user']}})
         # Get Classify List
         classify_list_map = db.find(
             {'selector': {
-                "list_name": results['task_list_name'], 
+                "list_name": results['task_list_name'],
                 "type": "image_classify_list"}})
         task = task_map.__next__()
         # pdb.set_trace()
@@ -374,13 +375,13 @@ def task_results():
         task_list_name = results['task_list_name']
         # Get Task
         task_map = db.find({'selector': {
-                           "_id": results['task'], 
-                           'list_name': task_list_name, 
-                           'type': 'task', 
+                           "_id": results['task'],
+                           'list_name': task_list_name,
+                           'type': 'task',
                            'user': results['user']}})
         # Get Pair List
         pair_list_map = db.find(
-            {'selector': {"list_name": task_list_name, 
+            {'selector': {"list_name": task_list_name,
                           "type": "image_pair_list"}})
         task = task_map.__next__()
         pair_list = pair_list_map.__next__()
@@ -504,25 +505,25 @@ def get_classification_results():
     username = request.args['username']
     base = "http://{}:{}/{}".format(
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
-    view = f"_design/basic_views/_view/classifyResults?key=\"{username}\""
+    view = f"_design/basic_views/_view/resultsClassify?key=\"{username}\""
     url = f"{base}/{view}"
     # pdb.set_trace()
     response = check_if_admin_party_then_make_request(url)
 
     return json.loads(response.content.decode('utf-8'))
+
 
 @bp.route('/get_pair_results/', methods=['GET'])
 def get_pair_results():
     username = request.args['username']
     base = "http://{}:{}/{}".format(
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
-    view = f"_design/basic_views/_view/pairResults?key=\"{username}\""
+    view = f"_design/basic_views/_view/resultsPair?key=\"{username}\""
     url = f"{base}/{view}"
-    # pdb.set_trace()
+    pdb.set_trace()
     response = check_if_admin_party_then_make_request(url)
 
     return json.loads(response.content.decode('utf-8'))
-
 
 
 # @bp.route('/delete_result/<app>', methods=['DELETE'])

@@ -17,7 +17,7 @@ function init_app() {
     if (imageList === "no tasks left") {
       return "no tasks left"
     }
-    
+
     GTF = this; // otherwise "this" becomes the $.ajax object
     return new Promise((resolve, reject) => {
       $.ajax({
@@ -48,7 +48,7 @@ function init_app() {
     if (imageList === "no tasks left") {
       return "no tasks left"
     }
-
+    debugger
     GTF = this; // otherwise "this" becomes the $.ajax object
     return new Promise((resolve, reject) => {
       $.ajax({
@@ -57,17 +57,18 @@ function init_app() {
         success: function (response) {
           var results = {};
           pairResults = response.rows
+          debugger
           pairResults.forEach((v, i, a) => {
-            if(v.value.accept_or_reject === 'accept'){
+            if (v.value.accept_or_reject === 'accept') {
               image_url0 = v.value.image0
               image_url1 = v.value.image1
-              
+
               image_id_index0 = image_url0.search('image_comparator/') + 'image_comparator/'.length
               image_id_index1 = image_url1.search('image_comparator/') + 'image_comparator/'.length
-              
+
               image_id0 = parseInt(image_url0.substring(image_id_index0, image_url0.length))
               image_id1 = parseInt(image_url1.substring(image_id_index1, image_url1.length))
-              
+
               results[image_id0] = v.value.classification0
               results[image_id1] = v.value.classification1
             }
@@ -92,7 +93,7 @@ function init_app() {
       return "no tasks means no UI to build";
     }
 
-    if (this.gridAppRedirect === true){
+    if (this.gridAppRedirect === true) {
       // If we have results from the classify or pair app use those
       // Reorder by frontal\lateral\reject
       results = imageList
@@ -107,7 +108,7 @@ function init_app() {
         } else {
           lateral.push(image_id)
         }
-  
+
       })
       imageList = frontal.concat(lateral)
     }
@@ -134,12 +135,12 @@ function init_app() {
         var label = $(`<label for="choices">Choose a class:</label>`)
         // selection_list = ['lateral','frontal'] //for later development
         // debugger
-        if(this.gridAppRedirect === true){
+        if (this.gridAppRedirect === true) {
           var select = $(`<select name="class" id="image_${v}">
                             <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
                             <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
                           </select>`)
-        }else {
+        } else {
           var select = $(`<select name="class" id="image_${v}">
                             <option value="frontal" "selected">frontal</option>
                             <option value="lateral">lateral</option>

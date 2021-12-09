@@ -30,6 +30,7 @@ else:
 
 
 def main(path_to_images: str, imageSetName: str, fromCSV: str = None):
+    # pdb.set_trace()
     # get images
     images_unfiltered = os.listdir(path_to_images)
     images = list(filter(lambda x: x.find(".jpg") != -
@@ -37,7 +38,8 @@ def main(path_to_images: str, imageSetName: str, fromCSV: str = None):
 
     # We need to check current current image counts
     db = couch[IMAGES_DB]
-    imgCount = [i for i in db.view("basic_views/count_image_docs")][0].value
+    count_image_docs = [i for i in db.view("basic_views/count_image_docs")]
+    imgCount = count_image_docs[0].value if len(count_image_docs) > 0 else 0
 
     # If from csv we need to get the extra column data and save it
     if fromCSV != None:
@@ -46,7 +48,7 @@ def main(path_to_images: str, imageSetName: str, fromCSV: str = None):
         for i, record in enumerate(records):
             t = datetime.now() - timedelta(hours=4)
             # mandatory fields
-            pdb.set_trace()
+            # pdb.set_trace()
             record['_id'] = str(i+imgCount+1)
             record['origin'] = record.pop('image')
             record['id'] = str(uuid.uuid1())
