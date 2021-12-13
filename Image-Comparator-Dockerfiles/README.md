@@ -1,7 +1,7 @@
 ### Deploy couchdb docker image
 Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a normal couchdb installs will store data so don't use this directory in a docker mount unless you don't have couchdb installed on the machine already.
 ```
-mkdir -p /opt/couchdb/data # if it doesn't exist already
+sudo mkdir -p /opt/couchdb/data # if it doesn't exist already
 
 # Change in production
 COUCHDB_USER=admin
