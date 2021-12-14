@@ -48,7 +48,6 @@ function init_app() {
     if (imageList === "no tasks left") {
       return "no tasks left"
     }
-    debugger
     GTF = this; // otherwise "this" becomes the $.ajax object
     return new Promise((resolve, reject) => {
       $.ajax({
@@ -57,7 +56,6 @@ function init_app() {
         success: function (response) {
           var results = {};
           pairResults = response.rows
-          debugger
           pairResults.forEach((v, i, a) => {
             if (v.value.accept_or_reject === 'accept') {
               image_url0 = v.value.image0

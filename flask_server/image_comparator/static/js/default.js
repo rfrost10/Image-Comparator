@@ -41,7 +41,7 @@ function TaskFeeder(config_obj) {
   this.currentTask = {};
   this.imageList = [];
   // Experimental option
-  this.gridAppRedirect = true;
+  this.gridAppRedirect = false;
   this.fromApp = null; // Don't touch, this is set in this.handleUrlFilter()
 
   // Flask URLs
@@ -223,7 +223,6 @@ function TaskFeeder(config_obj) {
 
   this.getTaskImageList = function (task) {
     TF = this; // otherwise "this" becomes the $.ajax object
-    // debugger
     if (task === undefined) {
       return "no tasks left"
     } else {

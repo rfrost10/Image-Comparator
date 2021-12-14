@@ -520,7 +520,7 @@ def get_pair_results():
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/resultsPair?key=\"{username}\""
     url = f"{base}/{view}"
-    pdb.set_trace()
+    # pdb.set_trace()
     response = check_if_admin_party_then_make_request(url)
 
     return json.loads(response.content.decode('utf-8'))
