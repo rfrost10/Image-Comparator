@@ -64,6 +64,8 @@ docker run \
   -v $PWD/flask_server:/flask_server \
   -v $PWD:$PWD \
   -w /flask_server \
+  -e FLASK_APP=image_comparator \
+  -e MACHINE_PORT=$MACHINE_PORT \
   --name image-comparator-flask-"$APP_NAME" \
   image-comparator:flask
 ```
