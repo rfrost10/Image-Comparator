@@ -109,11 +109,6 @@ python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data m
 
 > You need to have created an image set already with "addImages.py". Go back to the "Add Images to DB" section above.
 
-> Shell into container if you haven't already and make your way to "./dbutil"
-```
-docker exec -it -w $PWD image-comparator-flask bash
-```
-
 ### Image-Comparator
 
 #### Make Image Compare List:
