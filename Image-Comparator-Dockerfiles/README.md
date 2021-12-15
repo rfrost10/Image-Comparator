@@ -70,6 +70,6 @@ docker run \
 
 #### Run flask server
 ```bash
-flask run --port 8080 --host 0.0.0.0
+flask run --port $MACHINE_PORT --host 0.0.0.0
 ```
 
