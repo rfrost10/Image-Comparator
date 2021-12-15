@@ -1,7 +1,8 @@
 ### Deploy couchdb docker image
 Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a normal couchdb installs will store data so don't use this directory in a docker mount unless you don't have couchdb installed on the machine already.
 ```
-sudo mkdir -p /opt/couchdb/data # if it doesn't exist already
+APP_NAME=default
+sudo mkdir -p /opt/couchdb/data/$APP_NAME # if it doesn't exist already
 
 # Change in production
 COUCHDB_USER=admin
@@ -11,8 +12,8 @@ COUCH_PORT=5984
 
 docker run \
  -p $COUCH_PORT:5984 \
- --name image-comparator-couchdb \
- -v /opt/couchdb/data:/opt/couchdb/data \
+ --name image-comparator-couchdb-$APP_NAME \
+ -v /opt/couchdb/data/$APP_NAME:/opt/couchdb/data \
  -d \
  -e COUCHDB_USER=$COUCHDB_USER \
  -e COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
@@ -49,9 +50,6 @@ We will be using the *Dockerfile* file in ```Image-Comparator-Dockerfiles```.
 Build a new image for flask and serve in the context of the flask_server folder:
 ```bash
 cd Image-Comparator-Dockerfiles
-CONTAINER_NAME=image-comparator
-SUPPLEMENTARY_NAME="" # optional for multiple containers
-CONTAINER_TAG=flask
 MACHINE_PORT="8080"
 
 docker build . -f Dockerfile --force-rm -t $CONTAINER_NAME:$CONTAINER_TAG
@@ -66,7 +64,7 @@ docker run \
   -v $PWD/flask_server:/flask_server \
   -v $PWD:$PWD \
   -w /flask_server \
-  --name "$CONTAINER_NAME""-""$CONTAINER_TAG""$SUPPLEMENTARY_NAME" \
+  --name image-comparator-flask-"$APP_NAME" \
   image-comparator:flask
 ```
 
