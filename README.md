@@ -52,7 +52,7 @@ curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_de
 ### Add Images to DB:
 
 ```
-docker exec -it -w $PWD image-comparator-flask bash
+docker exec -it -w $PWD image-comparator-flask-$APP_NAME bash
 ```
 
 Place your imaging data in "Image-Comparator-Data". 
