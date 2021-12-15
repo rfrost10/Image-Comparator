@@ -18,6 +18,7 @@ Once setup you should have two things running:
 
 To finish configuring a single node setup, run the following;
 ```
+APP_NAME=default
 DB_PORT=5984
 COUCHDB_USER=admin
 COUCHDB_PASSWORD=password
