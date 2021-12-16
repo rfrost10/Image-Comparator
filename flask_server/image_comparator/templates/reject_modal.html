@@ -1,0 +1,56 @@
+<!-- Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="rejectModalLabel">What is the reason for rejection?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+
+        <!-- Form for User input -->
+        <!-- request.form['username'] -->
+        <!-- request.form.get('username') -->
+        <form action="http://{{ app_config.DNS }}:{{ app_config.HTTP_PORT }}/create_userr" method="post">
+            
+            <input type="radio" id="not_fl_pair" name="rejection_criteria" style="all: revert;" value="not_fl_pair">
+            <label for="not_fl_pair">Not Frontal\Lateral Pair</label><br>
+            <input type="radio" id="poor_image_quality" name="rejection_criteria" style="all: revert;" value="poor_image_quality">
+            <label for="poor_image_quality">Poor Image Quality</label><br>
+            <input type="radio" id="poor_patient_positioning" name="rejection_criteria" style="all: revert;" value="poor_patient_positioning">
+            <label for="poor_patient_positioning">Poor Patient Positioning</label><br>
+            <input type="radio" id="other" name="rejection_criteria" style="all: revert;" value="other">
+            <label for="other">Other</label><br>
+            
+            <!-- [*] Comment Box if Tie comment not forced -->
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-5">
+                    <div>
+                    <h5 id="tieModalLabel">Enter additional comments (optional):</h5>
+                    </div>
+                    <div>
+                    <textarea id="justification" rows="4" cols="50">default comment</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button id=reject-button type="button" class="btn btn-danger btn-lg" onclick="PairTaskFeeder.pairSubmit(this)"
+            style="display:block; margin:auto;" data-dismiss="modal">Reject</button>
+        </form>
+
+
+        <!-- Form for User input -->
+
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Submit</button> -->
+        </div>
+    </div>
+    </div>
+</div>
+<!-- Modal -->

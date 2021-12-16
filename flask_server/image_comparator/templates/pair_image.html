@@ -12,13 +12,15 @@
 <!-- BODY -->
 {% block content %}
 <p></p>
+<!-- reject modal -->
+{% include 'reject_modal.html' %}
+<!-- reject modal -->
 <div class="row">
   <div id=create_new_user_div>
     <!-- Button trigger modal -->
     <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
       User</button> -->
     <p>Current User: <span id="current_user" style="color: red">User Not Created</span></p>
-
 
     <!-- Modal -->
     <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
@@ -86,7 +88,8 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> <!-- Modal -->
+
   </div>
 </div>
 
@@ -142,10 +145,9 @@
           <p>Optional: Click button "Keyboard Shortcuts:" to allow for arrow keys to choose images. Otherwise
             you can click with your mouse. Controls are below.</p>
           <p>***************</p>
-          <p>Arrow keys enabled (practice mode "Off"):</p>
-          <p>* Left Arrow: Left Image</p>
-          <p>* Right Arrow: Right Image</p>
-          <p>* Up Arrow: Tie</p>
+          <p>Arrow keys enabled:</p>
+          <p>* Left Arrow: Left Image is Frontal</p>
+          <p>* Right Arrow: Right Image is Frontal</p>
           <p>***************</p>
 
           <hr>
@@ -179,45 +181,27 @@
   <div class="col-sm-5" style="display:inline-block;">
     <img id="image0" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive image_frame"
       src="https://via.placeholder.com/1250x500" alt="">
+    <p id=image0Classification class=imageClassification></p>
   </div>
 
   <div class="col-sm-5" style="display:inline-block;">
     <img id="image1" onclick="PairTaskFeeder.selectThisImage(this)" class="img-responsive image_frame"
       src="https://via.placeholder.com/1250x500" alt="">
+    <p id=image1Classification class=imageClassification></p>
   </div>
 
   <div class="col-sm-1">
     <!-- [*] Use if Reject comment not forced -->
-    <button id=reject-button type="button" class="btn btn-danger btn-lg" onclick="PairTaskFeeder.pairSubmit(this)"
-      style="display:block; margin:auto;">Reject</button>
+    <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#rejectModal">Reject</button>
     <br>
     <button id=accept-button type="button" class="btn btn-success btn-lg" onclick="PairTaskFeeder.pairSubmit(this)"
       style="display:block; margin:auto;">Accept</button>
     <br>
-    <p>Assign Img Class:</p>
-    <button id=frontal-button type="button" class="btn btn-default" onclick="PairTaskFeeder.assignClassification(this)"
-      style="display:block; margin:auto; background-color: #428bca; color: white;">Frontal</button>
-    <br>
-    <button id=lateral-button type="button" class="btn btn-warning" onclick="PairTaskFeeder.assignClassification(this)"
-      style="display:block; margin:auto;">Lateral</button>
-
   </div>
 
 
 </div>
 <!-- /.row -->
-<hr>
-
-<!-- [*] Comment Box if Tie comment not forced -->
-<div class="row">
-  <div>
-    <h5 id="tieModalLabel">Enter Optional Justification Before Making a Choice:</h5>
-  </div>
-  <div>
-    <textarea id="justification" rows="4" cols="50">optional justification</textarea>
-  </div>
-</div>
-
 <hr>
 {% endblock %}
 

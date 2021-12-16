@@ -118,7 +118,7 @@ function TaskFeeder(config_obj) {
     }
     promiseChain = promiseChain
       .then((response) => { this.buildUI(response) }) // response is imageList from 
-      .then(() => { $("#home")[0].focus() })
+      .then(() => { setTimeout(()=>{document.activeElement.blur()}, 500);})
   };
 
   this.updateUserAndDB = function () {
