@@ -311,6 +311,7 @@ def task_results():
         # 2 needs to mark grid task being referenced as "completed"
         x = db.find({'selector': {
             'list_name': results['task_list_name'],
+            'user':results['user'],
             'type': 'task'}})
         _id = x.__next__()['_id']
         grid_list = db[_id]
