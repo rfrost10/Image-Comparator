@@ -57,22 +57,24 @@ function init_app() {
           var results = {};
           pairResults = response.rows
           pairResults.forEach((v, i, a) => {
+            image_url0 = v.value.image0
+            image_url1 = v.value.image1
+            
+            image_id_index0 = image_url0.search('image_comparator/') + 'image_comparator/'.length
+            image_id_index1 = image_url1.search('image_comparator/') + 'image_comparator/'.length
+            
+            image_id0 = parseInt(image_url0.substring(image_id_index0, image_url0.length))
+            image_id1 = parseInt(image_url1.substring(image_id_index1, image_url1.length))
+            
             if (v.value.accept_or_reject === 'accept') {
-              image_url0 = v.value.image0
-              image_url1 = v.value.image1
-
-              image_id_index0 = image_url0.search('image_comparator/') + 'image_comparator/'.length
-              image_id_index1 = image_url1.search('image_comparator/') + 'image_comparator/'.length
-
-              image_id0 = parseInt(image_url0.substring(image_id_index0, image_url0.length))
-              image_id1 = parseInt(image_url1.substring(image_id_index1, image_url1.length))
-
               results[image_id0] = v.value.classification0
               results[image_id1] = v.value.classification1
             }
+            else if(v.value.accept_or_reject === 'reject'){
+              results[image_id0] = 'reject'
+              results[image_id1] = 'reject'
+            }
           })
-          // debugger
-          // GTF.results = results // No longer needed.
           resolve(results);
         },
         error: function (response) {
@@ -90,28 +92,30 @@ function init_app() {
       this.imageList = [];
       return "no tasks means no UI to build";
     }
-
     if (this.gridAppRedirect === true) {
       // If we have results from the classify or pair app use those
       // Reorder by frontal\lateral\reject
       results = imageList
       frontal = [];
       lateral = [];
+      reject = [];
       Object.values(results).forEach((v, i, a) => {
         var keys = Object.keys(results)
         // image_id = i + 1;
         image_id = keys[i];
         if (v === "frontal") {
           frontal.push(image_id)
-        } else {
+        } else if (v === "lateral"){
           lateral.push(image_id)
+        } else if (v === "reject"){
+          reject.push(image_id)
         }
-
+        
       })
-      imageList = frontal.concat(lateral)
+      imageList = frontal.concat(lateral).concat(reject)
     }
-
-
+    
+    debugger
     grid_of_images = $('#grid_of_images');
     grid_of_images.empty()
     let n_count = imageList.length;
@@ -137,11 +141,13 @@ function init_app() {
           var select = $(`<select name="class" id="image_${v}">
                             <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
                             <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
+                            <option value="reject" ${results[v] === 'reject' ? ' selected' : ''}>reject</option>
                           </select>`)
         } else {
           var select = $(`<select name="class" id="image_${v}">
                             <option value="frontal" "selected">frontal</option>
                             <option value="lateral">lateral</option>
+                            <option value="reject">reject</option>
                           </select>`)
         }
         row.append(col)
