@@ -2,3 +2,14 @@
   width: 100%;
   height: auto;
 }
+
+.image_frame {
+  object-fit: contain;
+  height: 100px;
+}
+
+.reject_border {
+  border-width: 3px;
+  border-style: solid;
+  border-color: red;
+}

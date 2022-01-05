@@ -32,7 +32,7 @@ function init_app() {
             image_id = parseInt(image_url.substring(image_id_index, image_url.length))
             results[image_id] = v.value.diagnosis
           })
-          // GTF.results = results // No longer needed.
+          GTF.cachedClassifyResults = results;
           resolve(results);
         },
         error: function (response) {
@@ -54,8 +54,10 @@ function init_app() {
         url: GTF.url_get_pair_results + `?username=${GTF.user}`,
         type: 'GET',
         success: function (response) {
-          var results = {};
+          // var results = {};
+          var results = [];
           pairResults = response.rows
+          // debugger
           pairResults.forEach((v, i, a) => {
             image_url0 = v.value.image0
             image_url1 = v.value.image1
@@ -65,16 +67,25 @@ function init_app() {
             
             image_id0 = parseInt(image_url0.substring(image_id_index0, image_url0.length))
             image_id1 = parseInt(image_url1.substring(image_id_index1, image_url1.length))
-            
             if (v.value.accept_or_reject === 'accept') {
-              results[image_id0] = v.value.classification0
-              results[image_id1] = v.value.classification1
+              temp_res = {}
+              temp_res[image_id0] = v.value.classification0
+              temp_res[image_id1] = v.value.classification1
+              results.push(temp_res)
+              // results[image_id0] = v.value.classification0
+              // results[image_id1] = v.value.classification1
             }
             else if(v.value.accept_or_reject === 'reject'){
-              results[image_id0] = 'reject'
-              results[image_id1] = 'reject'
+              temp_res = {}
+              temp_res[image_id0] = 'reject'
+              temp_res[image_id1] = 'reject'
+              results.push(temp_res)
+              // results[image_id0] = 'reject'
+              // results[image_id1] = 'reject'
             }
           })
+          // debugger
+          GTF.cachedPairResults = results;
           resolve(results);
         },
         error: function (response) {
@@ -93,67 +104,124 @@ function init_app() {
       return "no tasks means no UI to build";
     }
     if (this.gridAppRedirect === true) {
-      // If we have results from the classify or pair app use those
-      // Reorder by frontal\lateral\reject
-      results = imageList
-      frontal = [];
-      lateral = [];
-      reject = [];
-      Object.values(results).forEach((v, i, a) => {
-        var keys = Object.keys(results)
-        // image_id = i + 1;
-        image_id = keys[i];
-        if (v === "frontal") {
-          frontal.push(image_id)
-        } else if (v === "lateral"){
-          lateral.push(image_id)
-        } else if (v === "reject"){
-          reject.push(image_id)
-        }
-        
+      // flatten into new variable
+      results = {}
+      imageListSource = imageList
+      if (Object.keys(this.cachedClassifyResults).length != 0){
+        imageListSource = this.cachedClassifyResults
+      } else if (Object.keys(this.cachedPairResults).length != 0) {
+        imageListSource = this.cachedPairResults
+      }
+      imageListSource.forEach((v,i,a) => {
+        Object.keys(v).forEach((v_,i_,a_) => {
+          results[v_] = v[v_]
+        })
       })
-      imageList = frontal.concat(lateral).concat(reject)
-    }
-    
-    debugger
-    grid_of_images = $('#grid_of_images');
-    grid_of_images.empty()
-    let n_count = imageList.length;
-    let width = $("#img_columns")[0].value
-    // let width = 5;
-    let col_sizes = { 1: 12, 2: 6, 3: 4, 4: 3, 5: 2 }
-    height = Math.floor(n_count / width) + n_count % width;
-    [...Array(height).keys()].forEach((v, i, a) => {
+      // For ordering by frontal, lateral in pairs so that frontal is always first
+      results_order = Object.keys(results)
+      Object.keys(results).forEach((v, i, a) => {
+        // debugger
+        // if(i === 16){debugger}
+        if (i % 2 === 0 && results[a[i]] === 'lateral' && results[a[i+1]] === 'frontal'){
+          temp = results_order[i]
+          results_order[i] = results_order[i+1]
+          results_order[i+1] = temp        
+        }
+      })
       // debugger
-      console.log(`making row ${i}`)
-      var row = $(`<div class="row"></div>`)
-      grid_of_images.append(row)
-      imageList.slice(v * width, (v + 1) * width).forEach((v, i, a) => {
-        var col = $(`<div class="col-xs-${col_sizes[width]}"></div>`)
-        // var img = $(`<img src="/static/img/TCGA_CS_4944.png" alt="">`)
-        var img = $(`<img id="image${v}"" src="" class="img-responsive" alt="">`)
+
+      // For ordering by frontal, lateral and reject
+
+      // frontal = [];
+      // lateral = [];
+      // reject = [];
+      // Object.values(results).forEach((v, i, a) => {
+      //   // debugger
+      //   var keys = Object.keys(results)
+      //   image_id = i + 1;
+      //   image_id = keys[i];
+      //   if (v === "frontal") {
+      //     frontal.push(image_id)
+      //   } else if (v === "lateral"){
+      //     lateral.push(image_id)
+      //   } else if (v === "reject"){
+      //     reject.push(image_id)
+      //   }
+        
+      // })
+      grid_of_images = $('#grid_of_images');
+      grid_of_images.empty()
+      let n_count = Object.keys(results).length;
+      let width = $("#img_columns")[0].value
+      // let width = 2;
+      let col_sizes = { 1: 12, 2: 6, 3: 4, 4: 3, 5: 2 }
+      // debugger
+      height = Math.floor(n_count / width) + n_count % width;
+      [...Array(height).keys()].forEach((v, i, a) => {
+        console.log(`making row ${i}`)
+        var row = $(`<div class="row"></div>`)
+        grid_of_images.append(row)
         // debugger
-        this.getBase64DataOfImageFromCouch(v, htmlID = `image${v}`); // set image
-        var label = $(`<label for="choices">Choose a class:</label>`)
-        // selection_list = ['lateral','frontal'] //for later development
+        results_order.slice(v * width, (v + 1) * width).forEach((v, i, a) => {
+          var col = $(`<div class="col-xs-${col_sizes[width]}"></div>`)
+          // var img = $(`<img src="/static/img/TCGA_CS_4944.png" alt="">`)
+          // debugger
+          reject_border = ''
+          if (Object.keys(this.cachedPairResults).length != 0) {
+            reject_border = results[v] === 'reject' ? "reject_border":""
+          }
+          var img = $(`<img id="image${v}"" src="" class="img-responsive image_frame ${reject_border}" alt="">`)
+          // debugger
+          this.getBase64DataOfImageFromCouch(v, htmlID = `image${v}`); // set image
+          var label = $(`<label for="choices">Choose a class:</label>`)
+          // selection_list = ['lateral','frontal'] //for later development
+          // debugger
+            var select = $(`<select name="class" id="image_${v}">
+                              <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
+                              <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
+                              <option value="reject" ${results[v] === 'reject' ? ' selected' : ''}>reject</option>
+                            </select>`)
+          row.append(col)
+          col.append(img, label, select)
+        })
+      })
+      // if
+    }
+    else {
+
+      grid_of_images = $('#grid_of_images');
+      grid_of_images.empty()
+      let n_count = imageList.length;
+      let width = $("#img_columns")[0].value
+      // let width = 5;
+      let col_sizes = { 1: 12, 2: 6, 3: 4, 4: 3, 5: 2 }
+      height = Math.floor(n_count / width) + n_count % width;
+      [...Array(height).keys()].forEach((v, i, a) => {
         // debugger
-        if (this.gridAppRedirect === true) {
-          var select = $(`<select name="class" id="image_${v}">
-                            <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
-                            <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
-                            <option value="reject" ${results[v] === 'reject' ? ' selected' : ''}>reject</option>
-                          </select>`)
-        } else {
+        console.log(`making row ${i}`)
+        var row = $(`<div class="row"></div>`)
+        grid_of_images.append(row)
+        imageList.slice(v * width, (v + 1) * width).forEach((v, i, a) => {
+          var col = $(`<div class="col-xs-${col_sizes[width]}"></div>`)
+          // var img = $(`<img src="/static/img/TCGA_CS_4944.png" alt="">`)
+          var img = $(`<img id="image${v}"" src="" class="img-responsive" alt="">`)
+          // debugger
+          this.getBase64DataOfImageFromCouch(v, htmlID = `image${v}`); // set image
+          var label = $(`<label for="choices">Choose a class:</label>`)
+          // selection_list = ['lateral','frontal'] //for later development
+          // debugger
           var select = $(`<select name="class" id="image_${v}">
                             <option value="frontal" "selected">frontal</option>
                             <option value="lateral">lateral</option>
                             <option value="reject">reject</option>
                           </select>`)
-        }
-        row.append(col)
-        col.append(img, label, select)
+          row.append(col)
+          col.append(img, label, select)
+        })
       })
-    })
+      // else
+    }
+        
   };
 
   GridTaskFeeder.gridSubmit = function () {

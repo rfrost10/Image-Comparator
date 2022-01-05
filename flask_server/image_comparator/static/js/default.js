@@ -40,6 +40,8 @@ function TaskFeeder(config_obj) {
   this.incompleteTasks = [];
   this.currentTask = {};
   this.imageList = [];
+  this.cachedClassifyResults = {};
+  this.cachedPairResults = {};
   // Experimental option
   this.gridAppRedirect = false;
   this.fromApp = null; // Don't touch, this is set in this.handleUrlFilter()
