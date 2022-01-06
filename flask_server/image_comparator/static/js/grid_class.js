@@ -171,18 +171,21 @@ function init_app() {
             reject_border = results[v] === 'reject' ? "reject_border":""
           }
           var img = $(`<img id="image${v}"" src="" class="img-responsive image_frame ${reject_border}" alt="">`)
-          // debugger
           this.getBase64DataOfImageFromCouch(v, htmlID = `image${v}`); // set image
           var label = $(`<label for="choices">Choose a class:</label>`)
           // selection_list = ['lateral','frontal'] //for later development
           // debugger
-            var select = $(`<select name="class" id="image_${v}">
-                              <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
-                              <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
-                              <option value="reject" ${results[v] === 'reject' ? ' selected' : ''}>reject</option>
-                            </select>`)
+          var select = $(`<select name="class" id="image_${v}">
+          <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
+          <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
+          <option value="reject" ${results[v] === 'reject' ? ' selected' : ''}>reject</option>
+          </select>`)
           row.append(col)
           col.append(img, label, select)
+          // debugger
+          select[0].addEventListener('change', function(event){
+            GridTaskFeeder.manageSelections(event)
+          })
         })
       })
       // if
@@ -269,6 +272,61 @@ function init_app() {
         console.log("get of tasks failed : " + JSON.stringify(response));
       }
     });
+
+  };
+
+  GridTaskFeeder.manageSelections = function (event) {
+    image_id = event.currentTarget.id
+    row = event.currentTarget.parentElement.parentElement.children
+    for(var i=0; i<row.length; i++){
+      // debugger
+      img_int_id = image_id.slice(6,image_id.length)
+      row_item_int_id = row[i].children[0].id.slice(5,row[i].children[0].id.length)
+      if (img_int_id === row_item_int_id){
+
+        if (i % 2 === 0){
+          // even index but odd position
+          // debugger
+          if (event.currentTarget.value === 'frontal'){
+            row[i+1].children[2].value = 'lateral'
+            row[i+1].children[0].classList.remove('reject_border')
+            row[i].children[0].classList.remove('reject_border')
+            break
+          } else if (event.currentTarget.value === 'lateral'){
+            row[i+1].children[2].value = 'frontal'
+            row[i+1].children[0].classList.remove('reject_border')
+            row[i].children[0].classList.remove('reject_border')
+            break
+          } else if (event.currentTarget.value === 'reject'){
+            row[i+1].children[2].value = 'reject'
+            row[i+1].children[0].classList.add('reject_border')
+            row[i].children[0].classList.add('reject_border')
+            break
+          }
+        } else if (i % 2 != 0){
+          // odd index but even position
+          // debugger
+          if (event.currentTarget.value === 'frontal'){
+            row[i-1].children[2].value = 'lateral'
+            row[i-1].children[0].classList.remove('reject_border')
+            row[i].children[0].classList.remove('reject_border')
+            break
+          } else if (event.currentTarget.value === 'lateral'){
+            row[i-1].children[2].value = 'frontal'
+            row[i-1].children[0].classList.remove('reject_border')
+            row[i].children[0].classList.remove('reject_border')          
+            break
+          } else if (event.currentTarget.value === 'reject'){
+            row[i-1].children[2].value = 'reject'
+            row[i-1].children[0].classList.add('reject_border')
+            row[i].children[0].classList.add('reject_border')
+            break
+          }
+        } // if / else if
+
+      } // if
+
+    } // for
 
   };
 
