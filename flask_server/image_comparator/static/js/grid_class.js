@@ -117,11 +117,15 @@ function init_app() {
         alert("no cached results but this.gridAppRedirect === true")
       }
       
-      imageListSource.forEach((v,i,a) => {
-        Object.keys(v).forEach((v_,i_,a_) => {
-          results[v_] = v[v_]
+      try {
+        imageListSource.forEach((v,i,a) => {
+          Object.keys(v).forEach((v_,i_,a_) => {
+            results[v_] = v[v_]
+          })
         })
-      })
+      } catch {
+        console.log("imageListSource is an empty object or not an object somehow.")
+      }
       // For ordering by frontal, lateral in pairs so that frontal is always first
       results_order = Object.keys(results)
       Object.keys(results).forEach((v, i, a) => {
