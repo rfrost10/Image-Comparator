@@ -101,17 +101,22 @@ function init_app() {
     console.log("in buildUI")
     if (imageList === "no tasks left") {
       this.imageList = [];
+      this.cachedClassifyResults = [];
+      this.cachedPairResults = [];
       return "no tasks means no UI to build";
     }
     if (this.gridAppRedirect === true) {
       // flatten into new variable
       results = {}
-      imageListSource = imageList
+      
       if (Object.keys(this.cachedClassifyResults).length != 0){
         imageListSource = this.cachedClassifyResults
       } else if (Object.keys(this.cachedPairResults).length != 0) {
         imageListSource = this.cachedPairResults
+      } else if (Object.keys(this.cachedClassifyResults).length === 0 && Object.keys(this.cachedPairResults).length === 0){
+        alert("no cached results but this.gridAppRedirect === true")
       }
+      
       imageListSource.forEach((v,i,a) => {
         Object.keys(v).forEach((v_,i_,a_) => {
           results[v_] = v[v_]
