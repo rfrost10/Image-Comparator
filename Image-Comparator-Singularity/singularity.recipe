@@ -1,0 +1,19 @@
+# Image-Comparator Singularity Recipe File
+Bootstrap:docker
+From:ubuntu:18.04
+
+%files
+    requirements.txt /
+
+%post
+    apt update -y;
+    apt install python3.8 -y;
+    apt-get install python3-pip -y;
+    apt-get install vim -y;
+    apt-get install curl -y;
+    pip3 install -r requirements.txt;
+    python3 -m pip install --upgrade pip;
+    python3 -m pip install --upgrade pillow
+
+%runscript
+    flask run --port 5900 --host 0.0.0.0
