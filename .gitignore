@@ -4,4 +4,6 @@ Configuration.rb
 .env
 __pycache__
 Image-Comparator-Data/
+*.simg
+*.sif
 git_access_token.txt
