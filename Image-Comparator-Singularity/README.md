@@ -18,6 +18,34 @@ docker run \
  -e COUCHDB_USER=$COUCHDB_USER \
  -e COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
  couchdb:latest
+
+# Create sandbox
+```bash
+singularity build --sandbox s_kmotion_couchdb couchdb.sif
+```
+
+```bash
+singularity shell \
+singularity shell \
+  --fakeroot \
+  --writable \
+  --net \
+  --env COUCHDB_USER=$COUCHDB_USER \
+  --env COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
+  -B /local_mount/space/carlsbad/3/users/bb927/Image-Comparator/couchdb_database:/opt/couchdb \
+  s_kmotion_couchdb/
+
+```
+chown -R couchdb:couchdb /opt/couchdb/data
+singularity run \
+  couchdb.sif
+ 
+
+singularity run \
+  -B /local_mount/space/carlsbad/3/users/bb927/Image-Comparator/couchdb_database:/opt/couchdb/data \
+  couchdb.sif
+  
+-B $PWD/couchdb_database:/opt/couchdb/data \
 ```
 
 > Note you can't make requests to this container wihtout making sure that CORS (cross-origin resource sharing) is enabled:
