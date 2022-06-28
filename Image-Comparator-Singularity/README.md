@@ -36,6 +36,8 @@ singularity shell \
   s_kmotion_couchdb/
 
 ```
+
+```bash
 chown -R couchdb:couchdb /opt/couchdb/data
 singularity run \
   couchdb.sif
@@ -60,12 +62,12 @@ Create an Admin (if you delete them):
 Debugging...
 
 To shell into this container:
-```
+```bash
 docker exec -it image-comparator-couchdb bash
 ```
 
 To stop container (if needed):
-```
+```bash
 docker stop image-comparator-couchdb
 ```
 
