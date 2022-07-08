@@ -154,6 +154,7 @@ def get_users():
 @bp.route('/get_tasks/<app>', methods=['GET'])
 def get_tasks(app):
     username = request.args['username']
+    # pdb.set_trace()
     base = "http://{}:{}/{}".format(
         current_app.config['DNS'], current_app.config['DB_PORT'], current_app.config["IMAGES_DB"])
     view = f"_design/basic_views/_view/incomplete_{app}_tasks?key=\"{username}\""

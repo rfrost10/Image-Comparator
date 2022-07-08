@@ -18,7 +18,7 @@ Once setup you should have two things running:
 
 To finish configuring a single node setup, run the following;
 ```
-APP_NAME=default
+INSTANCE=_instance_1 # use if you want to make multiple instances
 DB_PORT=5984
 COUCHDB_USER=admin
 COUCHDB_PASSWORD=password
@@ -51,8 +51,24 @@ curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@0.0.0.0:$DB_PORT/$DB_NAME/_de
 
 ### Add Images to DB:
 
+Make your way to the git clones repo root directory:
+```bash
+cd Image-Comparator
 ```
-docker exec -it -w $PWD image-comparator-flask-$APP_NAME bash
+
+Docker users:
+```bash
+docker exec -it -w $PWD image-comparator-flask$INSTANCE bash
+```
+
+For Singularity use:
+```bash
+singularity shell \
+  -B $PWD:$PWD \
+  -W $PWD \
+  --env FLASK_APP=flask_server/image_comparator \
+  --env LC_ALL=C.UTF-8 \
+  Image-Comparator-Singularity/IC$INSTANCE.simg
 ```
 
 Place your imaging data in "Image-Comparator-Data". 
@@ -60,33 +76,33 @@ Place your imaging data in "Image-Comparator-Data".
 Ex:
 ```
 root@a53f9696685a:/home/bb927/Image-Comparator# ls ../Image-Comparator-Data/
-MR.1.dcm   MR.2.dcm  MR.3.dcm  MR.4.dcm
+MR.1.png   MR.2.png  MR.3.png  MR.4.png
 ```
-
 
 > If you want to supply the class of the image ahead of time, supply a csv in "Image-Comparator-Data" with image name and id like so:
 ```
 image,class
-MR.1.dcm,class_a
-MR.2.dcm,class_b
-MR.3.dcm,class_c
-MR.4.dcm,class_a
+MR.1.png,class_a
+MR.2.png,class_b
+MR.3.png,class_c
+MR.4.png,class_a
 ...
 ```
 
+#### Copy the .env_sample file into a new .env for instance specific changes
+```bash
+cp flask_server/.env_sample flask_server/.env
+```
+> Make changes and add your specific setup
+
 Run addImages.py to add images:
 ```bash
-python3 image_comparator/utils/addImages.py <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
+python3 flask_server/image_comparator/utils/addImages.py <path to Image-Comparator-Data> <imageSetName> [<fromCSV>]
 ```
 
 Ex:
 ```bash
-python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST
-python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data TEST test_classification.csv
-
-python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCtrain training_classification.csv
-python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCvalidation validation_classification.csv
-python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data mimicMIDRCtest test_classification.csv
+python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data sample_data images.csv
 ```
 
 * \<imageFolder> Image-Comparator-Data, but could be user specified.  
@@ -114,25 +130,25 @@ python3 flask_server/image_comparator/utils/addImages.py Image-Comparator-Data m
 #### Make Image Compare List:
 
 ```bash
-python3 flask_server/image_comparator/utils/makeCompareList.py <imageSetName> <list name> <pct repeat>
+python3 flask_server/image_comparator/utils/makeCompareList.py <imageSetName> <list name> [<pct repeat>]
 ```
 
 ```bash
-python3 flask_server/image_comparator/utils/makeCompareList.py TEST TESTCompareList
-python3 flask_server/image_comparator/utils/makeCompareList.py TEST TESTCompareList 10
+python3 flask_server/image_comparator/utils/makeCompareList.py sample_data sample_dataCompareList
+python3 flask_server/image_comparator/utils/makeCompareList.py sample_data sample_dataCompareList 10
 ```
 
 ### Image-Classifier
 
 #### Make Image Classify List
 ```bash
-ruby makeImageClassifyList.rb <imageSet> <listName> <pctRepeat>
+python3 flask_server/image_comparator/utils/makeClassifyList.py <imageSet> <listName> [<pctRepeat>]
 ```
 
 Ex:
 ```bash
-python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassifyList
-python3 flask_server/image_comparator/utils/makeClassifyList.py TEST TESTClassifyList 10
+python3 flask_server/image_comparator/utils/makeClassifyList.py sample_data sample_data_ClassifyList
+python3 flask_server/image_comparator/utils/makeClassifyList.py sample_data sample_data_ClassifyList 10
 ```
 
 ### Grid-Classifier
@@ -143,7 +159,7 @@ python3 flask_server/image_comparator/utils/makeGridList.py <imageSet> <listName
 ```
 
 ```bash
-python3 flask_server/image_comparator/utils/makeGridList.py TEST TESTGridList
+python3 flask_server/image_comparator/utils/makeGridList.py sample_data sample_data_GridList
 ```
 
 ### Pair-Classifier
@@ -154,7 +170,7 @@ python3 flask_server/image_comparator/utils/makePairList.py <imageSet> <listName
 ```
 
 ```bash
-python3 flask_server/image_comparator/utils/makePairList.py TEST TESTPairList
+python3 flask_server/image_comparator/utils/makePairList.py sample_data sample_data_PairList
 ```
 
 ### Add a task to a user for one of the Apps:
@@ -162,24 +178,28 @@ python3 flask_server/image_comparator/utils/makePairList.py TEST TESTPairList
 python3 flask_server/image_comparator/utils/makeTask.py <user> <image-list-name> <image-list-type> <task-order> [<description>]
 ```
 
+Ex:
 ```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTCompareList compare 1 test_description
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1 test_description_sample_data
+python3 flask_server/image_comparator/utils/makeTask.py Rob sample_data_ClassifyList classify 1 test_description_sample_data
+python3 flask_server/image_comparator/utils/makeTask.py Bill sample_data_ClassifyList classify 1 test_description_sample_data
+```
+
+Ex:
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1 test_description
+```
+
+Ex:
+```bash
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_GridList grid 1
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_GridList grid 1 test_description
 ```
 
 ```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTClassifyList classify 1 test_description
-```
-
-```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTGridList grid 1
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTGridList grid 1 test_description
-```
-
-```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTPairList pair 1
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin TESTPairList pair 1 test_description
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_PairList pair 1
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_PairList pair 1 test_description
 ```
 
 ## Acknowledgements

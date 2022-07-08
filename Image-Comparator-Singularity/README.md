@@ -1,43 +1,11 @@
-### Deploy couchdb docker image
+# Deploy couchdb singularity container
 
+Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a normal couchdb installs will store data (in the container). For isngularity we work out of sandboxes so this will reside in the sandbox.
 
-# The following might be relevant for setting up `/opt/couchdb/data`
-TODO
-TODO
-TODO
-
-Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a normal couchdb installs will store data so don't use this directory in a docker mount unless you don't have couchdb installed on the machine already.
-
-```bash
-# MISCELLANEOUS SNIPPETS
-
-APP_NAME=default
-sudo mkdir -p /opt/couchdb/data/$APP_NAME # if it doesn't exist already
-
-
-  --env /local_mount/space/carlsbad/3/users/bb927/Image-Comparator/couchdb_database:/opt/couchdb \
-
-
-chown -R couchdb:couchdb /opt/couchdb/data
-singularity run \
-  couchdb.sif
-```
-TODO
-TODO
-TODO
-
-#### Preparation
-
-1. Find somewhere with sufficient local disk storage (i.e. not network storage)
-
-```bash
-ssh serena
-cd /local_mount/space/serena/2/users/dave
-mkdir couchdb
-cd couchdb
-```
-
-2. **If needed**, symlink your `~/.singularity` directory to be somewhere else so that you don't fill up your home directory (quota may be small)
+## Preparation
+> Note these are really duplicated instructions from [Martinos Singularity and Compute Instructions](https://www.nmr.mgh.harvard.edu/martinos/userInfo/computer/
+1. **If needed**, symlink your `~/.singularity` directory to be somewhere else so that you don't fill up your home directory (quota may be small)
+docker.php).
 
 ```bash
 TMP_FILES=/path/to/your/location
@@ -48,7 +16,7 @@ rm -rf ~/.singularity
 ln -s ${TMP_FILES}/singularity ~/.singularity
 ```
 
-3. Create singularity `tmp` and `cache` directories - see e.g. https://www.nmr.mgh.harvard.edu/martinos/userInfo/computer/docker.php
+2. Create singularity `tmp` and `cache` directories - see e.g. https://www.nmr.mgh.harvard.edu/martinos/userInfo/computer/docker.php
 
 ```bash
 mkdir -p /scratch/$USER/{tmp,cache}
@@ -56,49 +24,62 @@ export SINGULARITY_TMPDIR=/scratch/$USER/tmp
 export SINGULARITY_CACHEDIR=/scratch/$USER/cache
 ```
 
-#### Get couchdb:latest from Docker Hub
-
+## Get couchdb:latest from Docker Hub
 ```bash
+SERVER=carlsbad.nmr.mgh.harvard.edu #serena
+ssh $SERVER
+```
+
+Once in:
+```bash
+WKDIR=/local_mount/space/carlsbad/3/users/bb927/Image-Comparator # /local_mount/space/serena/2/users/dave
+cd $WKDIR
+```
+
+Grab and pull the couchdb image. We will store in the Singularity notes area:
+```bash
+cd Image-Comparator-Singularity
 singularity pull couchdb.sif docker://couchdb:latest
 ```
 
-#### Create sandbox
-
+## Create sandbox
 ```bash
-singularity build --sandbox couchdb_sandbox couchdb.sif
+INSTANCE=_instance_1 # use if you want to make multiple instances
+SANDBOX_NAME=couchdb_sandbox$INSTANCE
+singularity build --sandbox $SANDBOX_NAME couchdb.sif
 ```
 
-#### Set an open port you can use
+## Set an open port you can use
 couchdb uses port 5984 by default but you may not be able to use that
 
 ```bash
-OPEN_PORT=10105
+OPEN_PORT=5900 # 10105
 ```
 
-#### Some settings
+## Some settings
 Change the username and password
 
 ```bash
 COUCHDB_USER=admin
-COUCHDB_PASSWORD=asecretpassword
+COUCHDB_PASSWORD=password
 
-INST_NAME=couchdb_inst
+INST_NAME=couchdb$INSTANCE
 ```
 
-#### Start a singularity instance
+## Start a singularity instance
 So that the instance starts couchdb in the background (equivalent to docker detached `-d` mode)
 
 The `runscript` launches the couchdb server. `singularity instance start` runs
 `startscript`, which is initially empty. So to start the server, we'll run append a line to `startscript` to call `runscript`, which means that the server will start in the background after starting the instance.
 
 ```console
-$ echo "/.singularity.d/runscript" >> couchdb_sandbox/.singularity.d/startscript
+$ echo "/.singularity.d/runscript" >> $SANDBOX_NAME/.singularity.d/startscript
 
 $ singularity instance start --fakeroot --writable \
     --net --network-args "portmap=${OPEN_PORT}:5984/tcp" \
     --env COUCHDB_USER=$COUCHDB_USER \
     --env COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
-    couchdb_sandbox/ \
+    $SANDBOX_NAME/ \
     ${INST_NAME}
 [WARN  tini (14)] Tini is not running as PID 1 and isn't registered as a child subreaper.
 Zombie processes will not be re-parented to Tini, so zombie reaping won't work.
@@ -107,10 +88,10 @@ To fix the problem, use the -s option or set the environment variable TINI_SUBRE
 INFO:    instance started successfully
 ```
 
-#### Test the website
+## Test the database connection
 
 ```console
-$ curl localhost:10105
+$ curl $SERVER:$OPEN_PORT
 {"couchdb":"Welcome","version":"3.2.2","git_sha":"d5b746b7c","uuid":"ce86c3d679339d8bb6399d12c500b40e","features":["access-ready","partitioned","pluggable-storage-engines","reshard","scheduler"],"vendor":{"name":"The Apache Software Foundation"}}
 ```
 
@@ -118,21 +99,30 @@ This shows that the server is running!
 
 Alternatives:
 
+Examples:
 ```bash
-curl serena.nmr.mgh.harvard.edu:10105
-curl 0.0.0.0:10105
-curl 127.0.0.1:10105
+curl 0.0.0.0:$OPEN_PORT
+curl 127.0.0.1:$OPEN_PORT
 ```
 
-#### Get to the website
-Navigate to e.g. http://serena.nmr.mgh.harvard.edu:10105/_utils
+## Get to the website
+Navigate to e.g. http://$SERVER:$OPEN_PORT/_utils
 
 If this is a Martinos machine, you'll need to be on the network or on the VPN.
 
 At that page you should be able to log in with the user=COUCHDB_USER and pw=COUCHDB_PASSWORD
 
+> This may still not work. If it doesn't you may need to setup an ssh tunnel for your local machine to map the port where this is deployed to a port of your local. Here is an example
 
-#### Dealing with the singularity instance
+```bash
+$ sudo ssh -N -f -L localhost:$OPEN_PORT:localhost:$OPEN_PORT bb927@$SERVER
+```
+
+More notes here [https://ljvmiranda921.github.io/notebook/2018/01/31/running-a-jupyter-notebook/](https://ljvmiranda921.github.io/notebook/2018/01/31/running-a-jupyter-notebook/)
+
+This maps the localhost of both machines together and 
+
+## Dealing with the singularity instance
 Show running instances
 
 ```console
@@ -149,25 +139,17 @@ INFO:    Stopping couchdb_inst instance of /local_mount/space/serena/2/users/dav
 ```
 
 Check where output is written
-
 ```console
 $ singularity instance list -l ${INST_NAME}
 INSTANCE NAME    PID       LOGS
 couchdb_inst     241595    /homes/2/dave/.singularity/instances/logs/serena.nmr.mgh.harvard.edu/dave/couchdb_inst.err
                            /homes/2/dave/.singularity/instances/logs/serena.nmr.mgh.harvard.edu/dave/couchdb_inst.out
 ```
-Note that this user's `~/.singularity` is symlinked to be somewhere else
+> Note that this user's `~/.singularity` is symlinked to be somewhere else
 
-**Be careful** - a lot of output goes to the .err file, so eventually this could fill up your disk space
+**Be careful** - a lot of output goes to the .err file, so eventually this could fill up your disk space. Be sure to periodically check the space it makes.
 
-Stop the server (if needed)
-
-```console
-$ singularity instance stop ${INST_NAME}
-INFO:    Stopping couchdb_inst instance of /local_mount/space/serena/2/users/dave/couchdb/couchdb_sandbox (PID=241595)
-```
-
-> Note you can't make requests to this container wihtout making sure that CORS (cross-origin resource sharing) is enabled:
+> Note you can't make requests to this container without making sure that CORS (cross-origin resource sharing) is enabled:
 
 Once logged into couchdb goto settings to enable CORS:
 
@@ -177,7 +159,7 @@ Create an Admin (if you delete them):
 ![create couch admin](../readme_images/couchdb_create_admin.jpg)
 
 
-#### Extra information
+> Extra information
 FYI without the `startscript` modification above, would need to do the following.
 The disadvantage of this is that it would just run in the terminal, instead of in the background.
 
@@ -186,7 +168,7 @@ singularity instance start --fakeroot --writable \
     --net --network-args "portmap=${OPEN_PORT}:5984/tcp" \
     --env COUCHDB_USER=$COUCHDB_USER \
     --env COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
-    couchdb_sandbox/ \
+    $SANDBOX_NAME/ \
     ${INST_NAME}
 
 singularity run instance://${INST_NAME}
@@ -198,18 +180,19 @@ To shell into this container for debugging:
 singularity shell instance://${INST_NAME}
 ```
 
-### Set up Image-Comparator in a Singularity Container Using Flask
+# Set up Image-Comparator in a Singularity Container Using Flask
 
 We will be using the singularity.recipe file in ```Image-Comparator-Singularity```.
 
-#### Build the container
+## Build the container
 
-Build a new image for flask and serve in the context of the flask_server folder:
+Build a new image for flask and serve in the context of the flask_server folder and get yourself into the "Image-Comparator-Singularity" directory:
+
 ```bash
 cd Image-Comparator-Singularity
-MACHINE_PORT="5900"
+UI_PORT="5902" # For app not couchdb
 
-singularity build --fakeroot IC.simg singularity.recipe
+singularity build --fakeroot IC$INSTANCE.simg singularity.recipe
 
 cd ../
 
@@ -219,22 +202,25 @@ WKDIR=/local_mount/space/carlsbad/3/users/bb927/Image-Comparator/flask_server
 singularity run \
   -B $WKDIR:$WKDIR \
   --env FLASK_APP=flask_server/image_comparator \
-  --env MACHINE_PORT=$MACHINE_PORT \
   --env LC_ALL=C.UTF-8 \
-  Image-Comparator-Singularity/IC.simg 
+  Image-Comparator-Singularity/IC$INSTANCE.simg $UI_PORT
 ```
 
-#### Debugging flask server container
+> Note with a new port you may need this again:
+```bash
+$ sudo ssh -N -f -L localhost:$UI_PORT:localhost:$UI_PORT bb927@$SERVER
+```
+
+## Debugging flask server container
 ```bash
 singularity shell \
   -B $WKDIR:$WKDIR \
   --env FLASK_APP=flask_server/image_comparator \
-  --env MACHINE_PORT=$MACHINE_PORT \
+  --env UI_PORT=$UI_PORT \
   --env LC_ALL=C.UTF-8 \
-  Image-Comparator-Singularity/IC.simg
+  Image-Comparator-Singularity/IC$INSTANCE.simg
 
 # cd flask_server; # If above isn't working, and keep in mind if you are here then FLASK_APP=image_comparator
 
-flask run --port $MACHINE_PORT --host 0.0.0.0
+flask run --port $UI_PORT --host 0.0.0.0
 ```
-

@@ -16,4 +16,4 @@ From:ubuntu:18.04
     python3 -m pip install --upgrade pillow
 
 %runscript
-    flask run --port 5900 --host 0.0.0.0
+    flask run --port "$@" --host 0.0.0.0
