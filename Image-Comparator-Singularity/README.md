@@ -1,6 +1,6 @@
 # Deploy couchdb singularity container
 
-Decide on a place to store the couchdb data. ```/opt/couchdb/data``` is where a normal couchdb installs will store data (in the container). For isngularity we work out of sandboxes so this will reside in the sandbox.
+For singularity we work out of sandboxes so this will reside in the sandbox.
 
 ## Preparation
 > Note these are really duplicated instructions from [Martinos Singularity and Compute Instructions](https://www.nmr.mgh.harvard.edu/martinos/userInfo/computer/
@@ -30,11 +30,11 @@ SERVER=carlsbad.nmr.mgh.harvard.edu #serena
 ssh $SERVER
 ```
 
-Once in:
+Make your way to the git clones repo root directory:
 ```bash
-WKDIR=/local_mount/space/carlsbad/3/users/bb927/Image-Comparator # /local_mount/space/serena/2/users/dave
-cd $WKDIR
+cd Image-Comparator
 ```
+>  e.g. /local_mount/space/carlsbad/3/users/bb927/Image-Comparator
 
 Grab and pull the couchdb image. We will store in the Singularity notes area:
 ```bash
@@ -55,6 +55,7 @@ couchdb uses port 5984 by default but you may not be able to use that
 ```bash
 OPEN_PORT=5900 # 10105
 ```
+> when adding data - see repo's top-level README.md - set DB_PORT=$OPEN_PORT
 
 ## Some settings
 Change the username and password
@@ -70,7 +71,7 @@ INST_NAME=couchdb$INSTANCE
 So that the instance starts couchdb in the background (equivalent to docker detached `-d` mode)
 
 The `runscript` launches the couchdb server. `singularity instance start` runs
-`startscript`, which is initially empty. So to start the server, we'll run append a line to `startscript` to call `runscript`, which means that the server will start in the background after starting the instance.
+`startscript`, which is initially empty. So to start the server, we'll append a line to `startscript` to call `runscript`, which means that the server will start in the background after starting the instance.
 
 ```console
 $ echo "/.singularity.d/runscript" >> $SANDBOX_NAME/.singularity.d/startscript
@@ -193,14 +194,37 @@ cd Image-Comparator-Singularity
 UI_PORT="5902" # For app not couchdb
 
 singularity build --fakeroot IC$INSTANCE.simg singularity.recipe
+```
 
+If you are not root or do not have sudo access, this `singularity build` command can fail at the final hurdle with error:
+```console
+...
+INFO:    Creating SIF file...
+FATAL:   While performing build: while creating SIF: while creating container: container file creation failed: open /local_mount/space/serena/2/users/dave/Image-Comparator/Image-Comparator-Singularity/IC.simg: permission denied
+```
+In that case, you can build in /scratch/ by doing:
+```bash
+RETURN_TO=$PWD
+BUILD_DIR=/scratch/$USER/sing_build
+mkdir -p $BUILD_DIR
+cp requirements.txt $BUILD_DIR
+cp singularity.recipe $BUILD_DIR
+cd $BUILD_DIR
+singularity build --fakeroot IC$INSTANCE.simg singularity.recipe
+cd $RETURN_TO
+cp $BUILD_DIR/IC$INSTANCE.simg .
+```
+
+We should now move back from Image-Comparator-Singularity to the root directory:
+```bash
 cd ../
+```
+>  e.g. /local_mount/space/carlsbad/3/users/bb927/Image-Comparator
 
-WKDIR=$PWD # this should be where git repo was cloned
-WKDIR=/local_mount/space/carlsbad/3/users/bb927/Image-Comparator/flask_server
-
+And now start the app
+```bash
 singularity run \
-  -B $WKDIR:$WKDIR \
+  -B $PWD:$PWD \
   --env FLASK_APP=flask_server/image_comparator \
   --env LC_ALL=C.UTF-8 \
   Image-Comparator-Singularity/IC$INSTANCE.simg $UI_PORT
@@ -214,7 +238,8 @@ $ sudo ssh -N -f -L localhost:$UI_PORT:localhost:$UI_PORT bb927@$SERVER
 ## Debugging flask server container
 ```bash
 singularity shell \
-  -B $WKDIR:$WKDIR \
+  -B $PWD:$PWD \
+  -W $PWD \
   --env FLASK_APP=flask_server/image_comparator \
   --env UI_PORT=$UI_PORT \
   --env LC_ALL=C.UTF-8 \
