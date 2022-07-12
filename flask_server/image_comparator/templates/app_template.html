@@ -56,7 +56,11 @@
                         <!-- manually add users that you assigned tasks too in makeTasks.rb -->
                         <select id="username" onchange="{{ app_config.app }}TaskFeeder.OnSetUser(this.value)">
                             <option selected="selected">Choose your user</option>
-                            <option value="Benjamin">Benjamin</option>
+                             <option value="Rob">Rob</option>
+                            <option value="Rickey">Rickey</option>
+                            <option value="Khushi">Khushi</option>
+                            <option value="Yuh-Shin">Yuh-Shin</option>
+                            <option value="Brooks">Brooks</option>
                         </select>
                     </li>
 
@@ -73,7 +77,7 @@
 
 
     <!-- Page Content -->
-    <div class="container">
+    <div class="container" style="width: 100%;">
         <div class="row">
             <div style="display: none;">
                 <span id="si_user_label" class="label label-primary">User</span>
@@ -92,8 +96,6 @@
                 <span id="si_curtask">Default Compare App Message</span>
             </div>
         </div>
-
-        <hr>
         {% block content %}{% endblock %}
 
     </div>

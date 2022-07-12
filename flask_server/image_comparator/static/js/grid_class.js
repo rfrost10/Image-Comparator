@@ -27,12 +27,13 @@ function init_app() {
           var results = {};
           classifyResults = response.rows
           classifyResults.forEach((v, i, a) => {
+            // debugger
             image_url = v.value.image
             image_id_index = image_url.search('image_comparator/') + 'image_comparator/'.length
             image_id = parseInt(image_url.substring(image_id_index, image_url.length))
             results[image_id] = v.value.diagnosis
           })
-          // GTF.results = results // No longer needed.
+          GTF.classifyResults = results // No longer needed.
           resolve(results);
         },
         error: function (response) {
@@ -90,31 +91,38 @@ function init_app() {
       this.imageList = [];
       return "no tasks means no UI to build";
     }
-
-    if (this.gridAppRedirect === true) {
-      // If we have results from the classify or pair app use those
-      // Reorder by frontal\lateral\reject
-      results = imageList
-      frontal = [];
-      lateral = [];
-      Object.values(results).forEach((v, i, a) => {
-        var keys = Object.keys(results)
+    // imageList coming in is really classifyResults and we ignore for now as we store the state ahead of time
+    // debugger
+    classifyResults = this.classifyResults
+    newImageList = this.imageList
+    if(this.gridAppRedirect === true){
+      //Reorder by frontal\lateral\reject
+      no_motion = [];
+      mild_motion = [];
+      moderate_motion = [];
+      severe_motion = [];
+      newImageList = [];
+      // debugger
+      Object.values(classifyResults).forEach((v, i, a) => {
+        var keys = Object.keys(classifyResults)
         // image_id = i + 1;
         image_id = keys[i];
-        if (v === "frontal") {
-          frontal.push(image_id)
+        if (v === "no_motion") {
+          no_motion.push(image_id)
+        } else if (v === "mild_motion") {
+          mild_motion.push(image_id)
+        } else if (v === "moderate_motion") {
+          moderate_motion.push(image_id)
         } else {
-          lateral.push(image_id)
+          severe_motion.push(image_id)
         }
-
-      })
-      imageList = frontal.concat(lateral)
+  
+      })      
+      newImageList = no_motion.concat(mild_motion).concat(moderate_motion).concat(severe_motion)
     }
-
-
     grid_of_images = $('#grid_of_images');
     grid_of_images.empty()
-    let n_count = imageList.length;
+    let n_count = newImageList.length;
     let width = $("#img_columns")[0].value
     // let width = 5;
     let col_sizes = { 1: 12, 2: 6, 3: 4, 4: 3, 5: 2 }
@@ -124,7 +132,7 @@ function init_app() {
       console.log(`making row ${i}`)
       var row = $(`<div class="row"></div>`)
       grid_of_images.append(row)
-      imageList.slice(v * width, (v + 1) * width).forEach((v, i, a) => {
+      newImageList.slice(v * width, (v + 1) * width).forEach((v, i, a) => {
         var col = $(`<div class="col-xs-${col_sizes[width]}"></div>`)
         // var img = $(`<img src="/static/img/TCGA_CS_4944.png" alt="">`)
         var img = $(`<img id="image${v}"" src="" class="img-responsive" alt="">`)
@@ -133,15 +141,19 @@ function init_app() {
         var label = $(`<label for="choices">Choose a class:</label>`)
         // selection_list = ['lateral','frontal'] //for later development
         // debugger
-        if (this.gridAppRedirect === true) {
+        if(this.gridAppRedirect === true){
           var select = $(`<select name="class" id="image_${v}">
-                            <option value="frontal" ${results[v] === 'frontal' ? ' selected' : ''}>frontal</option>
-                            <option value="lateral" ${results[v] === 'lateral' ? ' selected' : ''}>lateral</option>
+                            <option value="no_motion" ${classifyResults[v] === 'no_motion' ? ' selected' : ''}>no_motion</option>
+                            <option value="mild_motion" ${classifyResults[v] === 'mild_motion' ? ' selected' : ''}>mild_motion</option>
+                            <option value="moderate_motion" ${classifyResults[v] === 'moderate_motion' ? ' selected' : ''}>moderate_motion</option>
+                            <option value="severe_motion" ${classifyResults[v] === 'severe_motion' ? ' selected' : ''}>severe_motion</option>
                           </select>`)
-        } else {
+        }else{
           var select = $(`<select name="class" id="image_${v}">
-                            <option value="frontal" "selected">frontal</option>
-                            <option value="lateral">lateral</option>
+                            <option value="no_motion" selected>no_motion</option>
+                            <option value="mild_motion">mild_motion</option>
+                            <option value="moderate_motion">moderate_motion</option>
+                            <option value="severe_motion">severe_motion</option>
                           </select>`)
         }
         row.append(col)

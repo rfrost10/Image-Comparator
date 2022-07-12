@@ -2,7 +2,7 @@
 {% extends "app_template.html" %}
 
 <!-- TITLE -->
-{% block title %}Classify Images{% endblock %}
+{% block title %}Kmotion Images{% endblock %}
 
 <!-- CSS -->
 {% block custom_css %}
@@ -16,8 +16,8 @@
 <div class="row">
     <div id=create_new_user_div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
-            User</button>
+        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
+            User</button> -->
         <p>Current User: <span id="current_user" style="color: red">User Not Created</span></p>
 
 
@@ -185,23 +185,22 @@
 <!-- Projects Row -->
 <div id="image-row" class="row">
     <div class="col-md-7">
-        <img id="image0" class="img-responsive" src="http://placehold.it/700x400">
+        <img id="image0" class="img-responsive" src="https://via.placeholder.com/700x400">
     </div>
     <div id="class_buttons" class="col-md-5">
         <h2 id="to-do-message" class="page-header">Class Choices:</h2>
-        <button type="button" class="btn btn-primary" id="option1"
-            onclick="ClassifyTaskFeeder.classifySubmit(this)">option1</button>
+        <button type="button" class="btn btn-primary" id="no_motion"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">no motion</button>
         <br>
-        <button type="button" class="btn btn-primary" id="option2"
-            onclick="ClassifyTaskFeeder.classifySubmit(this)">option2</button>
+        <button type="button" class="btn btn-primary" id="mild_motion"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">mild_motion</button>
         <br>
-        <button type="button" class="btn btn-primary" id="option3"
-            onclick="ClassifyTaskFeeder.classifySubmit(this)">option3</button>
+        <button type="button" class="btn btn-primary" id="moderate_motion"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">moderate_motion</button>
         <br>
-        <button type="button" class="btn btn-primary" id="option4"
-            onclick="ClassifyTaskFeeder.classifySubmit(this)">option4</button>
+        <button type="button" class="btn btn-primary" id="severe_motion"
+            onclick="ClassifyTaskFeeder.classifySubmit(this)">severe_motion</button>
         <hr>
-        <!-- Back Button -->
         <button type="button" class="btn btn-danger" id="previousClassification"
             onclick="ClassifyTaskFeeder.resetToPreviousClassification(this)">Go
             Back One</button>

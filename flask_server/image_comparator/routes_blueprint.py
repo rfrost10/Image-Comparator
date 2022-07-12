@@ -312,7 +312,8 @@ def task_results():
         # 2 needs to mark grid task being referenced as "completed"
         x = db.find({'selector': {
             'list_name': results['task_list_name'],
-            'type': 'task'}})
+            'type': 'task',
+            'user': results['user']}})
         _id = x.__next__()['_id']
         grid_list = db[_id]
         grid_list['completed'] = True
@@ -468,7 +469,7 @@ def reset_to_previous_result(app):
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
 
     # get old result
-    view = f"_design/basic_views/_view/{app}Results?key=\"{currentTask['user']}\""
+    view = f"_design/basic_views/_view/results{app.capitalize()}?key=\"{currentTask['user']}\""
     url = f"{base}/{view}"
     response = check_if_admin_party_then_make_request(url)
     all_results = json.loads(response.content.decode('utf-8'))

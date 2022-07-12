@@ -7,7 +7,7 @@ function init_app() {
     // Update global app feeder variable
     const config_obj = {
         endpoint_image_list: "image_compare_lists",
-        message: "Default Compare Message",
+        message: "Select Image With More Severe Motion",
         app: "compare"
     }
     CompareTaskFeeder = new TaskFeeder(config_obj);

@@ -7,7 +7,7 @@ function init_app() {
     // Update global app feeder variable
     const config_obj = {
         endpoint_image_list: "image_classify_lists",
-        message: "Default Classify Message",
+        message: "Classify Motion Severity",
         app: "classify"
     }
     ClassifyTaskFeeder = new TaskFeeder(config_obj);
@@ -159,21 +159,20 @@ function init_app() {
     };
 
     ClassifyTaskFeeder.enableButtons = function () {
-        document.getElementById("option1").disabled = false;
-        document.getElementById("option2").disabled = false;
-        document.getElementById("option3").disabled = false;
-        document.getElementById("option4").disabled = false;
+        document.getElementById("no_motion").disabled = false;
+        document.getElementById("mild_motion").disabled = false;
+        document.getElementById("moderate_motion").disabled = false;
+        document.getElementById("severe_motion").disabled = false;
         document.getElementById("previousClassification").disabled = false;
     };
 
     ClassifyTaskFeeder.disableButtons = function () {
-        document.getElementById("option1").disabled = true;
-        document.getElementById("option2").disabled = true;
-        document.getElementById("option3").disabled = true;
-        document.getElementById("option4").disabled = true;
+        document.getElementById("no_motion").disabled = true;
+        document.getElementById("mild_motion").disabled = true;
+        document.getElementById("moderate_motion").disabled = true;
+        document.getElementById("severe_motion").disabled = true;
         document.getElementById("previousClassification").disabled = true;
     };
-
     /* Begin Classify app specific functionality */
     // debugger
     ClassifyTaskFeeder.setPrompt();
