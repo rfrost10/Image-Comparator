@@ -75,7 +75,7 @@ Place your imaging data in "Image-Comparator-Data".
 
 Ex:
 ```
-root@a53f9696685a:/home/bb927/Image-Comparator# ls ../Image-Comparator-Data/
+root@a53f9696685a:/home/bb927/Image-Comparator# ls Image-Comparator-Data/
 MR.1.png   MR.2.png  MR.3.png  MR.4.png
 ```
 
@@ -94,6 +94,7 @@ MR.4.png,class_a
 cp flask_server/.env_sample flask_server/.env
 ```
 > Make changes and add your specific setup
+
 
 Run addImages.py to add images:
 ```bash
