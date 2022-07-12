@@ -95,14 +95,6 @@ cp flask_server/.env_sample flask_server/.env
 ```
 > Make changes and add your specific setup
 
-> e.g. some that might need to change are
-```bash
-FLASK_APP=image_comparator
-IMAGES_DB=image_comparator
-DNS=172.20.143.183 # specific to what the UI app starts with - * Running on http://172.20.143.183:5902/ (Press CTRL+C to quit)
-DB_PORT=5900 # DB_PORT
-HTTP_PORT=5902 # UI_PORT
-```
 
 Run addImages.py to add images:
 ```bash
