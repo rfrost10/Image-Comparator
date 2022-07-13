@@ -104,18 +104,18 @@ function init_app() {
                     else if (event.keyCode == 52) {
                         alert('4 was pressed');
                     }
-                } else if (TF.keyboardShortcuts === true && document.getElementById("option1").disabled === false) {
+                } else if (TF.keyboardShortcuts === true && document.getElementById("no_motion").disabled === false) {
                     if (event.keyCode == 49) {
-                        $("#option1").click()
+                        $("#no_motion").click()
                     }
                     else if (event.keyCode == 50) {
-                        $("#option2").click()
+                        $("#mild_motion").click()
                     }
                     else if (event.keyCode == 51) {
-                        $("#option3").click()
+                        $("#moderate_motion").click()
                     }
                     else if (event.keyCode == 52) {
-                        $("#option4").click()
+                        $("#severe_motion").click()
                     }
                 }
             }
