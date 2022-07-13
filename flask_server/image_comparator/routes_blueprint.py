@@ -469,7 +469,10 @@ def reset_to_previous_result(app):
         current_app.config['DNS'], current_app.config["DB_PORT"], current_app.config["IMAGES_DB"])
 
     # get old result
-    view = f"_design/basic_views/_view/results{app.capitalize()}?key=\"{currentTask['user']}\""
+    if app.capitalize() == "Compare":
+        view = f"_design/basic_views/_view/results{app.capitalize()}?key=[\"{currentTask['user']}\",\"{currentTask['list_name']}\"]"
+    else:
+        view = f"_design/basic_views/_view/results{app.capitalize()}_userList?key=[\"{currentTask['user']}\",\"{currentTask['list_name']}\"]"
     url = f"{base}/{view}"
     response = check_if_admin_party_then_make_request(url)
     all_results = json.loads(response.content.decode('utf-8'))

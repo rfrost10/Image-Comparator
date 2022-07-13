@@ -271,4 +271,25 @@ function TaskFeeder(config_obj) {
     })
   };
 
+  this.resetToPreviousTaskId = function () {
+    TF = this;
+    if (TF.currentTask.current_idx === 0) {
+        alert('You are on the first task, cannot go back.')
+    } else {
+        TF.disableButtons();
+        $.ajax({
+            url: this.url_reset_to_previous_result,
+            type: 'POST',
+            data: JSON.stringify(this.currentTask),
+            headers: { 'Content-Type': 'application/json' },
+            success: (response) => {
+                TF.OnSetUser(TF.user)
+            },
+            error: (response) => {
+                console.log('resetToPreviousClassification error!')
+            },
+        });
+    }
+  };
+
 }

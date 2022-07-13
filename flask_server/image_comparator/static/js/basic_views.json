@@ -45,8 +45,11 @@
     "resultsClassify": {
       "map": "function(doc) {\n  if (doc.type===\"classifyResult\")\n    emit(doc.user, doc);\n}"
     },
+    "resultsClassify_userList": {
+      "map": "function(doc) {\n  if (doc.type===\"classifyResult\")\n    emit([doc.user, doc.task_list_name], doc);\n}"
+    },
     "resultsCompare": {
-      "map": "function(doc) {if (doc.type===\"compareResult\")\n  emit(doc.user, doc);\n}"
+      "map": "function(doc) {if (doc.type===\"compareResult\")\n  emit([doc.user, doc.task_list_name], doc);\n}"
     },
     "resultsGrid": {
       "map": "function(doc) {\n  if (doc.type===\"gridResult\")\n    emit(doc.user, doc);\n}"
