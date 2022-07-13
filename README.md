@@ -135,8 +135,8 @@ python3 flask_server/image_comparator/utils/makeCompareList.py <imageSetName> <l
 ```
 
 ```bash
-python3 flask_server/image_comparator/utils/makeCompareList.py sample_data sample_dataCompareList
-python3 flask_server/image_comparator/utils/makeCompareList.py sample_data sample_dataCompareList 10
+python3 flask_server/image_comparator/utils/makeCompareList.py sample_data sample_data_CompareList
+python3 flask_server/image_comparator/utils/makeCompareList.py sample_data sample_data_CompareList 10
 ```
 
 ### Image-Classifier
@@ -181,15 +181,17 @@ python3 flask_server/image_comparator/utils/makeTask.py <user> <image-list-name>
 
 Ex:
 ```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1 test_description_sample_data
-python3 flask_server/image_comparator/utils/makeTask.py Rob sample_data_ClassifyList classify 1 test_description_sample_data
-python3 flask_server/image_comparator/utils/makeTask.py Bill sample_data_ClassifyList classify 1 test_description_sample_data
+
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_CompareList compare 1 test_description_sample_data
+python3 flask_server/image_comparator/utils/makeTask.py Rob sample_data_CompareList compare 1 test_description_sample_data
+python3 flask_server/image_comparator/utils/makeTask.py Bill sample_data_CompareList compare 1 test_description_sample_data
 ```
 
 Ex:
 ```bash
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1
-python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1 test_description
+python3 flask_server/image_comparator/utils/makeTask.py Benjamin sample_data_ClassifyList classify 1 test_description_sample_data
+python3 flask_server/image_comparator/utils/makeTask.py Rob sample_data_ClassifyList classify 1 test_description_sample_data
+python3 flask_server/image_comparator/utils/makeTask.py Bill sample_data_ClassifyList classify 1 test_description_sample_data
 ```
 
 Ex:
