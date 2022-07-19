@@ -2,7 +2,7 @@
 {% extends "app_template.html" %}
 
 <!-- TITLE -->
-{% block title %}Kmotion Images{% endblock %}
+{% block title %}Classify Images{% endblock %}
 
 <!-- CSS -->
 {% block custom_css %}
@@ -16,8 +16,8 @@
 <div class="row">
     <div id=create_new_user_div>
         <!-- Button trigger modal -->
-        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
-            User</button> -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">Create
+            User</button>
         <p>Current User: <span id="current_user" style="color: red">User Not Created</span></p>
 
 
@@ -125,16 +125,6 @@
                         <p>App Instructions:</p>
                         <ol>
                             <li>Select your user from the drop down at the top.</li>
-                            <li>You will be redirected to the same page with survey questions for you to fill
-                                out.
-                                <ul>
-                                    <li>
-                                        <p style="color:red;">If placeholders come up instead of images after
-                                            creating a user, hit refresh.</p>
-                                    </li>
-                                </ul>
-                            </li>
-
                         </ol>
                         <p>Optional: Click button "Keyboard Shortcuts:" to allow for arrow keys to choose
                             images. Otherwise you can click with your mouse. Controls are below.</p>
@@ -144,7 +134,12 @@
                         <p>* Number 2: mild motion</p>
                         <p>* Number 3: moderate motion</p>
                         <p>* Number 4: severe motion</p>
+                        <p>* Number 5: neck</p>
+                        <p>* Number 6: flow</p>
                         <p>***************</p>
+
+                        <p style="color: red;">NOTE: Choose ONE of the motion classifications.
+                            AND if any of the other artifact categories are present, select them as well.</p>
 
                         <hr>
 
@@ -187,7 +182,9 @@
     <div class="col-md-7">
         <img id="image0" class="img-responsive" src="https://via.placeholder.com/700x400">
     </div>
-    <div id="class_buttons" class="col-md-5">
+
+    <!-- buttons -->
+    <!-- <div id="class_buttons" class="col-md-5">
         <h2 id="to-do-message" class="page-header">Class Choices:</h2>
         <button type="button" class="btn btn-primary" id="no_motion"
             onclick="ClassifyTaskFeeder.classifySubmit(this)">no motion</button>
@@ -200,11 +197,36 @@
         <br>
         <button type="button" class="btn btn-primary" id="severe_motion"
             onclick="ClassifyTaskFeeder.classifySubmit(this)">severe motion</button>
+        <br>
+
+    </div> -->
+    <!-- checkboxes  -->
+    <div id="class_checkboxes" class="col-md-2">
+        <h2 class="page-header">Main Choices:</h2>
+        <!-- <form onSubmit="ClassifyTaskFeeder.classifySubmit()"> -->
+        <input type="checkbox" id="no_motion" name="no_motion" value="no_motion">
+        <label for="no_motion"> no motion</label><br><br>
+        <input type="checkbox" id="mild_motion" name="mild_motion" value="mild_motion">
+        <label for="mild_motion"> mild motion</label><br><br>
+        <input type="checkbox" id="moderate_motion" name="moderate_motion" value="moderate_motion">
+        <label for="moderate_motion"> moderate motion</label><br><br>
+        <input type="checkbox" id="severe_motion" name="severe_motion" value="severe_motion">
+        <label for="severe_motion"> severe motion</label><br><br>
         <hr>
+        <h2 class="page-header">Additional Choices:</h2>
+        <input type="checkbox" id="neck" name="neck" value="neck">
+        <label for="neck"> neck</label><br><br>
+        <input type="checkbox" id="flow" name="flow" value="flow">
+        <label for="flow"> flow</label><br><br>
+        <input type="submit" value="Submit" onclick="ClassifyTaskFeeder.classifySubmit()">
+        <!-- </form> -->
+
+        <!-- Back Button -->
         <button type="button" class="btn btn-danger" id="previousClassification"
             onclick="ClassifyTaskFeeder.resetToPreviousClassification(this)">Go
             Back One</button>
     </div>
+
 </div>
 {% endblock %}
 

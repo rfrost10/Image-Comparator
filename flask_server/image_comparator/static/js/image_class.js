@@ -16,6 +16,7 @@ function init_app() {
     // - Attributes
     ClassifyTaskFeeder.currentImg = null;
     ClassifyTaskFeeder.nextImg = null;
+    ClassifyTaskFeeder.usingCheckbox = true;
     ClassifyTaskFeeder.keyboardShortcuts = false; // turn keyboard listener on\off
 
     // - Methods
@@ -40,7 +41,6 @@ function init_app() {
         console.log("classifySubmit");
         this.disableButtons();
         // Gather all imageIDs
-        // debugger
         TF = this;
         const user = this.user;
 
@@ -52,17 +52,25 @@ function init_app() {
         const task_idx = this.currentTask.current_idx;
         // debugger
 
-        const save_results = {
+        save_results = {
             user: user,
             type: "classifyResult",
             date: timeStr,
             image: img0,
-            diagnosis: selection.id,
+            // diagnosis: selection.id, // button id
             task: task,
             task_list_name: this.currentTask.list_name,
             task_idx: task_idx,
         }
 
+        // Check if this is a button or checkbox classification
+        if (ClassifyTaskFeeder.usingCheckbox && document.getElementById('class_checkboxes') != null){
+            let checkboxes = ['no_motion','mild_motion','moderate_motion','severe_motion','neck','flow']
+            checkboxes.forEach((v,i,a) =>{
+                save_results[`diagnosis_${v}`] = document.getElementById(v).checked
+            })
+        }
+        debugger
         $.ajax({
             url: `http://${DNS}:${HTTP_PORT}/task_results`,
             data: JSON.stringify(save_results),
@@ -71,7 +79,8 @@ function init_app() {
             contentType: 'application/json',
             success: function (response) {
                 // debugger
-                console.log('success')
+                // Uncheck checkbox
+                TF.clearSelection()
                 // Reset incomplete tasks list
                 TF.OnSetUser(TF.user)
             },
@@ -87,6 +96,37 @@ function init_app() {
         alert('If you want to provide an optional justification for your decision (left/right/tie), please enter it before you click left/right/tie. The text box will refresh after a decision is made.')
     };
 
+    ClassifyTaskFeeder.initCheckboxListener = function (number_keys) {
+        no_motion_checkbox = document.getElementById('no_motion');
+        mild_motion_checkbox = document.getElementById('mild_motion');
+        moderate_motion_checkbox = document.getElementById('moderate_motion');
+        severe_motion_checkbox = document.getElementById('severe_motion');
+        neck_checkbox = document.getElementById('neck');
+        flow_checkbox = document.getElementById('flow');
+        // If no_motion is checked, unselect mild,moderate,severe
+        no_motion_checkbox.addEventListener('change', function() {
+            // alert("hello") // can use to check a button is being pressed
+            mild_motion_checkbox.checked = false
+            moderate_motion_checkbox.checked = false
+            severe_motion_checkbox.checked = false
+        });
+        mild_motion_checkbox.addEventListener('change', function() {
+            no_motion_checkbox.checked = false
+            moderate_motion_checkbox.checked = false
+            severe_motion_checkbox.checked = false
+        });
+        moderate_motion_checkbox.addEventListener('change', function() {
+            no_motion_checkbox.checked = false
+            mild_motion_checkbox.checked = false
+            severe_motion_checkbox.checked = false
+        });
+        severe_motion_checkbox.addEventListener('change', function() {
+            no_motion_checkbox.checked = false
+            mild_motion_checkbox.checked = false
+            moderate_motion_checkbox.checked = false
+        });
+
+    };
     ClassifyTaskFeeder.initKeyboardListener = function () {
         TF = this;
         document.addEventListener('keydown', function (event) {
@@ -104,19 +144,34 @@ function init_app() {
                     else if (event.keyCode == 52) {
                         alert('4 was pressed');
                     }
+                    else if (event.keyCode == 53) {
+                        alert('5 was pressed');
+                    }
+                    else if (event.keyCode == 54) {
+                        alert('6 was pressed');
+                    }
                 } else if (TF.keyboardShortcuts === true && document.getElementById("no_motion").disabled === false) {
                     if (event.keyCode == 49) {
-                        $("#no_motion").click()
+                        $("#no_motion")[0].click()
                     }
                     else if (event.keyCode == 50) {
-                        $("#mild_motion").click()
+                        $("#mild_motion")[0].click()
                     }
                     else if (event.keyCode == 51) {
-                        $("#moderate_motion").click()
+                        $("#moderate_motion")[0].click()
                     }
                     else if (event.keyCode == 52) {
-                        $("#severe_motion").click()
+                        $("#severe_motion")[0].click()
                     }
+                    else if (event.keyCode == 53) {
+                        $("#neck")[0].click()
+                    }
+                    else if (event.keyCode == 54) {
+                        $("#flow")[0].click()
+                    }
+                    // else if (event.keyCode == 54) {  // for enter find id/attribute for "submit"
+                    //     $("#flow")[0].click()
+                    // }
                 }
             }
         });  
@@ -158,11 +213,22 @@ function init_app() {
         }
     };
 
+    ClassifyTaskFeeder.clearSelection = function () {
+        document.getElementById("no_motion").checked = false;
+        document.getElementById("mild_motion").checked = false;
+        document.getElementById("moderate_motion").checked = false;
+        document.getElementById("severe_motion").checked = false;
+        document.getElementById("neck").checked = false;
+        document.getElementById("flow").checked = false;
+    };
+
     ClassifyTaskFeeder.enableButtons = function () {
         document.getElementById("no_motion").disabled = false;
         document.getElementById("mild_motion").disabled = false;
         document.getElementById("moderate_motion").disabled = false;
         document.getElementById("severe_motion").disabled = false;
+        document.getElementById("neck").disabled = false;
+        document.getElementById("flow").disabled = false;
         document.getElementById("previousClassification").disabled = false;
     };
 
@@ -171,12 +237,16 @@ function init_app() {
         document.getElementById("mild_motion").disabled = true;
         document.getElementById("moderate_motion").disabled = true;
         document.getElementById("severe_motion").disabled = true;
+        document.getElementById("neck").disabled = true;
+        document.getElementById("flow").disabled = true;
         document.getElementById("previousClassification").disabled = true;
     };
+
     /* Begin Classify app specific functionality */
     // debugger
     ClassifyTaskFeeder.setPrompt();
     ClassifyTaskFeeder.handleUrlFilter(document.location.search);
+    ClassifyTaskFeeder.initCheckboxListener();
     ClassifyTaskFeeder.initKeyboardListener();
 
 }
