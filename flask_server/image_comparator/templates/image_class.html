@@ -130,17 +130,22 @@
                             images. Otherwise you can click with your mouse. Controls are below.</p>
                         <p>***************</p>
                         <p>Number keys enabled (practice mode "Off"):</p>
-                        <p>* Number 1: no motion</p>
-                        <p>* Number 2: mild motion</p>
-                        <p>* Number 3: moderate motion</p>
-                        <p>* Number 4: severe motion</p>
-                        <p>* Number 5: neck</p>
-                        <p>* Number 6: flow</p>
+                        <p>* Number 1: No motion</p>
+                        <p>* Number 2: Mild motion</p>
+                        <p>* Number 3: Moderate motion</p>
+                        <p>* Number 4: Severe motion</p>
+                        <p>* </p>
+                        <p>* Number 5: Neck/jaw</p>
+                        <p>* Number 6: Flow/pulsation</p>
+                        <p>* Number 7: Implant/metal</p>
+                        <p>* Number 8: RF spike</p>
+                        <p>* Number 9: Zipper</p>
+                        <p>* </p>
                         <p>* Letter S: Submit</p>
                         <p>***************</p>
 
-                        <p style="color: red;">NOTE: Choose ONE of the motion classifications.
-                            AND if any of the other artifact categories are present, select them as well.</p>
+                        <p style="color: red;">NOTE: Choose ONE of the motion classifications.</p>
+                        <p style="color: red;">      AND if any of the other artifact categories are present, select them as well.</p>
 
                         <hr>
 
@@ -206,19 +211,25 @@
         <h2 class="page-header">Main Choices:</h2>
         <!-- <form onSubmit="ClassifyTaskFeeder.classifySubmit()"> -->
         <input type="checkbox" id="no_motion" name="no_motion" value="no_motion">
-        <label for="no_motion"> no motion</label><br><br>
+        <label for="no_motion"> No motion</label><br><br>
         <input type="checkbox" id="mild_motion" name="mild_motion" value="mild_motion">
-        <label for="mild_motion"> mild motion</label><br><br>
+        <label for="mild_motion"> Mild motion</label><br><br>
         <input type="checkbox" id="moderate_motion" name="moderate_motion" value="moderate_motion">
-        <label for="moderate_motion"> moderate motion</label><br><br>
+        <label for="moderate_motion"> Moderate motion</label><br><br>
         <input type="checkbox" id="severe_motion" name="severe_motion" value="severe_motion">
-        <label for="severe_motion"> severe motion</label><br><br>
-        <hr>
-        <h2 class="page-header">Additional Choices:</h2>
+        <label for="severe_motion"> Severe motion</label><br><br>
+
+        <h2 class="page-header">Additional Labels:</h2>
         <input type="checkbox" id="neck" name="neck" value="neck">
-        <label for="neck"> neck</label><br><br>
+        <label for="neck"> Neck/jaw</label><br><br>
         <input type="checkbox" id="flow" name="flow" value="flow">
-        <label for="flow"> flow</label><br><br>
+        <label for="flow"> Flow/pulsation</label><br><br>
+        <input type="checkbox" id="implant" name="implant" value="implant">
+        <label for="implant"> Implant/metal</label><br><br>
+        <input type="checkbox" id="spike" name="spike" value="spike">
+        <label for="spike"> RF spike</label><br><br>
+        <input type="checkbox" id="zipper" name="zipper" value="zipper">
+        <label for="zipper"> Zipper</label><br><br>
         <input type="submit" id="submit" name="submit" value="Submit" onclick="ClassifyTaskFeeder.classifySubmit()">
         <!-- </form> -->
 

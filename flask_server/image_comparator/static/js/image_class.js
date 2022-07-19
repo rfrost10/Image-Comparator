@@ -80,7 +80,7 @@ function init_app() {
 
         // Check if this is a button or checkbox classification
         if (ClassifyTaskFeeder.usingCheckbox && document.getElementById('class_checkboxes') != null){
-            let checkboxes = ['no_motion','mild_motion','moderate_motion','severe_motion','neck','flow']
+            let checkboxes = ['no_motion','mild_motion','moderate_motion','severe_motion','neck','flow', 'implant', 'spike', 'zipper']
             checkboxes.forEach((v,i,a) =>{
                 save_results[`diagnosis_${v}`] = document.getElementById(v).checked
             })
@@ -165,6 +165,15 @@ function init_app() {
                     else if (event.keyCode == 54) {
                         alert('6 was pressed');
                     }
+                    else if (event.keyCode == 55) {
+                        alert('7 was pressed');
+                    }
+                    else if (event.keyCode == 56) {
+                        alert('8 was pressed');
+                    }
+                    else if (event.keyCode == 57) {
+                        alert('9 was pressed');
+                    }
                     else if (event.keyCode == 83) {  // for enter find id/attribute for "submit"
                         alert('s was pressed');
                     }
@@ -186,6 +195,15 @@ function init_app() {
                     }
                     else if (event.keyCode == 54) {
                         $("#flow")[0].click()
+                    }
+                    else if (event.keyCode == 55) {
+                        $("#implant")[0].click()
+                    }
+                    else if (event.keyCode == 56) {
+                        $("#spike")[0].click()
+                    }
+                    else if (event.keyCode == 57) {
+                        $("#zipper")[0].click()
                     }
                     else if (event.keyCode == 83) { // "s"
                         $("#submit")[0].click()
@@ -238,6 +256,9 @@ function init_app() {
         document.getElementById("severe_motion").checked = false;
         document.getElementById("neck").checked = false;
         document.getElementById("flow").checked = false;
+        document.getElementById("implant").checked = false;
+        document.getElementById("spike").checked = false;
+        document.getElementById("zipper").checked = false;
     };
 
     ClassifyTaskFeeder.enableButtons = function () {
@@ -247,6 +268,9 @@ function init_app() {
         document.getElementById("severe_motion").disabled = false;
         document.getElementById("neck").disabled = false;
         document.getElementById("flow").disabled = false;
+        document.getElementById("implant").disabled = false;
+        document.getElementById("spike").disabled = false;
+        document.getElementById("zipper").disabled = false;
         document.getElementById("previousClassification").disabled = false;
     };
 
@@ -257,6 +281,9 @@ function init_app() {
         document.getElementById("severe_motion").disabled = true;
         document.getElementById("neck").disabled = true;
         document.getElementById("flow").disabled = true;
+        document.getElementById("implant").disabled = true;
+        document.getElementById("spike").disabled = true;
+        document.getElementById("zipper").disabled = true;
         document.getElementById("previousClassification").disabled = true;
     };
 
