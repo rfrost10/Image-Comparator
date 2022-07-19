@@ -36,10 +36,12 @@ function TaskFeeder(config_obj) {
   // Meant to be updated and represent app state
   this.app = config_obj['app'];
   this.user = "default";
+  // debugger
   this.message = config_obj['message'];
   this.incompleteTasks = [];
   this.currentTask = {};
   this.imageList = [];
+  this.cachedClassifyResults = {};
   // Experimental option
   this.gridAppRedirect = false;
   this.fromApp = null; // Don't touch, this is set in this.handleUrlFilter()
@@ -227,13 +229,14 @@ function TaskFeeder(config_obj) {
       return "no tasks left"
     } else {
       return new Promise((resolve, reject) => {
+        // debugger;
         $.ajax({
           url: this.url_image_list_base + `?key=${task.list_name}`,
           type: 'GET',
           success: function (response) {
             if (TF.app === 'compare' | TF.app === 'classify' | TF.app === 'pair') {
               var curTaskElem = document.getElementById("si_curtask");
-              curTaskElem.textContent = "You are on comparison " + (task.current_idx + 1) + " of " + response.rows[0].value.count;
+              curTaskElem.textContent = `You are on ${TF.app} task ` + (task.current_idx + 1) + " of " + response.rows[0].value.count;
             }
             TF.imageList = response.rows[0].value.list;
             resolve(TF.imageList);
