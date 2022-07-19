@@ -165,6 +165,9 @@ function init_app() {
                     else if (event.keyCode == 54) {
                         alert('6 was pressed');
                     }
+                    else if (event.keyCode == 83) {  // for enter find id/attribute for "submit"
+                        alert('s was pressed');
+                    }
                 } else if (TF.keyboardShortcuts === true && document.getElementById("no_motion").disabled === false) {
                     if (event.keyCode == 49) {
                         $("#no_motion")[0].click()
@@ -184,9 +187,9 @@ function init_app() {
                     else if (event.keyCode == 54) {
                         $("#flow")[0].click()
                     }
-                    // else if (event.keyCode == 54) {  // for enter find id/attribute for "submit"
-                    //     $("#flow")[0].click()
-                    // }
+                    else if (event.keyCode == 83) { // "s"
+                        $("#submit")[0].click()
+                    }
                 }
             }
         });  
