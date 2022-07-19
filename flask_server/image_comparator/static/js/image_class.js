@@ -39,6 +39,21 @@ function init_app() {
 
     ClassifyTaskFeeder.classifySubmit = function (selection) {
         console.log("classifySubmit");
+
+        // Check that one of the motion categories has been selected
+        if (ClassifyTaskFeeder.usingCheckbox && document.getElementById('class_checkboxes') != null){
+            no_motion_checkbox = document.getElementById('no_motion');
+            mild_motion_checkbox = document.getElementById('mild_motion');
+            moderate_motion_checkbox = document.getElementById('moderate_motion');
+            severe_motion_checkbox = document.getElementById('severe_motion');
+
+            let motion_boxes = [no_motion_checkbox.checked, mild_motion_checkbox.checked, moderate_motion_checkbox.checked, severe_motion_checkbox.checked]
+            if ( motion_boxes.every(element => element === false) ){
+                alert("Please select a motion category!")
+                return false
+            }
+        }
+
         this.disableButtons();
         // Gather all imageIDs
         TF = this;
