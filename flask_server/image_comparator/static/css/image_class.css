@@ -1,7 +1,7 @@
 /* BB - Widen the container for larger pictures */
 @media screen and (min-width: 1200px) {
   #image0 {
-    width: 100%;
+    width: 60%;
     margin: 0px 0px 0px 0px;
     display: "";
   }
