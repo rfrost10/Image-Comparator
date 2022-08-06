@@ -249,3 +249,44 @@ singularity shell \
 
 flask run --port $UI_PORT --host 0.0.0.0
 ```
+
+# Re-starting Image-Comparator
+Instructions for restarting the database and app if disconnected from `$SERVER`
+
+Start the couchdb database website
+```
+INSTANCE=_instance_1
+SANDBOX_NAME=couchdb_sandbox$INSTANCE
+OPEN_PORT=5900
+COUCHDB_USER=admin
+COUCHDB_PASSWORD=password
+INST_NAME=couchdb$INSTANCE
+
+cd Image-Comparator-Singularity/
+
+singularity instance start --fakeroot --writable \
+    --net --network-args "portmap=${OPEN_PORT}:5984/tcp" \
+    --env COUCHDB_USER=$COUCHDB_USER \
+    --env COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
+    $SANDBOX_NAME/ \
+    ${INST_NAME}
+```
+
+Check it works
+```console
+$ curl serena.nmr.mgh.harvard.edu:$OPEN_PORT
+{"couchdb":"Welcome","version":"3.2.2","git_sha":"d5b746b7c","uuid":"3e47d0e1b1762d7af20c7a4fb8718935","features":["access-ready","partitioned","pluggable-storage-engines","reshard","scheduler"],"vendor":{"name":"The Apache Software Foundation"}}
+```
+
+Start the flask app website
+```
+UI_PORT="5902"
+
+cd ..
+
+singularity run \
+  -B $PWD:$PWD \
+  --env FLASK_APP=flask_server/image_comparator \
+  --env LC_ALL=C.UTF-8 \
+  Image-Comparator-Singularity/IC$INSTANCE.simg $UI_PORT
+```
